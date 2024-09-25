@@ -12,6 +12,7 @@ env:
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
   MAIN_BRANCH: 'main'
   SAGE_DIR: '/usr/local/sage/SageV2'
+  BOT_NAME: ${{ secrets.BOT_NAME }}
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
   BOT_CLIENT_ID: ${{ secrets.BOT_CLIENT_ID }}
   TEST_BOT_TOKEN: ${{ secrets.TEST_BOT_TOKEN }}
@@ -25,10 +26,22 @@ env:
   ROLE_MUTED: ${{ secrets.ROLE_MUTED }}
   ROLE_LEVEL_ONE: ${{ secrets.ROLE_LEVEL_ONE }}
   ROLE_STUDENT_ADMIN: ${{ secrets.ROLE_STUDENT_ADMIN }}
+  ROLE_DROPDOWNS_COURSE_ROLES: ${{ secrets.ROLE_DROPDOWNS_COURSE_ROLES }}
+  ROLE_DROPDOWNS_ASSIGN_ROLES: ${{ secrets.ROLE_DROPDOWNS_ASSIGN_ROLES }}
   EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
   EMAIL_REPLY_TO: ${{ secrets.EMAIL_REPLY_TO }}
+  EMAIL_REPORT_ADDRESSES: ${{ secrets.EMAIL_REPORT_ADDRESSES }}
+  MONGO: ${{ secrets.MONGO }}
   MONGO_CONNECTION: ${{ secrets.MONGO_CONNECTION }}
   DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
+  DB_USERS: ${{ secrets.DB_USERS }}
+  DB_PVQ: ${{ secrets.DB_PVQ }}
+  DB_QTAGS: ${{ secrets.DB_QTAGS }}
+  DB_ASSIGNABLE: ${{ secrets.DB_ASSIGNABLE }}
+  DB_COURSES: ${{ secrets.DB_COURSES }}
+  DB_REMINDERS: ${{ secrets.DB_REMINDERS }}
+  DB_CLIENT_DATA: ${{ secrets.DB_CLIENT_DATA }}
+  DB_POLLS: ${{ secrets.DB_POLLS }}
   CHANNEL_ERROR_LOG: ${{ secrets.CHANNEL_ERROR_LOG }}
   CHANNEL_SERVER_LOG: ${{ secrets.CHANNEL_SERVER_LOG }}
   CHANNEL_MEMBER_LOG: ${{ secrets.CHANNEL_MEMBER_LOG }}
@@ -36,6 +49,8 @@ env:
   CHANNEL_FEEDBACK: ${{ secrets.CHANNEL_FEEDBACK }}
   CHANNEL_SAGE: ${{ secrets.CHANNEL_SAGE }}
   CHANNEL_ANNOUNCEMENTS: ${{ secrets.CHANNEL_ANNOUNCEMENTS }}
+  CHANNEL_ARCHIVE: ${{ secrets.CHANNEL_ARCHIVE }}
+  CHANNEL_ROLE_SELECT: ${{ secrets.CHANNEL_ROLE_SELECT }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PROJECT: ${{ secrets.GITHUB_PROJECT }}
   PREFIX: ${{ secrets.PREFIX }}
