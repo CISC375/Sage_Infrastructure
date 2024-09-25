@@ -1,97 +1,180 @@
 name: CI Pipeline
 
 on:
-  workflow_call:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+
+env:
+  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+  MAIN_BRANCH: 'main'
+  SAGE_DIR: '/usr/local/sage/SageV2'
+  BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+  BOT_CLIENT_ID: ${{ secrets.BOT_CLIENT_ID }}
+  TEST_BOT_TOKEN: ${{ secrets.TEST_BOT_TOKEN }}
+  TEST_BOT_CLIENT_ID: ${{ secrets.TEST_BOT_CLIENT_ID }}
+  GUILD_GATEWAY: ${{ secrets.GUILD_GATEWAY }}
+  GUILD_MAIN: ${{ secrets.GUILD_MAIN }}
+  GUILD_GATEWAY_INVITE: ${{ secrets.GUILD_GATEWAY_INVITE }}
+  ROLE_ADMIN: ${{ secrets.ROLE_ADMIN }}
+  ROLE_STAFF: ${{ secrets.ROLE_STAFF }}
+  ROLE_VERIFIED: ${{ secrets.ROLE_VERIFIED }}
+  ROLE_MUTED: ${{ secrets.ROLE_MUTED }}
+  ROLE_LEVEL_ONE: ${{ secrets.ROLE_LEVEL_ONE }}
+  ROLE_STUDENT_ADMIN: ${{ secrets.ROLE_STUDENT_ADMIN }}
+  EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+  EMAIL_REPLY_TO: ${{ secrets.EMAIL_REPLY_TO }}
+  MONGO_CONNECTION: ${{ secrets.MONGO_CONNECTION }}
+  DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
+  CHANNEL_ERROR_LOG: ${{ secrets.CHANNEL_ERROR_LOG }}
+  CHANNEL_SERVER_LOG: ${{ secrets.CHANNEL_SERVER_LOG }}
+  CHANNEL_MEMBER_LOG: ${{ secrets.CHANNEL_MEMBER_LOG }}
+  CHANNEL_MOD_LOG: ${{ secrets.CHANNEL_MOD_LOG }}
+  CHANNEL_FEEDBACK: ${{ secrets.CHANNEL_FEEDBACK }}
+  CHANNEL_SAGE: ${{ secrets.CHANNEL_SAGE }}
+  CHANNEL_ANNOUNCEMENTS: ${{ secrets.CHANNEL_ANNOUNCEMENTS }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_PROJECT: ${{ secrets.GITHUB_PROJECT }}
+  PREFIX: ${{ secrets.PREFIX }}
+  SEMESTER_ID: ${{ secrets.SEMESTER_ID }}
+  NODE_VERSION: '16'  # Specify your Node.js version as needed
 
 jobs:
   test-build:
     runs-on: ubuntu-latest
-    env:
-      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-      MAIN_BRANCH: 'main'
-      SAGE_DIR: '/usr/local/sage/SageV2'
-      JENKINS_NODE_COOKIE: 'dontKillMe'
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Clean temp workspace
-        run: |
-          find /tmp -user runner -print0 | xargs -0 rm -rf
-          echo "running build in temp workspace"
-          mv config.example.ts config.ts
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-      - name: Install dependencies
+      - name: Clean workspace
+        run: |
+          find /tmp -user $(whoami) -print0 | xargs -0 rm -rf
+          echo "Running build in temp workspace"
+
+      - name: Move config file
+        run: mv config.example.ts config.ts
+
+      - name: Install Dependencies and Build
         run: |
           npm run clean
           npm cache clean --force
           rm -rf node_modules
           npm install
+          npm run build
 
-      - name: Build
-        run: npm run build
-        continue-on-error: true
-
-      - name: Send Discord notification (Test Build)
+      - name: Send Discord Notification (Test Build)
         if: failure()
         run: |
-          curl -H "Content-Type: application/json" \
-            -d '{"content":"Test build failed on branch [${{ github.ref_name }}](https://github.com/ud-cis-discord/SageV2/commit/${{ github.sha }})"}' \
-            ${{ secrets.DISCORD_WEBHOOK }}
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "Test build failure on branch [`${{ github.ref }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})"}' \
+          ${{ env.DISCORD_WEBHOOK }}
 
   lint:
     runs-on: ubuntu-latest
     needs: test-build
     steps:
-      - name: Lint and Test
-        run: |
-          echo "Running tests in temp workspace"
-          npm run test
-        continue-on-error: true
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-      - name: Send Discord notification (Lint)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run Lint Tests
+        run: npm run test
+
+      - name: Send Discord Notification (Lint)
         if: failure()
         run: |
-          curl -H "Content-Type: application/json" \
-            -d '{"content":"Lint failed on branch [${{ github.ref_name }}](https://github.com/ud-cis-discord/SageV2/commit/${{ github.sha }})"}' \
-            ${{ secrets.DISCORD_WEBHOOK }}
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "Lint failure on branch [`${{ github.ref }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})"}' \
+          ${{ env.DISCORD_WEBHOOK }}
 
   deploy:
     runs-on: ubuntu-latest
     needs: lint
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Deploy to production
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Deploy to Production
         run: |
-          echo "Deploying to production"
-          cd $SAGE_DIR
+          echo "Rebuilding and deploying in prod directory..."
+          cd ${{ env.SAGE_DIR }}
           git pull
           npm run clean
           npm install
           npm run build
-          sudo /bin/systemctl restart sage
-        continue-on-error: true
+          sudo systemctl restart sage
 
-      - name: Send Discord notification (Deploy)
+      - name: Send Discord Notification (Deploy)
+        if: success()
         run: |
-          curl -H "Content-Type: application/json" \
-            -d '{"content":"Deployment on branch [${{ github.ref_name }}] complete"}' \
-            ${{ secrets.DISCORD_WEBHOOK }}
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "Deploy successful on branch [`${{ github.ref }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})"}' \
+          ${{ env.DISCORD_WEBHOOK }}
+
+      - name: Send Discord Notification (Deploy)
+        if: failure()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "URGENT: Deploy failed on branch [`${{ github.ref }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})"}' \
+          ${{ env.DISCORD_WEBHOOK }}
 
   update-docs:
     runs-on: ubuntu-latest
     needs: deploy
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Update documentation
-        run: |
-          echo "Updating documentation"
-          cd $SAGE_DIR
-          npm run autodoc
-        continue-on-error: true
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-      - name: Send Discord notification (Update Docs)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Update Documentation
         run: |
-          curl -H "Content-Type: application/json" \
-            -d '{"content":"Documentation updated on branch [${{ github.ref_name }}]"}' \
-            ${{ secrets.DISCORD_WEBHOOK }}
+          echo "Automatically updating the documentation website"
+          cd ${{ env.SAGE_DIR }}
+          npm run autodoc
+
+      - name: Send Discord Notification (Docs Update)
+        if: failure()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "Documentation update failed on branch [`${{ github.ref }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})"}' \
+          ${{ env.DISCORD_WEBHOOK }}
+
+      - name: Send Discord Notification (Docs Update)
+        if: success()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "Documentation updated successfully on branch [`${{ github.ref }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})"}' \
+          ${{ env.DISCORD_WEBHOOK }}
+
+  post-pipeline-notification:
+    runs-on: ubuntu-latest
+    needs: [test-build, lint, deploy, update-docs]
+    steps:
+      - name: Final Discord Notification
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "Pipeline completed with status `${{ job.status }}` on branch [`${{ github.ref }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})"}' \
+          ${{ env.DISCORD_WEBHOOK }}
