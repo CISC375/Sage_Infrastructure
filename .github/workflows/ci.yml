@@ -51,10 +51,14 @@ env:
   CHANNEL_ANNOUNCEMENTS: ${{ secrets.CHANNEL_ANNOUNCEMENTS }}
   CHANNEL_ARCHIVE: ${{ secrets.CHANNEL_ARCHIVE }}
   CHANNEL_ROLE_SELECT: ${{ secrets.CHANNEL_ROLE_SELECT }}
+  LEVEL_TIER_ROLES: ${{ secrets.LEVEL_TIER_ROLES }}
+  FIRST_LEVEL: ${{ secrets.FIRST_LEVEL }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PROJECT: ${{ secrets.GITHUB_PROJECT }}
   PREFIX: ${{ secrets.PREFIX }}
   SEMESTER_ID: ${{ secrets.SEMESTER_ID }}
+  MAINTAINERS: ${{ secrets.MAINTAINERS }}
+  BLACKLIST: ${{ secrets.BLACKLIST }}
   NODE_VERSION: '16'  # Specify your Node.js version as needed
 
 jobs:
