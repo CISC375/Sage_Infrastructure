@@ -20,6 +20,11 @@ jobs:
         cache: 'npm'
     - run: npm cache clean --force
     - run: npm ci
+
+    # Add this step to copy config.example.ts to config.ts
+    - name: Set config file
+      run: cp config.example.ts config.ts
+
     - name: build
       run: |
         npm run build 2>&1 | tee build-output.log
