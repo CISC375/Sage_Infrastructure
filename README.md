@@ -16,3 +16,7 @@ Sage was originally created by:
 Sage is currently maintained by:
 | <div style="float: left; text-align: center; padding: 10px"><img src="https://avatars.githubusercontent.com/u/58154576?v=4" height="30px" style="border-radius: 15px"><br><a href="https://github.com/sbrugel">Simon Brugel</a> </div> | <div style="float: left; text-align: center; padding: 10px;"><img src="https://avatars.githubusercontent.com/u/134813338?v=4" height="30px" style="border-radius: 15px"><br><a href="https://github.com/mattnadar">Matt Nadar</a> </div> | <div style="float: left; text-align: center; padding: 10px;"><img src="https://avatars.githubusercontent.com/u/115847166?v=4" height="30px" style="border-radius: 15px"><br><a href="https://github.com/leo-cx">Leo Chen</a> </div> 
 |-|-|-
+
+| <div style="float: left; text-align: center; padding: 10px;"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Document-icon.png" height="30px" style="border-radius: 5px;"><br><a href="https://docs.google.com/document/d/1OD2dycaOhUDsPyGmlvYVsMHJtAbilS2ikCLm0jQqgfA/edit?usp=sharing">Discord TTS Documentation</a></div> | <div style="float: left; text-align: center; padding: 10px;"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Document-icon.png" height="30px" style="border-radius: 5px;"><br><a href="https://docs.google.com/document/d/1Q9pTh8y1Z7IAmClws51TLHcotvo0Q3qOKf9GKhoqiYA/edit?usp=sharing">Testing Suites Setup Documentation</a></div> |
+|-|-|
+
