@@ -15,5 +15,7 @@ jobs:
 
   node:
     uses: ./.github/workflows/node.js.yml
+  test-suite:
+    uses: ./.github/workflows/test-suite.yml
 
   #documentation step would go here but not ready yet
