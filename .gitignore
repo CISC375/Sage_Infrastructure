@@ -113,3 +113,10 @@ dist
 
 # TernJS port file
 .tern-port
+binding.gyp
+build/binding.Makefile
+build/config.gypi
+build/gyp-mac-tool
+build/Makefile
+build/sage.target.mk
+package-lock.json
