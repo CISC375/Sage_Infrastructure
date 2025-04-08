@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sage-app-deployment
+spec:
+  replicas: 2  # You can adjust the number of replicas for scaling
+  selector:
+    matchLabels:
+      app: sage-app
+  template:
+    metadata:
+      labels:
+        app: sage-app
+    spec:
+      containers:
+      - name: sage-app
+        image: sadams287/sage-app:latest  # Replace with your Docker Hub image
+        ports:
+        - containerPort: 3000
