@@ -68,11 +68,13 @@ COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/assets ./assets
 
-FROM node:latest
+FROM node:20
 
 WORKDIR /usr/src/app
 
 COPY package.json ./
+
+COPY . .
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -81,10 +83,10 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libgif-dev \
     librsvg2-dev
-	
+
 RUN npm install
 
-COPY . .
+
 
 
 EXPOSE 8000
