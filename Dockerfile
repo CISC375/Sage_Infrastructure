@@ -31,13 +31,29 @@ RUN printf '%s\n' '{' \
     '  ]' \
     '}' > binding.gyp
 
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev  # Production dependencies only
 
 ################################################################################
-# Stage 2: Build the application
-FROM deps as build
+# Stage 2: Install dev dependencies and run tests
+FROM deps as test
 
-# Copy everything (including source files)
+# Copy everything, including source files, to run tests
+COPY . .
+
+# Install devDependencies (for Jest)
+RUN npm ci
+
+# Run tests
+RUN npm run test # This will run your Jest tests
+
+# If tests fail, stop the build process
+RUN if [ $? -ne 0 ]; then exit 1; fi
+
+################################################################################
+# Stage 3: Build the application
+FROM test as build
+
+# Copy everything
 COPY . .
 
 # Install devDependencies and build the project
@@ -45,7 +61,7 @@ RUN npm ci
 RUN npm run build
 
 ################################################################################
-# Stage 3: Runtime image
+# Stage 4: Runtime image
 FROM base as final
 
 ENV NODE_ENV=production
@@ -79,6 +95,5 @@ RUN npm install
 COPY . .
 
 CMD ["node", "dist/src/sage.js"]
-
 
 EXPOSE 8000
