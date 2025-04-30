@@ -114,4 +114,4 @@ dist
 # TernJS port file
 .tern-port
 
-config.gypi
+build/config.gypi
