@@ -19,7 +19,7 @@ export default class extends Command {
 			name: status,
 			value: status
 		}))
-	}]
+	}];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const status = interaction.options.getString('status') as PresenceStatusData;

@@ -38,7 +38,7 @@ export default class extends Command {
 			name: status,
 			value: status
 		}))
-	}]
+	}];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const msg = interaction.options.getString('msg_link');

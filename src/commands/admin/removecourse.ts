@@ -18,7 +18,7 @@ export default class extends Command {
 		description: 'The course ID of the course to be removed (ex: 108).',
 		type: ApplicationCommandOptionType.Channel,
 		required: true
-	}]
+	}];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		let timeout = DECISION_TIMEOUT;

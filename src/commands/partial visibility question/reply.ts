@@ -27,7 +27,7 @@ export default class extends Command {
 			type: ApplicationCommandOptionType.Attachment,
 			required: false
 		}
-	]
+	];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const id = interaction.options.getString('questionid');

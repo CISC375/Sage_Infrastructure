@@ -21,9 +21,9 @@
 		"autodoc": "node dist/autodoc/writecommands.js && autodoc/movemd.sh"
 	},
 	"binary": {
-  		"module_name": "your_module",
-  		"module_path": "./lib/binding/",
-  		"host": "https://your_module.s3-us-west-1.amazonaws.com"
+		"module_name": "your_module",
+		"module_path": "./lib/binding/",
+		"host": "https://your_module.s3-us-west-1.amazonaws.com"
 	},
 	"repository": {
 		"type": "git",
@@ -36,12 +36,12 @@
 	},
 	"homepage": "https://github.com/ud-cis-discord/SageV2",
 	"dependencies": {
+		"@discordjs/node-pre-gyp": "0.4.5",
 		"@octokit/rest": "^18.3.5",
 		"axios": "^1.4.0",
 		"canvas": "^2.11.2",
 		"console-stamp": "^3.0.2",
 		"discord.js": "^14.16.3",
-		"@discordjs/node-pre-gyp": "0.4.5",
 		"module-alias": "^2.2.2",
 		"moment": "^2.29.1",
 		"mongodb": "^3.6.3",
@@ -63,9 +63,14 @@
 		"@types/node-cron": "^2.0.3",
 		"@types/node-fetch": "^2.5.7",
 		"@types/nodemailer": "^6.4.0",
-		"@typescript-eslint/eslint-plugin": "^4.23.0",
-		"@typescript-eslint/parser": "^4.23.0",
-		"eslint": "^7.26.0",
+		"@typescript-eslint/eslint-plugin": "^7.18.0",
+		"@typescript-eslint/parser": "^7.18.0",
+		"eslint": "^8.57.1",
+		"eslint-config-prettier": "^10.1.2",
+		"eslint-plugin-prettier": "^5.2.6",
+		"husky": "^9.1.7",
+		"lint-staged": "^15.5.1",
+		"prettier": "^3.5.3",
 		"tsc-watch": "^4.6.2",
 		"typescript": "^5.0.2"
 	}

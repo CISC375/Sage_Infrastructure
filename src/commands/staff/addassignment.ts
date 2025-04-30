@@ -12,7 +12,7 @@ export default class extends Command {
 	permissions: ApplicationCommandPermissions[] = [STAFF_PERMS, ADMIN_PERMS];
 	description = 'Adds an assignment to a given course ID\'s assignment list';
 	runInDM = false;
-	options: ApplicationCommandOptionData[] =[
+	options: ApplicationCommandOptionData[] = [
 		{
 			name: 'course',
 			description: 'The course ID to add an assignment to',
@@ -25,7 +25,7 @@ export default class extends Command {
 			type: ApplicationCommandOptionType.String,
 			required: true
 		}
-	]
+	];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const course = interaction.options.getString('course');

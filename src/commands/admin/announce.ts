@@ -20,7 +20,7 @@ export default class extends Command {
 		description: 'A file to be posted with the announcement',
 		type: ApplicationCommandOptionType.Attachment,
 		required: false
-	}]
+	}];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const announceChannel = interaction.guild.channels.cache.get(CHANNELS.ANNOUNCEMENTS);

@@ -11,7 +11,7 @@ export default class extends Command {
 			type: ApplicationCommandOptionType.User,
 			required: true
 		}
-	]
+	];
 
 	run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const target = interaction.options.getMember('target') as GuildMember;

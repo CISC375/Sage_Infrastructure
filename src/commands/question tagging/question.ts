@@ -23,7 +23,7 @@ export default class extends Command {
 			type: ApplicationCommandOptionType.String,
 			required: false
 		}
-	]
+	];
 
 	// never assume that students are not dumb
 

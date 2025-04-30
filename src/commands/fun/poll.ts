@@ -43,7 +43,7 @@ export default class extends Command {
 				value: arg
 			}))
 		}
-	]
+	];
 	runInDM = false;
 
 	resetArray(array: number[], len: number): number[] {

@@ -19,7 +19,7 @@ export default class extends Command {
 			type: ApplicationCommandOptionType.Attachment,
 			required: false
 		}
-	]
+	];
 
 	async run(interaction:ChatInputCommandInteraction): Promise<InteractionResponse<boolean>> {
 		const feedback = interaction.options.getString('feedback');

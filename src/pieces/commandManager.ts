@@ -1,4 +1,4 @@
-import { Collection, Client, CommandInteraction, ApplicationCommand,
+import { Collection, Client, ApplicationCommand,
 	GuildMember, SelectMenuInteraction,
 	ModalSubmitInteraction, TextChannel, GuildMemberRoleManager,
 	ButtonInteraction, ModalBuilder, TextInputBuilder, ActionRowBuilder,

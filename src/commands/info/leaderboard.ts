@@ -17,7 +17,7 @@ export default class extends Command {
 			type: ApplicationCommandOptionType.Number,
 			required: false
 		}
-	]
+	];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		await interaction.deferReply();

@@ -17,7 +17,7 @@ export default class extends Command {
 		description: 'The three-digit course ID of the course to be added (ex: 108).',
 		type: ApplicationCommandOptionType.String,
 		required: true
-	}]
+	}];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		interaction.reply('<a:loading:755121200929439745> working...');
