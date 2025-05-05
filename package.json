@@ -9,9 +9,9 @@
 	"main": "dist/src/sage.js",
 	"scripts": {
 		"preinstall": "node install-deps.js",
-		"start": "node dist/src/sage.js",
+		"start": "node -r tsconfig-paths/register dist/index.js",
 		"install": "node-pre-gyp install --fallback-to-build --build-from-source",
-		"build": "tsc -p .",
+	  "build": "tsc -p . && tsc-alias",
 		"clean": "rm -rf dist",
 		"test": "eslint src --ext .ts",
 		"lint": "eslint src --ext .ts --fix",
@@ -42,7 +42,7 @@
 		"canvas": "^2.11.2",
 		"console-stamp": "^3.0.2",
 		"discord.js": "^14.16.3",
-		"module-alias": "^2.2.2",
+		"module-alias": "^2.2.3",
 		"moment": "^2.29.1",
 		"mongodb": "^3.6.3",
 		"node": "^18.20.7",
@@ -52,11 +52,13 @@
 		"parse-duration": "^0.4.4",
 		"pretty-ms": "^7.0.1"
 	},
+
 	"_moduleAliases": {
-		"@root": "dist",
-		"@lib": "dist/src/lib",
-		"@pieces": "dist/src/pieces"
-	},
+  "@root": "src",
+  "@lib": "src/lib",
+  "@pieces": "src/pieces"
+},
+
 	"devDependencies": {
 		"@types/console-stamp": "^0.2.33",
 		"@types/mongodb": "^3.6.3",
@@ -67,7 +69,9 @@
 		"@typescript-eslint/eslint-plugin": "^4.23.0",
 		"@typescript-eslint/parser": "^4.23.0",
 		"eslint": "^7.26.0",
+		"tsc-alias": "^1.8.15",
 		"tsc-watch": "^4.6.2",
+		"tsconfig-paths": "^4.2.0",
 		"typescript": "^5.0.2"
 	}
 }
