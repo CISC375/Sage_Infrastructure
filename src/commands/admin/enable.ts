@@ -17,7 +17,7 @@ export default class extends Command {
 		description: 'The name of the command to be enabled.',
 		type: ApplicationCommandOptionType.String,
 		required: true
-	}]
+	}];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const commandInput = interaction.options.getString('command');

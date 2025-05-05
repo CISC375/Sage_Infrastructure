@@ -36,7 +36,7 @@ export default class extends Command {
 			type: ApplicationCommandOptionType.String,
 			required: true
 		}
-	]
+	];
 
 	run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const question = interaction.options.getString('question');

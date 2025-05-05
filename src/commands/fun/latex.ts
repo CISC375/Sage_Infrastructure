@@ -22,7 +22,7 @@ export default class extends Command {
 			type: ApplicationCommandOptionType.String,
 			required: true
 		}
-	]
+	];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void | Message<boolean>> {
 		// Might take a few seconds to respond in rare cases

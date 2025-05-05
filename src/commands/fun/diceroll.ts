@@ -35,7 +35,7 @@ export default class extends Command {
 			required: false
 		}
 
-	]
+	];
 
 	run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		let min = interaction.options.getNumber('minimum');

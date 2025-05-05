@@ -15,7 +15,7 @@ export default class extends Command {
 		description: 'A message link',
 		type: ApplicationCommandOptionType.String,
 		required: true
-	}]
+	}];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const link = interaction.options.getString('msg_link');

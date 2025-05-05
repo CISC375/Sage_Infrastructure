@@ -16,7 +16,7 @@ export default class extends Command {
 		description: 'The role to add to the list of self-assignable roles.',
 		type: ApplicationCommandOptionType.Role,
 		required: true
-	}]
+	}];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const apiRole = interaction.options.getRole('role');

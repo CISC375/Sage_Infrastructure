@@ -26,7 +26,7 @@ export default class extends Command {
 		description: 'The issue body',
 		type: ApplicationCommandOptionType.String,
 		required: false
-	}]
+	}];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const title = interaction.options.getString('title');

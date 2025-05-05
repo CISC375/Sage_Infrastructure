@@ -21,7 +21,7 @@ export default class extends Command {
 			type: ApplicationCommandOptionType.String,
 			required: true
 		}
-	]
+	];
 
 	// never assume that students are not dumb
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {

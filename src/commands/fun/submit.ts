@@ -18,7 +18,7 @@ export default class extends Command {
 			type: ApplicationCommandOptionType.String,
 			required: false
 		}
-	]
+	];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const submissionChannel = await interaction.client.channels.fetch(CHANNELS.FEEDBACK) as TextChannel;

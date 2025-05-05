@@ -15,7 +15,7 @@ export default class extends Command {
 			required: true,
 			description: 'ID of the reminder to cancel'
 		}
-	]
+	];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const remindNum = interaction.options.getInteger('remindernumber') - 1;

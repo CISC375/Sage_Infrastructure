@@ -16,7 +16,7 @@ export default class extends Command {
 			type: ApplicationCommandOptionType.String,
 			required: false
 		}
-	]
+	];
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const cmd = interaction.options.getString('cmd');
