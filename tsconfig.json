@@ -2,7 +2,7 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "baseUrl": ".",
+        "baseUrl": "./",
         "esModuleInterop": true,
         "outDir": "./dist",
         "paths": {
@@ -21,8 +21,7 @@
         "module": "commonjs"
     },
 	"include": [
-		"config.ts",
-		"src/**/*"
+		"src", "types", "config.d.ts"
 	],
     "exclude": [
         "**/node_modules",
@@ -30,3 +29,12 @@
 		"**/dist"
     ]
 }
+
+
+  
+  
+  
+  
+  
+  
+  
