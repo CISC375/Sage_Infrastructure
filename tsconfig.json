@@ -2,11 +2,11 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "baseUrl": "./",
+        "baseUrl": ".",
         "esModuleInterop": true,
         "outDir": "./dist",
         "paths": {
-			"@root/*": ["./*"],
+			"@root/*": ["*"],
 			"@lib/*": ["src/lib/*"],
 			"@pieces/*": ["src/pieces/*"]
         },
@@ -21,7 +21,8 @@
         "module": "commonjs"
     },
 	"include": [
-		"src", "types", "config.d.ts"
+		"config.ts",
+		"src/**/*"
 	],
     "exclude": [
         "**/node_modules",
@@ -29,12 +30,3 @@
 		"**/dist"
     ]
 }
-
-
-  
-  
-  
-  
-  
-  
-  
