@@ -9,9 +9,9 @@
 	"main": "dist/src/sage.js",
 	"scripts": {
 		"preinstall": "node install-deps.js",
-		"start": "node -r tsconfig-paths/register dist/index.js",
+		"start": "node dist/src/sage.js",
 		"install": "node-pre-gyp install --fallback-to-build --build-from-source",
-	  "build": "tsc -p . && tsc-alias",
+		"build": "tsc -p .",
 		"clean": "rm -rf dist",
 		"test": "eslint src --ext .ts",
 		"lint": "eslint src --ext .ts --fix",
@@ -21,9 +21,9 @@
 		"autodoc": "node dist/autodoc/writecommands.js && autodoc/movemd.sh"
 	},
 	"binary": {
-		"module_name": "your_module",
-		"module_path": "./lib/binding/",
-		"host": "https://your_module.s3-us-west-1.amazonaws.com"
+  		"module_name": "your_module",
+  		"module_path": "./lib/binding/",
+  		"host": "https://your_module.s3-us-west-1.amazonaws.com"
 	},
 	"repository": {
 		"type": "git",
@@ -36,13 +36,13 @@
 	},
 	"homepage": "https://github.com/ud-cis-discord/SageV2",
 	"dependencies": {
-		"@discordjs/node-pre-gyp": "0.4.5",
 		"@octokit/rest": "^18.3.5",
 		"axios": "^1.4.0",
 		"canvas": "^2.11.2",
 		"console-stamp": "^3.0.2",
 		"discord.js": "^14.16.3",
-		"module-alias": "^2.2.3",
+		"@discordjs/node-pre-gyp": "0.4.5",
+		"module-alias": "^2.2.2",
 		"moment": "^2.29.1",
 		"mongodb": "^3.6.3",
 		"node-cron": "^2.0.3",
@@ -51,13 +51,11 @@
 		"parse-duration": "^0.4.4",
 		"pretty-ms": "^7.0.1"
 	},
-
 	"_moduleAliases": {
-  "@root": "src",
-  "@lib": "src/lib",
-  "@pieces": "src/pieces"
-},
-
+		"@root": "dist",
+		"@lib": "dist/src/lib",
+		"@pieces": "dist/src/pieces"
+	},
 	"devDependencies": {
 		"@types/console-stamp": "^0.2.33",
 		"@types/mongodb": "^3.6.3",
@@ -68,9 +66,7 @@
 		"@typescript-eslint/eslint-plugin": "^4.23.0",
 		"@typescript-eslint/parser": "^4.23.0",
 		"eslint": "^7.26.0",
-		"tsc-alias": "^1.8.15",
 		"tsc-watch": "^4.6.2",
-		"tsconfig-paths": "^4.2.0",
 		"typescript": "^5.0.2"
 	}
 }
