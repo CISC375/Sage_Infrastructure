@@ -13,7 +13,7 @@
 		"install": "node-pre-gyp install --fallback-to-build --build-from-source",
 		"build": "tsc -p .",
 		"clean": "rm -rf dist",
-		"test": "jest",
+		"test": "jest --verbose",
 		"test:lint": "eslint src --ext .ts",
 		"lint": "eslint src --ext .ts --fix",
 		"dev": "tsc-watch --onSuccess \"node dist/src/sage.js\"",

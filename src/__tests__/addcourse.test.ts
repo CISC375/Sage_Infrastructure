@@ -1,6 +1,6 @@
 import CreateCourseCommand from '../../src/commands/admin/addcourse';
 import { ChatInputCommandInteraction, Guild, Role, TextChannel, Client } from 'discord.js';
-import { DB } from '@root/config';
+import { DB } from '../../config';
 
 jest.mock('@root/config', () => ({
   DB: { COURSES: 'courses' },
@@ -12,9 +12,10 @@ jest.mock('@lib/utils/generalUtils', () => ({
   updateDropdowns: jest.fn()
 }));
 
-describe('CreateCourseCommand', () => {
+describe('Create Course Command Test', () => {
   let command: CreateCourseCommand;
   let interaction: jest.Mocked<ChatInputCommandInteraction>;
+  let interaction2: jest.Mocked<ChatInputCommandInteraction>;
   let mockGuild: jest.Mocked<Guild>;
   let mockMongo: any;
 
@@ -46,10 +47,19 @@ describe('CreateCourseCommand', () => {
       guild: mockGuild
     } as any;
 
+	interaction2 = {
+		reply: jest.fn().mockResolvedValue(undefined),
+		editReply: jest.fn().mockResolvedValue(undefined),
+		options: { getString: jest.fn().mockReturnValue('361') } as any,
+		client: { mongo: mockMongo } as any,
+		user: { username: 'testuser', id: '12346' },
+		guild: mockGuild
+	  } as any;
+  
     command = new CreateCourseCommand();
   });
 
-  it('creates a new course properly', async () => {
+  test('Creates a new 108 course properly', async () => {
     await command.run(interaction);
 
     expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining('working'));
@@ -58,4 +68,16 @@ describe('CreateCourseCommand', () => {
     expect(mockMongo.collection).toHaveBeenCalledWith('courses');
     expect(interaction.editReply).toHaveBeenCalledWith(expect.stringContaining('Successfully added course'));
   });
+
+
+  test('Creates a new 361 course properly', async () => {
+    await command.run(interaction2);
+
+    expect(interaction2.reply).toHaveBeenCalledWith(expect.stringContaining('working'));
+    expect(mockGuild.roles.create).toHaveBeenCalledTimes(2);
+    expect(mockGuild.channels.create).toHaveBeenCalled();
+    expect(mockMongo.collection).toHaveBeenCalledWith('courses');
+    expect(interaction2.editReply).toHaveBeenCalledWith(expect.stringContaining('Successfully added course'));
+  });
+
 });

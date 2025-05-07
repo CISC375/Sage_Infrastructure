@@ -10,8 +10,9 @@ jest.mock('@root/config', () => ({
   import PingCommand from '../../src/commands/info/ping';
   import { ChatInputCommandInteraction, Client } from 'discord.js';
   
-  describe('PingCommand', () => {
+  describe('Ping Command Test', () => {
 	let interaction: jest.Mocked<ChatInputCommandInteraction>;
+	let interaction2: jest.Mocked<ChatInputCommandInteraction>;
 	let command: PingCommand;
   
 	beforeEach(() => {
@@ -26,10 +27,17 @@ jest.mock('@root/config', () => ({
 		client: mockClient,
 	  } as unknown as jest.Mocked<ChatInputCommandInteraction>;
   
+	  interaction2 = {
+		reply: jest.fn().mockResolvedValue(undefined),
+		editReply: jest.fn().mockResolvedValue(undefined),
+		createdTimestamp: Date.now() - 76, // simulate 76ms round trip
+		client: mockClient,
+	  } as unknown as jest.Mocked<ChatInputCommandInteraction>;
+
 	  command = new PingCommand();
 	});
   
-	it('replies with "Ping?" and edits reply with round trip time and ping', async () => {
+	test('Replies with "Ping?" and edits reply with round trip time and ping', async () => {
 	  await command.run(interaction);
   
 	  expect(interaction.reply).toHaveBeenCalledWith('Ping?');
@@ -39,5 +47,18 @@ jest.mock('@root/config', () => ({
 		expect.stringMatching(/Pong! Round trip took \d+ms, REST ping 123ms\./)
 	  );
 	});
+
+	test('Second Ping test and replies with round trip time and ping', async () => {
+		await command.run(interaction2);
+	
+		expect(interaction2.reply).toHaveBeenCalledWith('Ping?');
+	
+		const expectedEdit = `Pong! Round trip took 76ms, REST ping 123ms.`;
+		expect(interaction2.editReply).toHaveBeenCalledWith(
+		  expect.stringMatching(/Pong! Round trip took \d+ms, REST ping 123ms\./)
+		);
+	  });
+
+
   });
   
