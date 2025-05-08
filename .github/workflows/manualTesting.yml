@@ -1,21 +1,29 @@
-name: Manual Jest Tests
+name: Run Jest Tests
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main  # Run on push to `main` branch
+      - 'feature/*'  # Or you can specify any feature branches you want to test
+  pull_request:
+    branches:
+      - main  # Run on pull request targeting `main` branch
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '20'  # Update Node version as needed
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
+      - name: Run Jest tests
         run: npm test
