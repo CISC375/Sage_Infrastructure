@@ -1,6 +1,6 @@
 import { BOTMASTER_PERMS } from '@lib/permissions';
-import { TextChannel, ApplicationCommandPermissions, ChatInputCommandInteraction, ApplicationCommandOptionData, ModalBuilder, ActionRowBuilder,
-    ModalActionRowComponent, InteractionResponse, TextInputBuilder, TextInputStyle, ApplicationCommandOptionType } from 'discord.js';
+import { TextChannel, ApplicationCommandPermissions, ChatInputCommandInteraction, ApplicationCommandOptionData,
+	ModalBuilder, ActionRowBuilder, ModalActionRowComponent, InteractionResponse, TextInputBuilder, TextInputStyle, ApplicationCommandOptionType } from 'discord.js';
 import { CHANNELS } from '@root/config';
 import { Command } from '@lib/types/Command';
 
@@ -53,10 +53,10 @@ export default class extends Command {
 			.setRequired(false)
 			.setValue(file ? file.url : '');
 
-		const modalRows: ActionRowBuilder<ModalActionRowComponent>[] = [
-			new ActionRowBuilder<ModalActionRowComponent>().addComponents(contentsComponent),
-			new ActionRowBuilder<ModalActionRowComponent>().addComponents(channelComponent),
-			new ActionRowBuilder<ModalActionRowComponent>().addComponents(fileComponent)
+		const modalRows: ActionRowBuilder<TextInputBuilder>[] = [
+			new ActionRowBuilder<TextInputBuilder>().addComponents(contentsComponent),
+			new ActionRowBuilder<TextInputBuilder>().addComponents(channelComponent),
+			new ActionRowBuilder<TextInputBuilder>().addComponents(fileComponent)
 		];
 		modal.addComponents(...modalRows);
 
