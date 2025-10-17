@@ -14,7 +14,7 @@
     "rootDir": "./",
     "skipLibCheck": true,
     "target": "ES2019",
-    "types": ["node", "discord.js"],
+    "types": ["node", "discord.js", "jest"],
     "module": "commonjs"
   },
   "include": ["config.ts", "src/**/*"],
