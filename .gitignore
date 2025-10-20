@@ -113,3 +113,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# local files
+config.ts
+config.example.ts
