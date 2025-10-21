@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Define the Node version
-ARG NODE_VERSION=20.18.3
+ARG NODE_VERSION=24.4.0
 
 # ─────────────────────────────────────────────────────────────
 # Base image with Node and build tools
