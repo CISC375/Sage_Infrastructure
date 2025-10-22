@@ -16,7 +16,8 @@
 		"target": "ES2019",
 		"types": [
 			"node",
-			"discord.js"
+			"discord.js",
+			"jest"
 		],
         "module": "commonjs"
     },
