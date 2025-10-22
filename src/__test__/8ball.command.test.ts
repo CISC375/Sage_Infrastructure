@@ -8,7 +8,7 @@ const MAGIC8BALL_RESPONSES = [
     'Better not tell you now.',
     'Cannot predict now.',
     'Concentrate and ask again.',
-    'Don’t count on it.',
+    'Don\'t count on it.',
     'It is certain.',
     'It is decidedly so.',
     'Most likely.',
@@ -21,7 +21,7 @@ const MAGIC8BALL_RESPONSES = [
     'Very doubtful.',
     'Without a doubt.',
     'Yes.',
-    'Yes – definitely.',
+    'Yes - definitely.',
     'You may rely on it.'
 ];
 
