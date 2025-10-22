@@ -1,5 +1,5 @@
 // adjust the import path to the file that exports the command class
-const RespectsCommand = require("../commands/fun/f").default;
+const RespectsCommand = require("../../commands/fun/f").default;
 
 describe("RespectsCommand", () => {
     let cmd; // Using 'any' as the type since the interaction mock is complex

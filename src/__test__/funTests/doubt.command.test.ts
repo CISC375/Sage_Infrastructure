@@ -1,5 +1,5 @@
 // adjust the import path to the file that exports the command class
-const DoubtCommand = require("../commands/fun/doubt").default; // ⚠️ Adjust this path
+const DoubtCommand = require("../../commands/fun/doubt").default; // ⚠️ Adjust this path
 
 describe("DoubtCommand", () => {
     let cmd;

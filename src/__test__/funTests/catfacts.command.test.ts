@@ -1,5 +1,5 @@
 // adjust the import path to the file that exports the command class
-const CatFactCommand = require("../commands/fun/catfacts").default;
+const CatFactCommand = require("../../commands/fun/catfacts").default;
 const axios = require("axios");
 
 // Mock the axios module
