@@ -1,7 +1,15 @@
-/** @type {import('jest').Config} */
+const { createDefaultPreset } = require("ts-jest");
+const tsJestTransformCfg = createDefaultPreset().transform;
+
+/** @type {import("jest").Config} **/
 module.exports = {
-	preset: "ts-jest",
 	testEnvironment: "node",
-	testMatch: ["**/src/**/*.test.ts", "**/tests/**/*.test.ts"],
-	moduleFileExtensions: ["ts", "js", "json"],
+	transform: {
+		...tsJestTransformCfg,
+	},
+	// This is the part you need to add
+	moduleNameMapper: {
+		"^@lib/(.*)$": "<rootDir>/src/lib/$1",
+		"^@root/(.*)$": "<rootDir>/$1",
+	},
 };
