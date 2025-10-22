@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: sage
-          image: docker_username/docker_repo:your_tag   # You can get all of this information from docker hub.
+          image: kevlund/sage-repo:test-bot   # You can get all of this information from docker hub.
           ports: 
           - containerPort: 8080
           resources:
