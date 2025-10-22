@@ -10,7 +10,7 @@
 ],
 "rules": {
 // add or customize rules here
-  "@typescript-eslint/no-unused-vars": "warn"
+  "@typescript-eslint/no-unused-vars": "off"
 
 }
 }	

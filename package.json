@@ -15,7 +15,7 @@
 		"clean": "rm -rf dist",
 		"test": "jest",
 		"test:lint": "eslint src --ext .ts",
-		"lint": "eslint src --ext .ts --fix",
+		"lint": "eslint 'src/**/*.{ts,tsx}'",
 		"dev": "tsc-watch --onSuccess \"node dist/src/sage.js\"",
 		"onboard": "node dist/onboard/onboard.js",
 		"nudge": "node dist/onboard/nudge.js",
@@ -38,7 +38,7 @@
 	"homepage": "https://github.com/ud-cis-discord/SageV2",
 	"dependencies": {
 		"@discordjs/node-pre-gyp": "0.4.5",
-		"@octokit/rest": "^18.3.5",
+		"@octokit/rest": "^22.0.0",
 		"axios": "^1.4.0",
 		"canvas": "^2.11.2",
 		"console-stamp": "^3.0.2",
@@ -48,8 +48,8 @@
 		"mongodb": "^3.6.3",
 		"node-cron": "^2.0.3",
 		"node-fetch": "^2.6.1",
-		"nodemailer": "^6.4.17",
-		"parse-duration": "^0.4.4",
+		"nodemailer": "^7.0.9",
+		"parse-duration": "^2.1.4",
 		"pretty-ms": "^7.0.1"
 	},
 	"_moduleAliases": {
