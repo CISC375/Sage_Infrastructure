@@ -12,31 +12,28 @@ import ActivityCommand from '../../../commands/admin/activity';
 const mockSetActivity = jest.fn();
 const mockReply = jest.fn().mockResolvedValue(undefined); // replyはPromiseを返すのでresolveする
 const mockGetString = jest.fn();
-
 // MongoDBクライアントのモック化
 const mockUpdateOne = jest.fn().mockResolvedValue({});
 const mockMongo = {
     collection: jest.fn(() => ({
         updateOne: mockUpdateOne
     }))
-};
-
+}
 // BOTとDBの設定をモック化 (configファイルからのインポートをエミュレート)
 const mockConfig = {
     BOT: { NAME: 'TestBot' },
     DB: { CLIENT_DATA: 'clientDataCollection' },
 };
-
 // Activityコマンドがインポートされる前に設定をモック化する必要があるため、
 // `jest.mock`を使用して依存関係をモック化します。
-
 jest.mock('@root/config', () => ({
     BOT: { NAME: 'TestBot' },
     DB: { CLIENT_DATA: 'clientDataCollection' },
+	ROLES:{
+		STAFF: 'mock-staff-role-id-123'
+	}
 })
 );
-// ActivityTypeをActivityCommandが受け取る形式に合わせるため、ここでは詳細なモックは不要です。
-
 // ------------------------------------------------------------------
 // テストの開始
 // ------------------------------------------------------------------
