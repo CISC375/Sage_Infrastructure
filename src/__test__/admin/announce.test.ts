@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, TextChannel, Attachment, ModalBuilder, ApplicationCommandOptionType } from 'discord.js';
-import AnnounceCommand from '../../../commands/admin/announce';
+import AnnounceCommand from '../../commands/admin/announce';
 import { Command } from '@lib/types/Command';
 
 // --- MOCK SETUP ---

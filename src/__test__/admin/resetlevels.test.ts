@@ -1,4 +1,4 @@
-import ResetLevelsCommand from '../../../commands/admin/resetlevels';
+import ResetLevelsCommand from '../../commands/admin/resetlevels';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 // Mocks for config and permissions

@@ -1,5 +1,5 @@
 import { ActivityType, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
-import ActivityCommand from '../../../commands/admin/activity';
+import ActivityCommand from '../../commands/admin/activity';
 
 // ------------------------------------------------------------------
 // モックの設定

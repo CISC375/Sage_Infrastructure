@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Formatters } from 'discord.js';
-import DisableCommand from '../../../commands/admin/disable';
+import DisableCommand from '../../commands/admin/disable';
 import { Command } from '@lib/types/Command';
 import { SageData } from '@lib/types/SageData';
 

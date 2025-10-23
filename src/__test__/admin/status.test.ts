@@ -1,4 +1,4 @@
-import StatusCommand from '../../../commands/admin/status';
+import StatusCommand from '../../commands/admin/status';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 jest.mock('@root/config', () => ({ BOT: { NAME: 'TestBot' }, ROLES: { VERIFIED: 'verified_role_id' } }));

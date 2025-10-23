@@ -7,7 +7,7 @@ import {
     Collection,
     ChannelType
 } from 'discord.js';
-import AddCourseCommand from '../../../commands/admin/addcourse'; // コマンドのパス
+import AddCourseCommand from '../../commands/admin/addcourse'; // コマンドのパス
 import { updateDropdowns } from '@lib/utils/generalUtils'; // モック対象
 
 // ------------------------------------------------------------------

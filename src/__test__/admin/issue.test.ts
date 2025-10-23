@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from 'discord.js';
-import IssueCommand from '../../../commands/admin/issue';
+import IssueCommand from '../../commands/admin/issue';
 
 // Mock config and permissions
 jest.mock('@root/config', () => ({

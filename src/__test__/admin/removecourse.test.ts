@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, CategoryChannel } from 'discord.js';
-import RemoveCourseCommand from '../../../commands/admin/removecourse';
+import RemoveCourseCommand from '../../commands/admin/removecourse';
 
 // Mock config and permissions
 jest.mock('@root/config', () => ({

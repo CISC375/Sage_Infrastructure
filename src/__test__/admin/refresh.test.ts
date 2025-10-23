@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from 'discord.js';
-import RefreshCommand from '../../../commands/admin/refresh';
+import RefreshCommand from '../../commands/admin/refresh';
 
 // Mocks for modules used by the command
 jest.mock('@root/config', () => ({

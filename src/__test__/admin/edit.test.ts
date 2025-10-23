@@ -1,6 +1,6 @@
 // Jest tests for admin/edit command
 import { ChatInputCommandInteraction, TextChannel } from 'discord.js';
-import EditCommand from '../../../commands/admin/edit';
+import EditCommand from '../../commands/admin/edit';
 
 jest.mock('@root/config', () => ({
   BOT: { NAME: 'TestBot' },

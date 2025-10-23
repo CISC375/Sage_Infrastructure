@@ -1,6 +1,6 @@
 import { Command } from '@lib/types/Command';
 import { ChatInputCommandInteraction } from 'discord.js';
-import CountCategoryChannelsCommand from '../../../commands/admin/count';
+import CountCategoryChannelsCommand from '../../commands/admin/count';
 
 // --- MOCK SETUP ---
 

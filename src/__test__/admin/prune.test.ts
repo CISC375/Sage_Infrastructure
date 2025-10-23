@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from 'discord.js';
-import PruneCommand from '../../../commands/admin/prune';
+import PruneCommand from '../../commands/admin/prune';
 
 // Mock required modules used by the command
 jest.mock('@root/config', () => ({

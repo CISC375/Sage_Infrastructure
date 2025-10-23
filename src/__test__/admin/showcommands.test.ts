@@ -1,4 +1,4 @@
-import ShowCommandsCommand from '../../../commands/admin/showcommands';
+import ShowCommandsCommand from '../../commands/admin/showcommands';
 import { ChatInputCommandInteraction, Formatters } from 'discord.js';
 
 jest.mock('@lib/permissions', () => ({ BOTMASTER_PERMS: [{ id: 'botmaster_role_id', permission: true, type: 1 }] }));

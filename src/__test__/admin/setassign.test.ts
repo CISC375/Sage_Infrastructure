@@ -1,4 +1,4 @@
-import SetAssignCommand from '../../../commands/admin/setassign';
+import SetAssignCommand from '../../commands/admin/setassign';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 jest.mock('@root/config', () => ({ DB: { ASSIGNABLE: 'assignable' }, ROLES: { VERIFIED: 'verified_role_id' } }));

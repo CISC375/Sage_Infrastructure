@@ -1,4 +1,4 @@
-import RestartCommand from '../../../commands/admin/restart';
+import RestartCommand from '../../commands/admin/restart';
 import { ActivityType, ChatInputCommandInteraction } from 'discord.js';
 
 jest.mock('@root/config', () => ({ BOT: { NAME: 'TestBot' }, ROLES: { VERIFIED: 'verified_role_id' } }));
