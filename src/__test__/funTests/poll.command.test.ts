@@ -12,7 +12,7 @@ import {
   GuildMember,
 } from 'discord.js';
 // Adjust this import path to match your project structure
-import PollCommand, { handlePollOptionSelect } from '../commands/fun/poll';
+import PollCommand, { handlePollOptionSelect } from '../../commands/fun/poll';
 import { SageInteractionType } from '@lib/types/InteractionType';
 import { BOT, DB, ROLES } from '@root/config';
 import { Command } from '@lib/types/Command';

@@ -1,5 +1,5 @@
 // adjust the import path to the file that exports the command class
-const Magic8BallCommand = require("../commands/fun/8ball").default;
+const Magic8BallCommand = require("../../commands/fun/8ball").default;
 
 // We must define the array here because it is NOT exported from the command file
 const MAGIC8BALL_RESPONSES = [
@@ -8,7 +8,7 @@ const MAGIC8BALL_RESPONSES = [
     'Better not tell you now.',
     'Cannot predict now.',
     'Concentrate and ask again.',
-    'Don’t count on it.',
+    'Don\'t count on it.',
     'It is certain.',
     'It is decidedly so.',
     'Most likely.',
@@ -21,7 +21,7 @@ const MAGIC8BALL_RESPONSES = [
     'Very doubtful.',
     'Without a doubt.',
     'Yes.',
-    'Yes – definitely.',
+    'Yes - definitely.',
     'You may rely on it.'
 ];
 

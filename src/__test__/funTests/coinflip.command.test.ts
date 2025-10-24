@@ -1,5 +1,5 @@
 // adjust the import path to the file that exports the command class
-const CoinFlipCommand = require("../commands/fun/coinflip").default;
+const CoinFlipCommand = require("../../commands/fun/coinflip").default;
 
 // We must define the array here because it is NOT exported from the command file
 const COIN_FLIP = ['You got: Heads!', 'You got: Tails!'];

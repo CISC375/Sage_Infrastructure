@@ -12,7 +12,7 @@ import {
 //   MessageComponentCollector,
 } from 'discord.js';
 // Adjust this import path to match your project structure
-import XkcdCommand from '../commands/fun/xkcd';
+import XkcdCommand from '../../commands/fun/xkcd';
 import { ROLES } from '@root/config';
 import { generateErrorEmbed } from '@lib/utils/generalUtils';
 import fetch from 'node-fetch';

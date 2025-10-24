@@ -11,7 +11,7 @@ import {
 // Adjust this import path to match your project structure
 import RockPaperScissorsCommand, {
   handleRpsOptionSelect,
-} from '../commands/fun/rockpaperscissors';
+} from '../../commands/fun/rockpaperscissors';
 import { SageInteractionType } from '@lib/types/InteractionType';
 import { buildCustomId, getDataFromCustomId } from '@lib/utils/interactionUtils';
 import { BOT, ROLES } from '@root/config'; // ROLES is now needed for the mock type
