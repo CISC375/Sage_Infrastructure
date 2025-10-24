@@ -1,14 +1,11 @@
 import {
   ChatInputCommandInteraction,
   InteractionResponse,
-  EmbedBuilder, // Import EmbedBuilder if generateErrorEmbed returns one
-  ApplicationCommandOptionType, // Needed for base Command mock
   ThreadChannel, // Import ThreadChannel type for mocking
 } from 'discord.js';
 // Adjust import path as necessary
 import ArchiveCommand from '../../commands/partial visibility question/archive';
 import { generateErrorEmbed } from '@lib/utils/generalUtils';
-import { ROLES, BOT } from '@root/config'; // For base Command mock
 
 // --- Mocks ---
 
