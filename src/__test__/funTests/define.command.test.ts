@@ -1,5 +1,5 @@
 // adjust the import path to the file that exports the command class
-const DefineCommand = require("../commands/fun/define").default;
+const DefineCommand = require("../../commands/fun/define").default;
 
 describe("DefineCommand", () => {
     let cmd;

@@ -4,7 +4,7 @@ import {
   InteractionResponse,
 } from 'discord.js';
 // Adjust this import path to match your project structure
-import QuoteCommand from '../commands/fun/quote';
+import QuoteCommand from '../../commands/fun/quote';
 import axios from 'axios';
 import { ROLES } from '@root/config'; // Imported for the mock
 

@@ -1,5 +1,5 @@
 // adjust the import path to the file that exports the command class
-const BlindfoldCommand = require("../commands/fun/blindfoldedroosen").default;
+const BlindfoldCommand = require("../../commands/fun/blindfoldedroosen").default;
 
 describe("BlindfoldCommand", () => {
     let cmd;

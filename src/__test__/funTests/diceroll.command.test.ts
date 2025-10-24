@@ -1,5 +1,5 @@
 // adjust the import path to the file that exports the command class
-const RollCommand = require("../commands/fun/diceroll").default;
+const RollCommand = require("../../commands/fun/diceroll").default;
 // Import the mocked function
 const { generateErrorEmbed } = require('@root/src/lib/utils/generalUtils');
 

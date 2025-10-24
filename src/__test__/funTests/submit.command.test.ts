@@ -1,5 +1,5 @@
 // adjust the import path to the file that exports the command class
-const ContestSubmitCommand = require("../commands/fun/submit").default;
+const ContestSubmitCommand = require("../../commands/fun/submit").default;
 // We need to mock the config file
 const { CHANNELS, ROLES } = require('@root/config'); // ROLES is imported here by the base class
 const { EmbedBuilder } = require('discord.js');
