@@ -95,8 +95,8 @@ jest.mock('@lib/utils/generalUtils', () => ({
 // Mock external dependencies
 jest.mock('parse-duration', () => jest.fn());
 
-// --- Typed Mocks ---
-const mockParse = parse as jest.Mock;
+// --- Typed Mocks ---s
+const mockParse = parse as unknown as jest.Mock;
 const mockGenerateErrorEmbed = generateErrorEmbed as jest.Mock;
 const mockDateToTimestamp = dateToTimestamp as jest.Mock;
 const MockEmbedBuilder = EmbedBuilder as unknown as jest.Mock;

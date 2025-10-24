@@ -1,9 +1,6 @@
 import { ActivityType, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import ActivityCommand from '../../commands/admin/activity';
 
-// ------------------------------------------------------------------
-// モックの設定
-// ------------------------------------------------------------------
 
 const mockSetActivity = jest.fn();
 const mockReply = jest.fn().mockResolvedValue(undefined);
@@ -28,9 +25,6 @@ jest.mock('@root/config', () => ({
     }
 }));
 
-// ------------------------------------------------------------------
-// テストの開始
-// ------------------------------------------------------------------
 
 describe('Activity Command', () => {
     let command: ActivityCommand;
