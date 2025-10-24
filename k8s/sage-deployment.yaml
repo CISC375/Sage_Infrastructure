@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sage-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sage
+  template:
+    metadata:
+      labels:
+        app: sage
+    spec:
+      containers:
+        - name: sage
+          image: sage-bot:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: sage-config
+                  key: ENVIRONMENT
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: sage-config
+                  key: LOG_LEVEL
+            - name: DISCORD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: sage-secrets
+                  key: DISCORD_TOKEN
