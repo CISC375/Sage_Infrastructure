@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, ApplicationCommandPermissions, ChatInputCommandInteraction, Formatters,
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, ApplicationCommandPermissions, ChatInputCommandInteraction, codeBlock,
 	InteractionResponse } from 'discord.js';
 import { BOTMASTER_PERMS } from '@lib/permissions';
 import { getCommand } from '@root/src/lib/utils/generalUtils';
@@ -42,7 +42,7 @@ export default class extends Command {
 			{ upsert: true }
 		);
 
-		return interaction.reply(Formatters.codeBlock('diff', `->>> ${command.name} Disabled`));
+		return interaction.reply(codeBlock('diff', `->>> ${command.name} Disabled`));
 	}
 
 }
