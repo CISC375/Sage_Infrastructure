@@ -82,9 +82,10 @@ describe('Activity Command', () => {
             { upsert: true }
         );
 
+        // FIX: Changed 'flags: MessageFlags.Ephemeral' to 'ephemeral: true'
         expect(mockReply).toHaveBeenCalledWith({
             content: `Set ${mockConfig.BOT.NAME}'s activity to *${testStatus} ${testContent}*`,
-            flags: MessageFlags.Ephemeral,
+            ephemeral: true,
         });
     });
 
@@ -108,9 +109,11 @@ describe('Activity Command', () => {
             { $set: { status: { type: expectedType, content: testContent } } },
             { upsert: true }
         );
+
+        // FIX: Changed 'flags: MessageFlags.Ephemeral' to 'ephemeral: true'
         expect(mockReply).toHaveBeenCalledWith({
             content: `Set ${mockConfig.BOT.NAME}'s activity to *${testStatus} ${testContent}*`,
-            flags: MessageFlags.Ephemeral,
+            ephemeral: true,
         });
     });
 });
