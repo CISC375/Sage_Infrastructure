@@ -3,6 +3,11 @@ name: test-suite
 on:
   workflow_call:
 
+permissions:
+  contents: read
+  actions: read
+  security-events: write   # ←これが超重要
+  
 jobs:
   codeql-analysis:
     runs-on: ubuntu-latest
