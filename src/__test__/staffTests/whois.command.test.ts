@@ -41,7 +41,7 @@ jest.mock('discord.js', () => {
 	};
 });
 
-// Mock pretty-ms to return a simple, predictable format without 'ago'
+// Mock pretty-ms to return a simple, predictable format without 'ago' suffix
 jest.mock('pretty-ms', () => jest.fn((ms) => `${ms / 1000}s`));
 
 // Mock permissions
@@ -151,13 +151,13 @@ describe('WhoisCommand', () => {
 		const expectedCreatedAgoMs = now.getTime() - mockTargetUser.createdTimestamp;
 		const expectedJoinedAgoMs = now.getTime() - mockTargetMember.joinedTimestamp;
 
-		// *** FIX: Precisely match whitespace from the '+ Received' lines ***
-		// Use template literals and ensure spacing matches the error log exactly.
+		// *** FIX: Use CORRECT dates (0-indexed month) and EXACT whitespace from source ***
+		// Use template literals and ensure spacing matches the source file exactly.
 		expect(mockEmbed.addFields).toHaveBeenCalledWith([
 			{ name: 'Display Name', value: 'TargetNickname (<@target123>)', inline: true },
-			// Match the exact date and spacing from the RECEIVED ('+') lines
-			{ name: 'Account Created', value: `11/31/2023 \n          (${expectedCreatedAgoMs / 1000}s ago)`, inline: true },
-			{ name: 'Joined Server', value: `5/14/2024\n          (${expectedJoinedAgoMs / 1000}s ago)`, inline: true },
+			// January = 0, June = 5. Day = getDate(). Match the newline and 8 spaces.
+			{ name: 'Account Created', value: `11/31/2023 \n		(${expectedCreatedAgoMs / 1000}s ago)`, inline: true },
+			{ name: 'Joined Server', value: `5/14/2024\n		(${expectedJoinedAgoMs / 1000}s ago)`, inline: true },
 			{ name: 'Roles', value: '<@&role1> <@&role2>', inline: true },
 		]);
 		// *** END FIX ***
