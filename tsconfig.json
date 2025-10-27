@@ -1,32 +1,31 @@
 {
-    "compilerOptions": {
-        "allowJs": true,
-        "allowSyntheticDefaultImports": true,
-        "baseUrl": ".",
-        "esModuleInterop": true,
-        "outDir": "./dist",
-        "paths": {
-			"@root/*": ["*"],
-			"@lib/*": ["src/lib/*"],
-			"@pieces/*": ["src/pieces/*"]
-        },
-        "resolveJsonModule": true,
-        "rootDir": "./",
-		"skipLibCheck": true,
-		"target": "ES2019",
-		"types": [
-			"node",
-			"discord.js"
-		],
-        "module": "commonjs"
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "paths": {
+      "@root/*": ["*"],
+      "@lib/*": ["src/lib/*"],
+      "@pieces/*": ["src/pieces/*"]
     },
-	"include": [
-		"config.ts",
-		"src/**/*"
-	],
-    "exclude": [
-        "**/node_modules",
-		"**/node_modules/discord.js/typings/index.d.ts", // problematic in djs versions >13.1
-		"**/dist"
-    ]
+    "resolveJsonModule": true,
+    "rootDir": "./",
+    "skipLibCheck": true,
+    "target": "ES2019",
+    "types": ["node", "discord.js", "jest"],
+    "module": "commonjs"
+  },
+  "include": [
+    "config.ts",
+    "src/**/*",
+    "tests/**/*",
+    "testing/**/*"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/node_modules/discord.js/typings/index.d.ts",
+    "**/dist"
+  ]
 }
