@@ -11,6 +11,11 @@ env:
   MAIN_BRANCH: 'main'
   SAGE_DIR: '/usr/local/sage/SageV2'
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 jobs:
 
   node:

@@ -5,9 +5,9 @@ on:
 
 permissions:
   contents: read
+  security-events: write
   actions: read
-  security-events: write   # ←これが超重要
-  
+
 jobs:
   codeql-analysis:
     runs-on: ubuntu-latest
@@ -25,6 +25,7 @@ jobs:
           npm run build || true
 
       - name: Perform CodeQL Analysis
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false }}
         uses: github/codeql-action/analyze@v2
 
   touca-test:
