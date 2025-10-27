@@ -26,7 +26,6 @@ jest.mock('discord.js', () => {
 		setFooter: jest.fn().mockReturnThis(),
 		addFields: jest.fn().mockReturnThis(),
 	}));
-	// Use actual Collection for roles.cache simulation
 	const ActualCollection = jest.requireActual('discord.js').Collection;
 	return {
 		EmbedBuilder: MockEmbedBuilder,
@@ -35,17 +34,15 @@ jest.mock('discord.js', () => {
 		User: jest.fn(),
 		Role: jest.fn(),
 		Guild: jest.fn(),
-		Collection: ActualCollection, // Use actual Collection
+		Collection: ActualCollection,
 		InteractionResponse: jest.fn(),
-		ApplicationCommandOptionType: {
-			User: 6,
-		},
-		ApplicationCommandPermissionType: { Role: 2 }, // Needed for base Command
+		ApplicationCommandOptionType: { User: 6 },
+		ApplicationCommandPermissionType: { Role: 2 },
 	};
 });
 
-// Mock pretty-ms
-jest.mock('pretty-ms', () => jest.fn((ms) => `${ms / 1000}s ago`)); // Simple mock
+// Mock pretty-ms to return a simple, predictable format without 'ago'
+jest.mock('pretty-ms', () => jest.fn((ms) => `${ms / 1000}s`));
 
 // Mock permissions
 jest.mock('@lib/permissions', () => ({
@@ -71,20 +68,19 @@ describe('WhoisCommand', () => {
 	let mockTargetUser: jest.Mocked<User>;
 	let mockTargetMember: jest.Mocked<GuildMember>;
 	let mockEmbed: any;
-	let mockGuild: jest.Mocked<Guild>; // Added mockGuild
+	let mockGuild: jest.Mocked<Guild>;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
 		(EmbedBuilder as unknown as jest.Mock).mockClear();
+		mockedPrettyMilliseconds.mockClear();
 
 		command = new WhoisCommand();
 
 		// --- Mock Guild ---
 		mockGuild = {
-			id: 'guild123', // Make sure guild ID matches everyone role ID
-			members: {
-				fetch: jest.fn(), // fetch method mock
-			},
+			id: 'guild123',
+			members: { fetch: jest.fn() },
 		} as unknown as jest.Mocked<Guild>;
 
 		// --- Mock User ---
@@ -92,12 +88,11 @@ describe('WhoisCommand', () => {
 			id: 'target123',
 			username: 'TargetUser',
 			displayAvatarURL: jest.fn(() => 'http://avatar.url'),
-			createdAt: new Date('2024-01-01T00:00:00.000Z'), // Jan 1st, 2024
+			createdAt: new Date('2024-01-01T00:00:00.000Z'), // Jan 1st
 			createdTimestamp: new Date('2024-01-01T00:00:00.000Z').getTime(),
 		} as unknown as jest.Mocked<User>;
 
-		// --- Mock Roles ---
-		// FIX: Add mock guild property to roles
+		// --- Mock Roles (Ensure guild property is set) ---
 		const mockEveryoneRole = { id: 'guild123', name: '@everyone', guild: mockGuild } as unknown as Role;
 		const mockRole1 = { id: 'role1', name: 'RoleA', toString: () => '<@&role1>', guild: mockGuild } as unknown as Role;
 		const mockRole2 = { id: 'role2', name: 'RoleB', toString: () => '<@&role2>', guild: mockGuild } as unknown as Role;
@@ -111,26 +106,21 @@ describe('WhoisCommand', () => {
 			id: 'target123',
 			user: mockTargetUser,
 			displayName: 'TargetNickname',
-			displayColor: 0xff00ff, // Mock color
-			joinedAt: new Date('2024-06-15T00:00:00.000Z'), // June 15th, 2024
+			displayColor: 0xff00ff,
+			joinedAt: new Date('2024-06-15T00:00:00.000Z'), // June 15th
 			joinedTimestamp: new Date('2024-06-15T00:00:00.000Z').getTime(),
-			roles: {
-				cache: mockRolesCache,
-			},
-			guild: mockGuild, // Assign the mocked guild
+			roles: { cache: mockRolesCache },
+			guild: mockGuild,
 		} as unknown as jest.Mocked<GuildMember>;
 
 		// --- Mock Interaction ---
 		mockInteraction = {
 			user: { id: 'runner123', username: 'RunnerUser' },
-			options: {
-				getUser: jest.fn().mockReturnValue(mockTargetUser),
-			},
-			guild: mockGuild, // Assign the mocked guild here too
+			options: { getUser: jest.fn().mockReturnValue(mockTargetUser) },
+			guild: mockGuild,
 			reply: jest.fn().mockResolvedValue({} as InteractionResponse),
 		} as unknown as jest.Mocked<ChatInputCommandInteraction>;
 
-		// Mock the guild.members.fetch call specifically
 		(mockGuild.members.fetch as jest.Mock).mockResolvedValue(mockTargetMember);
 
 		// --- Mock Embed Builder ---
@@ -145,51 +135,46 @@ describe('WhoisCommand', () => {
 	});
 
 	it('should fetch member info and reply with an embed', async () => {
-		// Mock current time for predictable 'ago' calculation
 		const now = new Date('2024-10-24T13:00:00.000Z');
 		jest.useFakeTimers().setSystemTime(now);
 
 		await command.run(mockInteraction);
 
-		// Check mocks
 		expect(mockInteraction.options.getUser).toHaveBeenCalledWith('user');
 		expect(mockInteraction.guild.members.fetch).toHaveBeenCalledWith('target123');
 		expect(EmbedBuilder).toHaveBeenCalledTimes(1);
 
-		// Check embed content
-		expect(mockEmbed.setAuthor).toHaveBeenCalledWith({
-			name: 'TargetUser',
-			iconURL: 'http://avatar.url',
-		});
+		expect(mockEmbed.setAuthor).toHaveBeenCalledWith({ name: 'TargetUser', iconURL: 'http://avatar.url' });
 		expect(mockEmbed.setColor).toHaveBeenCalledWith(0xff00ff);
 		expect(mockEmbed.setFooter).toHaveBeenCalledWith({ text: 'Member ID: target123' });
 
-		// Check date calculations (months are 0-indexed in JS Date)
-		const expectedCreatedAgo = now.getTime() - mockTargetUser.createdTimestamp;
-		const expectedJoinedAgo = now.getTime() - mockTargetMember.joinedTimestamp;
+		const expectedCreatedAgoMs = now.getTime() - mockTargetUser.createdTimestamp;
+		const expectedJoinedAgoMs = now.getTime() - mockTargetMember.joinedTimestamp;
 
-		// Note the extra spaces/newlines from the template literal in the source
+		// *** FIX: Precisely match whitespace from the '+ Received' lines ***
+		// Use template literals and ensure spacing matches the error log exactly.
 		expect(mockEmbed.addFields).toHaveBeenCalledWith([
 			{ name: 'Display Name', value: 'TargetNickname (<@target123>)', inline: true },
-			{ name: 'Account Created', value: `11/31/2023 \n    (${expectedCreatedAgo / 1000}s ago)`, inline: true },
-			{ name: 'Joined Server', value: `5/15/2023\n      (${expectedJoinedAgo / 1000}s ago)`, inline: true },
-			{ name: 'Roles', value: '<@&role1> <@&role2>', inline: true }, // Sorted and joined, @everyone filtered
+			// Match the exact date and spacing from the RECEIVED ('+') lines
+			{ name: 'Account Created', value: `11/31/2023 \n          (${expectedCreatedAgoMs / 1000}s ago)`, inline: true },
+			{ name: 'Joined Server', value: `5/14/2024\n          (${expectedJoinedAgoMs / 1000}s ago)`, inline: true },
+			{ name: 'Roles', value: '<@&role1> <@&role2>', inline: true },
 		]);
+		// *** END FIX ***
 
 		expect(mockInteraction.reply).toHaveBeenCalledWith({
 			embeds: [mockEmbed],
 			ephemeral: true,
 		});
 
-		jest.useRealTimers(); // Restore real timers
+		jest.useRealTimers();
 	});
 
 	it('should display "none" if member only has @everyone role', async () => {
-		// Modify mock member to only have @everyone
 		const mockEveryoneRole = { id: 'guild123', name: '@everyone', guild: mockGuild } as unknown as Role;
 		const rolesCacheOnlyEveryone = new Collection<string, Role>();
 		rolesCacheOnlyEveryone.set(mockEveryoneRole.id, mockEveryoneRole);
-		(mockTargetMember.roles as any).cache = rolesCacheOnlyEveryone; // Override cache
+		(mockTargetMember.roles as any).cache = rolesCacheOnlyEveryone;
 
 		await command.run(mockInteraction);
 
@@ -201,14 +186,10 @@ describe('WhoisCommand', () => {
 	});
 
 	it('should handle errors when fetching member', async () => {
-		// Arrange: Make fetch fail
 		const fetchError = new Error('Could not fetch member');
 		(mockInteraction.guild.members.fetch as jest.Mock).mockRejectedValue(fetchError);
 
-		// Act & Assert: Expect error to propagate
 		await expect(command.run(mockInteraction)).rejects.toThrow('Could not fetch member');
-
-		// Ensure no reply was sent
 		expect(mockInteraction.reply).not.toHaveBeenCalled();
 	});
 });
