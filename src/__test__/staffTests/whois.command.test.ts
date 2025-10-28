@@ -192,4 +192,5 @@ describe('WhoisCommand', () => {
 		await expect(command.run(mockInteraction)).rejects.toThrow('Could not fetch member');
 		expect(mockInteraction.reply).not.toHaveBeenCalled();
 	});
+
 });
