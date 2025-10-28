@@ -47,7 +47,7 @@ export default class extends Command {
 						name: 'Message content',
 						value: target.content || '*This message had no text content*'
 					}]);
-				staffChannel.send({ embeds: [embed] });
+				await staffChannel.send({ embeds: [embed] });
 			}
 		}
 
@@ -58,7 +58,7 @@ export default class extends Command {
 				this.sendEmail(targetUser.email, interaction.user.tag, reason);
 			});
 
-		interaction.reply({ content: `${target.author.username} has been warned.`, ephemeral: true });
+		await interaction.reply({ content: `${target.author.username} has been warned.`, ephemeral: true });
 		return target.delete();
 	}
 

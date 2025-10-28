@@ -76,9 +76,9 @@ export default class extends Command {
 			throw `Something went wrong creating ${asker.user.tag}'s private thread. Please contact ${MAINTAINERS} for assistance!'`;
 		}
 
-		privThread.guild.members.fetch();
-		privThread.members.add(interaction.user.id);
-		privThread.members.add(question.owner);
+		await privThread.guild.members.fetch();
+		await privThread.members.add(interaction.user.id);
+		await privThread.members.add(question.owner);
 
 		const embed = new EmbedBuilder()
 			.setDescription(`I've sent your response to this thread: <#${privThread.id}>\n\n Please have any further conversation there.`);
