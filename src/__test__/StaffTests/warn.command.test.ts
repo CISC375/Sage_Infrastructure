@@ -257,7 +257,7 @@ describe('Warn Command', () => {
     expect(mockTargetMessage.delete).toHaveBeenCalledTimes(1);
   });
 
-  it('should throw an error if DMs fail and user is not in database', async () => {
+it('should throw an error if DMs fail and user is not in database', async () => {
     mockInteraction.options.getString.mockReturnValue('http://discord-message-link');
     mockTargetMessage.author.send.mockRejectedValue(new Error('Cannot send messages to this user')); // Simulate failed DM
 
@@ -266,7 +266,12 @@ describe('Warn Command', () => {
       .mockResolvedValueOnce(mockCourse) // First call (course)
       .mockResolvedValueOnce(null); // Second call (user) -> NOT FOUND
 
-    // Should not reply or delete if it throws
+    // ADD THIS BLOCK TO CATCH THE ERROR
+    await expect(command.run(mockInteraction)).rejects.toThrow(
+      'TargetUser#0001 (targetId123) is not in the database'
+    );
+
+    // Verify that it didn't reply or delete
     expect(mockInteraction.reply).not.toHaveBeenCalled();
     expect(mockTargetMessage.delete).not.toHaveBeenCalled();
   });

@@ -70,7 +70,7 @@ describe('Sudoreply Command', () => {
 
   // Re-initialize mocks before each test
   beforeEach(() => {
-    // Restore all mocks to ensure no implementations leak between tests
+    // Restore all mocks to ensure no implementations leak
     jest.restoreAllMocks();
 
     // Re-instantiate the command
@@ -125,7 +125,6 @@ describe('Sudoreply Command', () => {
 
     // --- Mock EmbedBuilder (clear calls) ---
     // These mocks are imported directly, so we need to clear them manually.
-    // restoreAllMocks does not affect them.
     mockEmbedSetDescription.mockClear();
     mockEmbedSetTitle.mockClear();
     mockEmbedSetFooter.mockClear();
@@ -199,7 +198,6 @@ describe('Sudoreply Command', () => {
       content: `\`/sudoreply\` has been depreciated for private questions. Please reply in thread <#threadId_456>.`,
       ephemeral: true,
     });
-    // We didn't mock fetch, so create won't be called, but this is a good sanity check
     expect(mockGeneralChannel.threads.create).not.toHaveBeenCalled();
   });
 
@@ -298,8 +296,8 @@ describe('Sudoreply Command', () => {
     mockClient.channels.fetch.mockResolvedValue({ type: ChannelType.GuildVoice } as any);
 
     // Expect the command to throw an error
-    // await expect(command.run(mockInteraction)).rejects.toThrow(
-    //   expect.stringContaining("Something went wrong creating")
-    // );
+	await expect(command.run(mockInteraction)).rejects.toThrow(
+		/Something went wrong creating/
+	);
   });
 });
