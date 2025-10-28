@@ -23,7 +23,9 @@ export default class extends Command {
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		let timeout = DECISION_TIMEOUT;
 		const course = interaction.options.getChannel('course') as CategoryChannel;
-		console.log(course.id);
+		
+		// debugging
+		// console.log(course.id);
 
 		//	 grabbing course data
 		let channelCount;
