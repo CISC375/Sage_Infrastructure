@@ -51,7 +51,7 @@ export default class extends Command {
 			}
 		}
 
-		target.author.send(`Your message was deleted in ${target.channel} by ${interaction.user.tag}. Below is the given reason:\n${reason}`)
+		await target.author.send(`Your message was deleted in ${target.channel} by ${interaction.user.tag}. Below is the given reason:\n${reason}`)
 			.catch(async () => {
 				const targetUser: SageUser = await interaction.client.mongo.collection(DB.USERS).findOne({ discordId: target.author.id });
 				if (!targetUser) throw `${target.author.tag} (${target.author.id}) is not in the database`;
@@ -62,13 +62,14 @@ export default class extends Command {
 		return target.delete();
 	}
 
-	sendEmail(recipient: string, mod: string, reason: string): void {
+	// sendEmail(recipient: string, mod: string, reason: string): void {
+	async sendEmail(recipient: string, mod: string, reason: string): Promise<void> {
 		const mailer = nodemailer.createTransport({
 			host: 'mail.udel.edu',
 			port: 25
 		});
 
-		mailer.sendMail({
+		await mailer.sendMail({
 			from: EMAIL.SENDER,
 			replyTo: EMAIL.REPLY_TO,
 			to: recipient,
