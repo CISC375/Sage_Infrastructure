@@ -1,10 +1,8 @@
 import {
     ChatInputCommandInteraction,
-    Guild,
     TextChannel,
     CategoryChannel,
     Role,
-    Collection,
     ChannelType
 } from 'discord.js';
 import AddCourseCommand from '../../commands/admin/addcourse'; // コマンドのパス

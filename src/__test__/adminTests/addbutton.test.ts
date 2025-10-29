@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, ButtonStyle, TextChannel, Message, InteractionResponse } from 'discord.js';
+import { ChatInputCommandInteraction, ButtonStyle, TextChannel, Message } from 'discord.js';
 import ButtonCommand from '../../commands/admin/addbutton'; // あなたのプロジェクト構成に合わせてパスを調整してください
 import * as mockConfig from '@root/config';
 
