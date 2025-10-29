@@ -7,13 +7,10 @@ import {
 	Collection,
 	Guild,
 	InteractionResponse,
-	ApplicationCommandOptionType,
 } from 'discord.js';
 // Adjust import path
 import WhoisCommand from '../../commands/staff/whois'; // Adjust path if needed
 import prettyMilliseconds from 'pretty-ms';
-import { STAFF_PERMS, ADMIN_PERMS } from '@lib/permissions';
-import { ROLES, BOT } from '@root/config'; // Needed for base Command
 
 // --- Mocks ---
 
