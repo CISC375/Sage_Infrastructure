@@ -6,7 +6,6 @@ import {
 // Adjust this import path to match your project structure
 import QuoteCommand from '../../commands/fun/quote';
 import axios from 'axios';
-import { ROLES } from '@root/config'; // Imported for the mock
 
 // --- Mocks ---
 

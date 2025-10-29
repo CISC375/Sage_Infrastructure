@@ -4,8 +4,6 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   EmbedBuilder,
-  ButtonStyle,
-  ApplicationCommandOptionType,
   InteractionResponse,
   Message,
   Client,
@@ -14,9 +12,7 @@ import {
 // Adjust this import path to match your project structure
 import PollCommand, { handlePollOptionSelect } from '../../commands/fun/poll';
 import { SageInteractionType } from '@lib/types/InteractionType';
-import { BOT, DB, ROLES } from '@root/config';
-import { Command } from '@lib/types/Command';
-import { generateErrorEmbed, dateToTimestamp } from '@lib/utils/generalUtils';
+import { DB } from '@root/config';
 import parse from 'parse-duration';
 import { Poll } from '@lib/types/Poll';
 
@@ -97,8 +93,6 @@ jest.mock('parse-duration', () => jest.fn());
 
 // --- Typed Mocks ---
 const mockParse = parse as jest.Mock;
-const mockGenerateErrorEmbed = generateErrorEmbed as jest.Mock;
-const mockDateToTimestamp = dateToTimestamp as jest.Mock;
 const MockEmbedBuilder = EmbedBuilder as unknown as jest.Mock;
 const MockButtonBuilder = ButtonBuilder as unknown as jest.Mock;
 const MockActionRowBuilder = ActionRowBuilder as unknown as jest.Mock;

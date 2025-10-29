@@ -4,7 +4,6 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   EmbedBuilder,
-  ButtonStyle,
   InteractionResponse,
   Message,
 } from 'discord.js';
@@ -14,8 +13,7 @@ import RockPaperScissorsCommand, {
 } from '../../commands/fun/rockpaperscissors';
 import { SageInteractionType } from '@lib/types/InteractionType';
 import { buildCustomId, getDataFromCustomId } from '@lib/utils/interactionUtils';
-import { BOT, ROLES } from '@root/config'; // ROLES is now needed for the mock type
-import { Command } from '@lib/types/Command';
+import { BOT } from '@root/config'; // ROLES is now needed for the mock type
 
 // --- Mocks ---
 
