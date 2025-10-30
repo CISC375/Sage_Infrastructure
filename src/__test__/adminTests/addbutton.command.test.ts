@@ -3,78 +3,76 @@ import ButtonCommand from '../../commands/admin/addbutton'; // あなたのプ�
 import * as mockConfig from '@root/config';
 
 // ------------------------------------------------------------------
-// 📚 モックの設定 (Mock Setup)
+// Mock Setup
 // ------------------------------------------------------------------
 
-// Jestのモック関数 (スパイ)
+// Jest mock functions (spies)
 const mockGetString = jest.fn();
 const mockReply = jest.fn().mockResolvedValue(undefined);
-const mockEdit = jest.fn().mockResolvedValue(undefined); // message.editをモック
+const mockEdit = jest.fn().mockResolvedValue(undefined); // mock for message.edit
 
-// メッセージフェッチの成功と失敗を制御するためのモック関数
+// Mocks to control success/failure of message fetching
 const mockFetchMessage = jest.fn();
 const mockFetchChannel = jest.fn();
 
-// Discord.jsの構造を再現したモックMessageオブジェクト
+// Mock Message object mirroring discord.js structure
 const mockMessage = (editable: boolean, content: string = 'Original message content') => ({
     editable: editable,
     content: content,
     edit: mockEdit,
-    // その他、コマンドがアクセスしないプロパティは省略
+    // Other properties unused by the command are omitted
 } as unknown as Message);
 
-// interaction.client.channels.fetch と channel.messages.fetch をモック
+// Mock interaction.client.channels.fetch and channel.messages.fetch
 const mockClient = {
     channels: {
         fetch: mockFetchChannel,
     },
-    // その他の不要なclientプロパティは省略
+    // Other unnecessary client properties are omitted
 };
 
-// BOT設定のモック化
+// Mock BOT config
 jest.mock('@root/config', () => ({
     BOT: { NAME: 'TestBot' },
-    BOTMASTER_PERMS: [], // テストではpermissionsは実行しないため省略可
+    BOTMASTER_PERMS: [], // Permissions not exercised in these tests
 	ROLES: {
-        STAFF: 'dummy-staff-role-id' // テストが動作すればIDは何でもOK
-        // 他に参照されるロールがあればここに追加
+        STAFF: 'dummy-staff-role-id' // Any ID is fine as long as tests run
+        // Add other referenced roles here if needed
     }
 })
 );
 
 // ------------------------------------------------------------------
-// 🚀 テストの開始 (Start Testing)
+// Start Testing
 // ------------------------------------------------------------------
 
 describe('Button Command', () => {
     let command: ButtonCommand;
     let mockInteraction: ChatInputCommandInteraction;
 
-    // 各テストケースの前に実行
+    // Run before each test
     beforeEach(() => {
         command = new ButtonCommand();
 
-        // モックのリセット
+        // Reset mocks
         mockGetString.mockClear();
         mockReply.mockClear();
         mockEdit.mockClear();
         mockFetchMessage.mockClear();
         mockFetchChannel.mockClear();
 
-        // 模擬ChatInputCommandInteractionオブジェクトの作成
+        // Build a minimal ChatInputCommandInteraction mock
         mockInteraction = {
             client: mockClient,
             options: {
                 getString: mockGetString,
             },
             reply: mockReply,
-            // 型キャストで不要なプロパティを省略
+            // Unused properties are omitted via casting
         } as unknown as ChatInputCommandInteraction;
 
-        // モックのデフォルト設定
-        // 成功ケースのデフォルト設定として、モックメッセージのフェッチ関数を設定
+        // Default successful wiring: channel fetch returns an object with messages.fetch
         mockFetchChannel.mockImplementation((channelID: string) => {
-            // channelIDとmessageIDはここでは使用しないが、引数として受け取る
             return Promise.resolve({
                 messages: {
                     fetch: mockFetchMessage
@@ -84,7 +82,7 @@ describe('Button Command', () => {
     });
 
     // ------------------------------------------------------------------
-    // ✅ 正常系テスト (Success Cases)
+    // Success Cases
     // ------------------------------------------------------------------
 
     it('should successfully edit a message with a Primary button', async () => {
@@ -93,7 +91,7 @@ describe('Button Command', () => {
         const customID = 'unique_id_1';
         const style = 'primary';
         
-        // ユーザー入力のモック設定
+        // Mock user input
         mockGetString
             .mockImplementation((name) => {
                 if (name === 'msg_link') return msgLink;
@@ -103,34 +101,32 @@ describe('Button Command', () => {
                 return null;
             });
 
-        // メッセージフェッチの成功と編集可能なメッセージを返す設定
+        // Return an editable message
         const messageToEdit = mockMessage(true);
         mockFetchMessage.mockResolvedValue(messageToEdit);
 
-        // テストの実行
         await command.run(mockInteraction);
 
-        // 1. メッセージがフェッチされたか検証
-        // リンクからchannelID(67890)とmessageID(112233)が正しく抽出されたかを確認
+        // 1. Verify message was fetched using parsed IDs
         expect(mockClient.channels.fetch).toHaveBeenCalledWith('67890');
         expect(mockFetchMessage).toHaveBeenCalledWith('112233');
 
-        // 2. message.edit が正しく呼ばれたか検証
+        // 2. Verify message.edit was called with expected content and components
         expect(mockEdit).toHaveBeenCalledTimes(1);
-        const editCall = mockEdit.mock.calls[0][0]; // 1回目の呼び出しの最初の引数
+        const editCall = mockEdit.mock.calls[0][0];
         
-        // 編集内容の検証
-        expect(editCall.content).toBe(messageToEdit.content); // 元のcontentが保持されていること
-        expect(editCall.components).toHaveLength(1); // ActionRowが1つあること
+        // Validate edited content
+        expect(editCall.content).toBe(messageToEdit.content);
+        expect(editCall.components).toHaveLength(1);
 
-        // ボタンの検証 (ActionRowの中身)
+        // Validate button (contents of ActionRow)
         const componentData = editCall.components[0].toJSON().components[0];
         expect(componentData.label).toBe(label);
         expect(componentData.custom_id).toBe(customID);
-        // 'PRIMARY'に変換されてButtonComponentのStyleが設定される
+        // Converted to PRIMARY and set on ButtonComponent
         expect(componentData.style).toBe(ButtonStyle.Primary); 
 
-        // 3. interaction.reply が成功メッセージで呼ばれたか検証
+        // 3. Verify success reply
         expect(mockReply).toHaveBeenCalledWith({
             content: 'Your message has been given a button', 
             ephemeral: true 
@@ -152,18 +148,18 @@ describe('Button Command', () => {
                 return null;
             });
         
-        mockFetchMessage.mockResolvedValue(mockMessage(true)); // 編集可能
+        mockFetchMessage.mockResolvedValue(mockMessage(true)); // Editable
 
         await command.run(mockInteraction);
 
-        // 'canary.'が削除され、正しくIDが抽出されてメッセージが取得されることを検証
+        // Verify canary removal and correct ID extraction
         expect(mockClient.channels.fetch).toHaveBeenCalledWith('67890');
         expect(mockFetchMessage).toHaveBeenCalledWith('112233');
         expect(mockEdit).toHaveBeenCalled();
     });
 
     // ------------------------------------------------------------------
-    // ❌ エラー系テスト (Error Cases)
+    // Error Cases
     // ------------------------------------------------------------------
 
     it('should reply with an error if the message cannot be found', async () => {
@@ -178,16 +174,16 @@ describe('Button Command', () => {
                 return null;
             });
 
-        // message.fetchが失敗したときのエラーをシミュレート
+        // Simulate fetch failure
         mockFetchMessage.mockRejectedValue(new Error('Discord API Error'));
 
-        // コマンドがエラー文字列を throw することを検証
+        // Verify the command throws the specified error string
         await expect(command.run(mockInteraction)).rejects.toBe("I can't seem to find that message");
 
-        // 最終的なユーザー応答 (成功メッセージ) が呼ばれていないことを確認
+        // Ensure success reply was not sent
         expect(mockReply).not.toHaveBeenCalledWith({ content: 'Your message has been given a button', ephemeral: true });
         
-        // message.editが実行されていないことを検証
+        // Ensure message.edit was not called
         expect(mockEdit).not.toHaveBeenCalled();
     });
 
@@ -203,18 +199,18 @@ describe('Button Command', () => {
                 return null;
             });
 
-        // 編集不可能なメッセージを返す設定
+        // Return a non-editable message
         mockFetchMessage.mockResolvedValue(mockMessage(false)); 
 
         await command.run(mockInteraction);
 
-        // 1. 編集不可のエラーメッセージで応答されたことを検証
+        // 1. Verify it replies with not-editable error
         expect(mockReply).toHaveBeenCalledWith({
             content: `It seems I can't edit that message. You'll need to tag a message that was sent by me, ${mockConfig.BOT.NAME}`,
             ephemeral: true
         });
 
-        // 2. message.editが実行されていないことを検証 (早期リターン)
+        // 2. Ensure message.edit was not called (early return)
         expect(mockEdit).not.toHaveBeenCalled();
     });
 });

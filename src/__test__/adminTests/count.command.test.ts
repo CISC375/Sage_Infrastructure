@@ -4,7 +4,7 @@ import CountCategoryChannelsCommand from '../../commands/admin/count';
 
 // --- MOCK SETUP ---
 
-// 依存関係である ADMIN_PERMS のダミー定義をモックします
+// Mock a dummy definition for the dependent ADMIN_PERMS
 jest.mock('@lib/permissions', () => ({
     ADMIN_PERMS: { id: 'admin_role_id', permission: true, type: 1 },
 }));
@@ -13,14 +13,14 @@ const MOCK_CATEGORY_ID = '123456789';
 const MOCK_CHANNEL_COUNT = 7;
 
 /**
- * 成功パスで使用する CategoryChannel のモックヘルパー
+ * Mock helper for CategoryChannel used in the success path
  */
 const mockCategoryChannel = (count: number): any => ({
     id: MOCK_CATEGORY_ID,
     name: 'archive-category',
-    // Discordのメンション形式 (toString) をシミュレート
+    // Simulate Discord mention format (toString)
     toString: () => `<#${MOCK_CATEGORY_ID}>`,
-    // 子チャンネルのキャッシュサイズをモック
+    // Mock child channels cache size
     children: {
         cache: {
             size: count,
@@ -29,14 +29,14 @@ const mockCategoryChannel = (count: number): any => ({
 });
 
 /**
- * 失敗パスで使用する TextChannel のモックヘルパー
- * children.cache が存在しないため、try/catchブロックでエラーを引き起こします
+ * Mock helper for TextChannel used in the failure path
+ * Since children.cache is missing, this triggers an error in the try/catch block
  */
 const mockInvalidChannel: any = {
     id: '987654321',
     name: 'general-chat',
     toString: () => `<#987654321>`,
-    // CategoryChannelに必要な 'children'プロパティを意図的に省略
+    // Intentionally omit the 'children' property required for CategoryChannel
 };
 
 
@@ -44,15 +44,15 @@ let mockInteraction: ChatInputCommandInteraction;
 let command: Command;
 
 beforeEach(() => {
-    // 相互作用オブジェクトと、それに付随するメソッドのモック
+    // Mock the interaction object and its methods
     mockInteraction = {
         options: {
             getChannel: jest.fn(),
         },
-        reply: jest.fn(), // 応答メソッドをモック
+        reply: jest.fn(), // Mock reply method
     } as unknown as ChatInputCommandInteraction; 
 
-    // コマンドインスタンスの初期化
+    // Initialize the command instance
     command = new CountCategoryChannelsCommand();
 });
 
@@ -61,17 +61,17 @@ beforeEach(() => {
 describe('CountCategoryChannels Command', () => {
 
     test('should reply with the correct channel count for a valid category', async () => {
-        // Setup: 有効な CategoryChannel モックを返すように設定
+        // Setup: return a valid CategoryChannel mock
         const categoryChannelMock = mockCategoryChannel(MOCK_CHANNEL_COUNT);
         (mockInteraction.options.getChannel as jest.Mock).mockReturnValue(categoryChannelMock);
 
         // Execute
         await command.run(mockInteraction);
 
-        // Assertion 1: interaction.reply が一度だけ呼び出されたことを確認
+        // Assertion 1: interaction.reply is called exactly once
         expect(mockInteraction.reply as jest.Mock).toHaveBeenCalledTimes(1);
 
-        // Assertion 2: 正しいチャンネル数を含むコンテンツで応答されたことを確認
+        // Assertion 2: replies with the correct channel count in the content
         const expectedContent = `**${categoryChannelMock}** has **${MOCK_CHANNEL_COUNT}** channel(s)!`;
         expect(mockInteraction.reply as jest.Mock).toHaveBeenCalledWith({
             content: expectedContent,
@@ -80,16 +80,16 @@ describe('CountCategoryChannels Command', () => {
     });
 
     test('should reply with an error message if the channel is not a valid category', async () => {
-        // Setup: childrenプロパティを持たない無効なチャンネルモックを返すように設定
+        // Setup: return an invalid channel mock that lacks the children property
         (mockInteraction.options.getChannel as jest.Mock).mockReturnValue(mockInvalidChannel);
 
         // Execute
         await command.run(mockInteraction);
 
-        // Assertion 1: interaction.reply が一度だけ呼び出されたことを確認
+        // Assertion 1: interaction.reply is called exactly once
         expect(mockInteraction.reply as jest.Mock).toHaveBeenCalledTimes(1);
 
-        // Assertion 2: エラーメッセージで応答されたことを確認 (try/catchブロックが発動)
+        // Assertion 2: replies with an error message (try/catch block triggered)
         const expectedContent = `That's not a valid channel category.`;
         expect(mockInteraction.reply as jest.Mock).toHaveBeenCalledWith({
             content: expectedContent,
