@@ -9,6 +9,10 @@ import DiscordStatusCmd from '../../commands/info/discordstatus';
 jest.mock('node-fetch', () => jest.fn());
 import fetch from 'node-fetch';
 
+jest.mock('@root/config', () => ({
+	ROLES: { VERIFIED: 'role-verified' }
+}), { virtual: true });
+
 const mockFetch = fetch as unknown as jest.Mock;
 
 type MinimalInteraction = Pick<ChatInputCommandInteraction, 'deferReply' | 'editReply'>;

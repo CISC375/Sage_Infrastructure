@@ -6,6 +6,10 @@
 import type { ChatInputCommandInteraction } from 'discord.js';
 import CommitCmd from '../../commands/info/commit';
 
+jest.mock('@root/config', () => ({
+	ROLES: { VERIFIED: 'role-verified' }
+}), { virtual: true });
+
 jest.mock('@root/package.json', () => ({ homepage: 'https://github.com/org/repo' }), { virtual: true });
 
 jest.mock('child_process', () => ({ execSync: jest.fn() }));

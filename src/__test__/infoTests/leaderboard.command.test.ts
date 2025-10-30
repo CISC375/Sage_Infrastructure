@@ -5,6 +5,10 @@
 import type { ChatInputCommandInteraction, ImageURLOptions } from 'discord.js';
 import LeaderboardCmd from '../../commands/info/leaderboard';
 
+jest.mock('@root/config', () => ({
+	ROLES: { VERIFIED: 'role-verified' }
+}), { virtual: true });
+
 
 // Mock canvas (no native bindings)
 const ctx = {
