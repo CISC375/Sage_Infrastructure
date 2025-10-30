@@ -203,7 +203,7 @@ describe('Check Command', () => {
       // 0/10 = 0. 10 * 0 = 0.
       // 0 green squares, 1 check, 9 empty
       const bar = command.progressBar(0, 10, 10);
-      expect(bar).toBe('✅⚫⚫⚫⚫⚫⚫⚫⚫⚫ **0%**');
+      expect(bar).toBe('✅⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫ **0%**');
     });
 
     it('should show 100% progress (level up)', () => {
