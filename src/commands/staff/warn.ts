@@ -55,7 +55,7 @@ export default class extends Command {
 			.catch(async () => {
 				const targetUser: SageUser = await interaction.client.mongo.collection(DB.USERS).findOne({ discordId: target.author.id });
 				if (!targetUser) throw new Error(`${target.author.tag} (${target.author.id}) is not in the database`);
-				this.sendEmail(targetUser.email, interaction.user.tag, reason);
+				await this.sendEmail(targetUser.email, interaction.user.tag, reason);
 			});
 
 		await interaction.reply({ content: `${target.author.username} has been warned.`, ephemeral: true });
