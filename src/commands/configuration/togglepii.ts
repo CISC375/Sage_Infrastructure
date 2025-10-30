@@ -21,7 +21,7 @@ export default class extends Command {
 
 		entry.pii = !entry.pii;
 
-		interaction.client.mongo.collection(DB.USERS).updateOne({ discordId: interaction.user.id }, { $set: { pii: entry.pii } });
+		await interaction.client.mongo.collection(DB.USERS).updateOne({ discordId: interaction.user.id }, { $set: { pii: entry.pii } });
 
 		return interaction.reply({ content: `Your personally identifiable information is now${entry.pii ? ' ABLE' : ' UNABLE'} to be sent by instructors over Discord.
 ${entry.pii ? '' : '**It is still available to staff outside of Discord.**'}`, ephemeral: true });

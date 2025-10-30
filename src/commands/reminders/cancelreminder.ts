@@ -32,7 +32,7 @@ export default class extends Command {
 			});
 		}
 
-		interaction.client.mongo.collection(DB.REMINDERS).findOneAndDelete(reminder);
+		await interaction.client.mongo.collection(DB.REMINDERS).findOneAndDelete(reminder);
 
 		const hidden = reminder.mode === 'private';
 		return interaction.reply({

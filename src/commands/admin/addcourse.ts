@@ -114,7 +114,7 @@ export default class extends Command {
 
 		await updateDropdowns(interaction);
 
-		interaction.editReply(`Successfully added course with ID ${course}`);
+		await interaction.editReply(`Successfully added course with ID ${course}`);
 	}
 
 	async createTextChannel(guild: Guild, name: string, permissionOverwrites: Array<OverwriteResolvable>, parent: string, reason: string): Promise<TextChannel> {

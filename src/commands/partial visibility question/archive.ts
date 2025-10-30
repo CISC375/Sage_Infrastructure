@@ -13,7 +13,7 @@ export default class extends Command {
 		}
 		await interaction.reply(`Archiving thread...`);
 		await interaction.channel.setArchived(true, `${interaction.user.username} archived the question.`);
-		interaction.editReply(`Thread archived.`);
+		await interaction.editReply(`Thread archived.`);
 	}
 
 }
