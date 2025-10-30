@@ -54,7 +54,7 @@ export default class extends Command {
 		await target.author.send(`Your message was deleted in ${target.channel} by ${interaction.user.tag}. Below is the given reason:\n${reason}`)
 			.catch(async () => {
 				const targetUser: SageUser = await interaction.client.mongo.collection(DB.USERS).findOne({ discordId: target.author.id });
-				if (!targetUser) throw new Error(`${target.author.tag} (${target.author.id}) is not in the database`);
+				if (!targetUser) throw Error(`${target.author.tag} (${target.author.id}) is not in the database`);
 				await this.sendEmail(targetUser.email, interaction.user.tag, reason);
 			});
 
