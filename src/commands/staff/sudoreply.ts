@@ -73,7 +73,7 @@ export default class extends Command {
 				type: `GUILD_PRIVATE_THREAD`
 			});
 		} else {
-			throw new Error(`Something went wrong creating ${asker.user.tag}'s private thread. Please contact ${MAINTAINERS} for assistance!'`);
+			throw Error(`Something went wrong creating ${asker.user.tag}'s private thread. Please contact ${MAINTAINERS} for assistance!'`);
 		}
 
 		await privThread.guild.members.fetch();
