@@ -11,7 +11,7 @@ describe("google Command", () => {
 		const mockReplyResult = { mocked: true };
 		const mockReply = jest.fn().mockResolvedValue(mockReplyResult);
 		const searchTerm = "test search";
-		const expectedUrl = `https://letmegooglethat.com/?q=${searchTerm.replace(new RegExp(' ', 'g'), '+').replace('%', '%25')}`;
+		const expectedUrl = `https://letmegooglethat.com/?q=${encodeURIComponent(searchTerm)}`;
 		const interaction = {
 			reply: mockReply,
 			options: {
