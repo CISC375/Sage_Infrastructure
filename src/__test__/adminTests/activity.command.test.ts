@@ -1,4 +1,4 @@
-import { ActivityType, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
+import { ActivityType, ChatInputCommandInteraction } from 'discord.js';
 import ActivityCommand from '../../commands/admin/activity';
 
 

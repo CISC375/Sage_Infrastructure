@@ -60,7 +60,8 @@ export default class extends Command {
 		}
 		interaction.reply({
 			embeds: [this.createComicEmbed(comic)],
-			components: [actionRow]
+			components: [actionRow],
+			fetchReply: true
 		});
 
 		let replyId;

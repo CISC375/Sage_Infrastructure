@@ -4,20 +4,12 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   EmbedBuilder,
-  ButtonStyle,
-  ApplicationCommandOptionType,
   InteractionResponse,
   Message,
-  TextChannel,
-//   MessageComponentCollector,
 } from 'discord.js';
 // Adjust this import path to match your project structure
 import XkcdCommand from '../../commands/fun/xkcd';
-import { ROLES } from '@root/config';
-import { generateErrorEmbed } from '@lib/utils/generalUtils';
 import fetch from 'node-fetch';
-import moment from 'moment';
-import { Command } from '@lib/types/Command';
 
 // --- Type for Mock Data ---
 interface XkcdComic {
@@ -90,7 +82,6 @@ jest.mock('@lib/utils/generalUtils', () => ({
 
 // --- Typed Mocks ---
 const mockedFetch = fetch as unknown as jest.Mock;
-const mockedGenerateErrorEmbed = generateErrorEmbed as jest.Mock;
 const MockEmbedBuilder = EmbedBuilder as unknown as jest.Mock;
 const MockButtonBuilder = ButtonBuilder as unknown as jest.Mock;
 const MockActionRowBuilder = ActionRowBuilder as unknown as jest.Mock;

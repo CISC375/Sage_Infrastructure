@@ -43,7 +43,7 @@ export default class extends Command {
 			}
 		});
 
-		interaction.client.mongo.collection(DB.COURSES).updateOne({ name: course }, { $set: { ...entry } });
+		await interaction.client.mongo.collection(DB.COURSES).updateOne({ name: course }, { $set: { ...entry } });
 
 		const fields: Array<EmbedField> = [];
 		if (added.length > 0) {

@@ -3,14 +3,12 @@ import {
   EmbedBuilder,
   AttachmentBuilder,
   InteractionResponse,
-  ApplicationCommandOptionType,
   Message,
 } from 'discord.js';
 // Adjust this import path to match your project structure
 import LatexCommand from '../../commands/fun/latex';
 import fetch from 'node-fetch';
 import { createCanvas, loadImage } from 'canvas';
-import { ROLES } from '@root/config';
 import { generateErrorEmbed } from '@lib/utils/generalUtils';
 
 // --- Mocks ---

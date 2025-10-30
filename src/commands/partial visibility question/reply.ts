@@ -50,7 +50,7 @@ export default class extends Command {
 
 		if (file) embed.setImage(file.url);
 
-		channel.send({ embeds: [embed] });
+		await channel.send({ embeds: [embed] });
 
 		interaction.reply({ content: 'I\'ve forwarded your message along.', ephemeral: true });
 	}
