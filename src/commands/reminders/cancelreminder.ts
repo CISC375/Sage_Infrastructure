@@ -26,7 +26,7 @@ export default class extends Command {
 		const reminder = reminders[remindNum];
 
 		if (!reminder) {
-			interaction.reply({
+			return interaction.reply({
 				content: `I couldn't find reminder **${remindNum}**. Use the \`viewremind\` command to see your current reminders.`,
 				ephemeral: true
 			});
