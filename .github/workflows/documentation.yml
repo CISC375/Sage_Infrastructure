@@ -2,7 +2,7 @@ name: documentation
 
 on:
   push:
-    branches: [ "main", "Ava-branch-config" ]
+    branches: ["main", "Ava-branch-config"]
 
 jobs:
   build:
