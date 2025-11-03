@@ -92,7 +92,7 @@ jest.mock('@lib/utils/generalUtils', () => ({
 jest.mock('parse-duration', () => jest.fn());
 
 // --- Typed Mocks ---
-const mockParse = parse as jest.Mock;
+const mockParse = parse as unknown as jest.MockedFunction<typeof parse>;
 const MockEmbedBuilder = EmbedBuilder as unknown as jest.Mock;
 const MockButtonBuilder = ButtonBuilder as unknown as jest.Mock;
 const MockActionRowBuilder = ActionRowBuilder as unknown as jest.Mock;
