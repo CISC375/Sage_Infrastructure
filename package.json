@@ -13,8 +13,9 @@
 		"install": "node-pre-gyp install --fallback-to-build --build-from-source",
 		"build": "tsc -p .",
 		"clean": "rm -rf dist",
-		"test": "eslint src --ext .ts",
-		"lint": "eslint src --ext .ts --fix",
+		"test": "jest",
+		"test:lint": "eslint src --ext .ts",
+		"lint": "eslint 'src/**/*.{ts,tsx}'",
 		"dev": "tsc-watch --onSuccess \"node dist/src/sage.js\"",
 		"onboard": "node dist/onboard/onboard.js",
 		"nudge": "node dist/onboard/nudge.js",
@@ -45,6 +46,7 @@
 		"module-alias": "^2.2.2",
 		"moment": "^2.29.1",
 		"mongodb": "^3.6.3",
+		"mongoose": "^8.19.2",
 		"node": "^24.8.0",
 		"node-cron": "^2.0.3",
 		"node-fetch": "^2.6.1",
@@ -59,15 +61,19 @@
 	},
 	"devDependencies": {
 		"@types/console-stamp": "^0.2.33",
+		"@types/jest": "^30.0.0",
 		"@types/mongodb": "^3.6.3",
 		"@types/node": "^14.18.63",
 		"@types/node-cron": "^2.0.3",
 		"@types/node-fetch": "^2.5.7",
 		"@types/nodemailer": "^6.4.0",
-		"@typescript-eslint/eslint-plugin": "^4.23.0",
-		"@typescript-eslint/parser": "^4.23.0",
-		"eslint": "^7.26.0",
+		"@typescript-eslint/eslint-plugin": "^4.33.0",
+		"@typescript-eslint/parser": "^4.33.0",
+		"dotenv-cli": "^10.0.0",
+		"eslint": "^7.32.0",
+		"jest": "^30.2.0",
+		"ts-jest": "^29.4.5",
 		"tsc-watch": "^4.6.2",
-		"typescript": "^5.0.2"
+		"typescript": "^5.9.3"
 	}
 }

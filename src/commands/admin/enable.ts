@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, ApplicationCommandPermissions, ChatInputCommandInteraction, Formatters,
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, ApplicationCommandPermissions, ChatInputCommandInteraction, codeBlock,
 	InteractionResponse } from 'discord.js';
 import { BOTMASTER_PERMS } from '@lib/permissions';
 import { getCommand } from '@root/src/lib/utils/generalUtils';
@@ -24,7 +24,7 @@ export default class extends Command {
 		const command = getCommand(interaction.client, commandInput);
 
 		//	check if command exists or is already enabled
-		if (!command) return interaction.reply({ content: `I couldn't find a command called \`${command}\``, ephemeral: true });
+		if (!command) return interaction.reply({ content: `I couldn't find a command called \`${commandInput}\``, ephemeral: true });
 		if (command.enabled) return interaction.reply({ content: `${command.name} is already enabled.`, ephemeral: true });
 
 		command.enabled = true;
@@ -38,7 +38,7 @@ export default class extends Command {
 			{ upsert: true }
 		);
 
-		return interaction.reply(Formatters.codeBlock('diff', `+>>> ${command.name} Enabled`));
+		return interaction.reply(codeBlock('diff', `+>>> ${command.name} Enabled`));
 	}
 
 }

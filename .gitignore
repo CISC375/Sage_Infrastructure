@@ -113,3 +113,13 @@ dist
 
 # TernJS port file
 .tern-port
+
+# local files
+config.ts
+config.example.ts
+
+# SageDeployment Files
+k8s/sage-deployment.yaml
+k8s/sage-configmap.yaml
+k8s/sage-secret.yaml
+k8s/sage-service.yaml

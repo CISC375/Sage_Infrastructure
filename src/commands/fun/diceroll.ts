@@ -40,8 +40,8 @@ export default class extends Command {
 	run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		let min = interaction.options.getNumber('minimum');
 		let max = interaction.options.getNumber('maximum');
-		const numRolls = interaction.options.getNumber('numdice') || DEFAULT_ROLLS;
-		const keepHighest = interaction.options.getNumber('keephighest') || numRolls;
+		const numRolls = interaction.options.getNumber('numdice') ?? DEFAULT_ROLLS;
+		const keepHighest = interaction.options.getNumber('keephighest') ?? numRolls;
 
 		if (!min) {
 			[min, max] = [DEFAULT_RANGE[0], max || DEFAULT_RANGE[1]];
