@@ -117,3 +117,9 @@ dist
 # local files
 config.ts
 config.example.ts
+
+# SageDeployment Files
+sage-deployment.yaml
+sage-configmap.yaml
+sage-secret.yaml
+sage-service.yaml
