@@ -119,7 +119,7 @@ config.ts
 config.example.ts
 
 # SageDeployment Files
-sage-deployment.yaml
-sage-configmap.yaml
-sage-secret.yaml
-sage-service.yaml
+k8s/sage-deployment.yaml
+k8s/sage-configmap.yaml
+k8s/sage-secret.yaml
+k8s/sage-service.yaml
