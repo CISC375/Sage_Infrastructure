@@ -15,6 +15,7 @@ module.exports = {
 		...tsJestTransformCfg,
 	},
 
+	// Map the TS path aliases so Jest resolves imports like @lib/foo
 	moduleNameMapper: {
 		"^@lib/(.*)$": "<rootDir>/src/lib/$1",
 		"^@root/(.*)$": "<rootDir>/$1",
