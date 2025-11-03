@@ -3,11 +3,11 @@ name: Run Jest Tests
 on:
   push:
     branches:
-      -  Julia-TestAutomation #main  # Run on push to `main` branch
+      -  mizuho #main  # Run on push to `main` branch
       - 'feature/*'  # Or you can specify any feature branches you want to test
   pull_request:
     branches:
-      - Julia-TestAutomation  # Run on pull request targeting `main` branch
+      - mizuho  # Run on pull request targeting `main` branch
 
 jobs:
   test:
