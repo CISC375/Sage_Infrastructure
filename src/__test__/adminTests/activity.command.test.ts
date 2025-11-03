@@ -1,9 +1,6 @@
-import { ActivityType, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
+import { ActivityType, ChatInputCommandInteraction } from 'discord.js';
 import ActivityCommand from '../../commands/admin/activity';
 
-// ------------------------------------------------------------------
-// モックの設定
-// ------------------------------------------------------------------
 
 const mockSetActivity = jest.fn();
 const mockReply = jest.fn().mockResolvedValue(undefined);
@@ -28,9 +25,6 @@ jest.mock('@root/config', () => ({
     }
 }));
 
-// ------------------------------------------------------------------
-// テストの開始
-// ------------------------------------------------------------------
 
 describe('Activity Command', () => {
     let command: ActivityCommand;
@@ -82,9 +76,10 @@ describe('Activity Command', () => {
             { upsert: true }
         );
 
+        // FIX: Changed 'flags: MessageFlags.Ephemeral' to 'ephemeral: true'
         expect(mockReply).toHaveBeenCalledWith({
             content: `Set ${mockConfig.BOT.NAME}'s activity to *${testStatus} ${testContent}*`,
-            flags: MessageFlags.Ephemeral,
+            ephemeral: true,
         });
     });
 
@@ -108,9 +103,11 @@ describe('Activity Command', () => {
             { $set: { status: { type: expectedType, content: testContent } } },
             { upsert: true }
         );
+
+        // FIX: Changed 'flags: MessageFlags.Ephemeral' to 'ephemeral: true'
         expect(mockReply).toHaveBeenCalledWith({
             content: `Set ${mockConfig.BOT.NAME}'s activity to *${testStatus} ${testContent}*`,
-            flags: MessageFlags.Ephemeral,
+            ephemeral: true,
         });
     });
 });

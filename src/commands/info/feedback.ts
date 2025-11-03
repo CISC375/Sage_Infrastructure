@@ -35,7 +35,7 @@ export default class extends Command {
 
 		if (file) embed.setImage(file.url);
 
-		feedbackChannel.send({ embeds: [embed] });
+		await feedbackChannel.send({ embeds: [embed] });
 
 		return interaction.reply({ content: `Thanks! I've sent your feedback to ${MAINTAINERS}.`, ephemeral: true });
 	}

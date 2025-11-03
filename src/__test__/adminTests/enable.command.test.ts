@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Formatters } from 'discord.js';
+import { ChatInputCommandInteraction, codeBlock } from 'discord.js';
 import EnableCommand from '../../commands/admin/enable';
 import { Command } from '@lib/types/Command';
 import { SageData } from '@lib/types/SageData';
@@ -100,7 +100,7 @@ describe('Enable Command', () => {
 
     // Success reply
     expect(mockInteraction.reply).toHaveBeenCalledWith(
-      Formatters.codeBlock('diff', `+>>> ${MOCK_COMMAND_NAME} Enabled`)
+      codeBlock('diff', `+>>> ${MOCK_COMMAND_NAME} Enabled`)
     );
   });
 

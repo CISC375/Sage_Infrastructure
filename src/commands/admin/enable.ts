@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, ApplicationCommandPermissions, ChatInputCommandInteraction, Formatters,
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, ApplicationCommandPermissions, ChatInputCommandInteraction, codeBlock,
 	InteractionResponse } from 'discord.js';
 import { BOTMASTER_PERMS } from '@lib/permissions';
 import { getCommand } from '@root/src/lib/utils/generalUtils';
@@ -32,13 +32,13 @@ export default class extends Command {
 
 		const { commandSettings } = await interaction.client.mongo.collection(DB.CLIENT_DATA).findOne({ _id: interaction.client.user.id }) as SageData;
 		commandSettings[commandSettings.findIndex(cmd => cmd.name === command.name)] = { name: command.name, enabled: true };
-		interaction.client.mongo.collection(DB.CLIENT_DATA).updateOne(
+		await interaction.client.mongo.collection(DB.CLIENT_DATA).updateOne(
 			{ _id: interaction.client.user.id },
 			{ $set: { commandSettings } },
 			{ upsert: true }
 		);
 
-		return interaction.reply(Formatters.codeBlock('diff', `+>>> ${command.name} Enabled`));
+		return interaction.reply(codeBlock('diff', `+>>> ${command.name} Enabled`));
 	}
 
 }

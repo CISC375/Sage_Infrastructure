@@ -52,7 +52,7 @@ export default class extends Command {
 			.setFooter({ text: `Last changed ${moment(currentStatus.page.updated_at).format('YYYY MMM Do')}` })
 			.setColor('Blurple');
 
-		interaction.editReply({ embeds: [embed] });
+		await interaction.editReply({ embeds: [embed] });
 	}
 
 }

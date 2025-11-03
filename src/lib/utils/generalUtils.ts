@@ -65,28 +65,9 @@ export async function updateDropdowns(interaction: CommandInteraction): Promise<
 	Thank you Ben for making v14 refactoring so much easier, now I'll just find some more hair having pulled all of mine out
 	- S
 	*/
-	let channel: TextChannel | null = null;
-	try {
-		channel = await interaction.guild.channels.fetch(CHANNELS.ROLE_SELECT) as TextChannel;
-	} catch (error) {
-		// failed to fetch channel
-		const responseEmbed = new EmbedBuilder()
-			.setColor('#ff0000')
-			.setTitle('Argument error')
-			.setDescription('Unknown channel, make sure your ROLE_SELECT channel ID is correct.');
-		interaction.channel?.send({ embeds: [responseEmbed] });
-		return;
-	}
-	if (!channel) {
-		const responseEmbed = new EmbedBuilder()
-			.setColor('#ff0000')
-			.setTitle('Argument error')
-			.setDescription('Unknown channel, make sure your ROLE_SELECT channel ID is correct.');
-		interaction.channel?.send({ embeds: [responseEmbed] });
-		return;
-	}
+	const channel = await interaction.guild.channels.fetch(CHANNELS.ROLE_SELECT) as TextChannel;
+	let coursesMsg, assignablesMsg;
 
-	let coursesMsg: any | undefined, assignablesMsg: any | undefined;
 	// find both dropdown messages, based on what's in the config
 	try {
 		coursesMsg = await channel.messages.fetch(ROLE_DROPDOWNS.COURSE_ROLES);
@@ -95,34 +76,23 @@ export async function updateDropdowns(interaction: CommandInteraction): Promise<
 		const responseEmbed = new EmbedBuilder()
 			.setColor('#ff0000')
 			.setTitle('Argument error')
-			.setDescription('Unknown message(s), make sure your channel and message ID are correct.');
-		interaction.channel?.send({ embeds: [responseEmbed] });
-		return; // stop here to avoid accessing undefined messages
+			.setDescription(`Unknown message(s), make sure your channel and message ID are correct.`);
+		interaction.channel.send({ embeds: [responseEmbed] });
 	}
-	if (!coursesMsg || !assignablesMsg) {
-		const responseEmbed = new EmbedBuilder()
-			.setColor('#ff0000')
-			.setTitle('Argument error')
-			.setDescription('Could not fetch dropdown messages.');
-		interaction.channel?.send({ embeds: [responseEmbed] });
-		return;
-	}
-	if (coursesMsg.author?.id !== BOT.CLIENT_ID || assignablesMsg.author?.id !== BOT.CLIENT_ID) {
+	if (coursesMsg.author.id !== BOT.CLIENT_ID || assignablesMsg.author.id !== BOT.CLIENT_ID) {
 		const responseEmbed = new EmbedBuilder()
 			.setColor('#ff0000')
 			.setTitle('Argument error')
 			.setDescription(`You must tag a message that was sent by ${BOT.NAME} (me!).`);
-		interaction.channel?.send({ embeds: [responseEmbed] });
-		return;
+		interaction.channel.send({ embeds: [responseEmbed] });
 	}
 
 	// get roles from DB
 	let courses: Array<Course> = await interaction.client.mongo.collection(DB.COURSES).find().toArray();
 	const assignableRoles = await interaction.client.mongo.collection(DB.ASSIGNABLE).find().toArray();
-	let assignables = [] as Array<{ name: string, id: string }>;
+	let assignables = [];
 	for (const role of assignableRoles) {
-		const fetched = await interaction.guild.roles.fetch(role.id).catch(() => null);
-		const name = fetched?.name ?? `Role ${role.id}`;
+		const { name } = await interaction.guild.roles.fetch(role.id);
 		assignables.push({ name, id: role.id });
 	}
 

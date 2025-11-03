@@ -30,12 +30,12 @@ export default class extends Command {
 			const responseMsg = `The role \`${role.name}\` has been removed.`;
 			await assignables.findOneAndDelete(newRole);
 			await updateDropdowns(interaction);
-			interaction.editReply(responseMsg);
+			await interaction.editReply(responseMsg);
 		} else {
 			await interaction.reply('Adding role...');
 			await assignables.insertOne(newRole);
 			await updateDropdowns(interaction);
-			interaction.editReply(`The role \`${role.name}\` has been added.`);
+			await interaction.editReply(`The role \`${role.name}\` has been added.`);
 			return;
 		}
 	}

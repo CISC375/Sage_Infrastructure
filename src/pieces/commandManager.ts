@@ -36,8 +36,7 @@ async function register(bot: Client): Promise<void> {
 
 	bot.on('interactionCreate', async interaction => {
 		if (interaction.isChatInputCommand() || interaction.isContextMenuCommand()) runCommand(interaction as ChatInputCommandInteraction, bot);
-		// if (interaction.isSelectMenu()) handleDropdown(interaction);
-		if (interaction.isStringSelectMenu()) handleDropdown(interaction);
+		if (interaction.isSelectMenu()) handleDropdown(interaction);
 		if (interaction.isModalSubmit()) handleModalBuilder(interaction, bot);
 		if (interaction.isButton()) handleButton(interaction);
 	});

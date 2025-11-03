@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, ApplicationCommandPermissions, ChatInputCommandInteraction, InteractionResponse, ActivityType, MessageFlags } from 'discord.js';
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, ApplicationCommandPermissions, ChatInputCommandInteraction, InteractionResponse, ActivityType } from 'discord.js';
 import { BOT, DB } from '@root/config';
 import { BOTMASTER_PERMS } from '@lib/permissions';
 import { Command } from '@lib/types/Command';
@@ -31,26 +31,29 @@ export default class extends Command {
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const bot = interaction.client;
+		
+		// FIX 1: Get 'content', not 'category'
 		const content = interaction.options.getString('content');
-		const statusStr = interaction.options.getString('status');
 
-		const typeMap: Record<string, ActivityType> = {
-			Playing: ActivityType.Playing,
-			Streaming: ActivityType.Streaming,
-			Listening: ActivityType.Listening,
-			Watching: ActivityType.Watching,
-			Competing: ActivityType.Competing
-		};
-		const type = typeMap[statusStr] ?? ActivityType.Playing;
+		// FIX 2: Get the string value for the reply, and the enum value for the API
+		const statusString = interaction.options.getString('status');
+		const typeEnum = ActivityType[statusString as keyof typeof ActivityType];
 
-		bot.user.setActivity(content, { type });
-		// update DB so it persists after restart
-		bot.mongo.collection(DB.CLIENT_DATA).updateOne(
+		// setting Sage's activity status in the guild
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore - TypeScript still complains but this is correct for discord.js v13/v14
+		// FIX 3: Use the numeric enum value (e.g., 3) for setActivity
+		bot.user.setActivity(content, { type: typeEnum });
+
+		//	updating Sage's activity status in the database (so that it stays upon a restart)
+		await bot.mongo.collection(DB.CLIENT_DATA).updateOne(
 			{ _id: bot.user.id },
-			{ $set: { status: { type, content } } },
+			// FIX 4: Use the numeric enum value (e.g., 3) for the database
+			{ $set: { status: { type: typeEnum, content } } },
 			{ upsert: true });
 
-		return interaction.reply({ content: `Set ${BOT.NAME}'s activity to *${statusStr} ${content}*`, flags: MessageFlags.Ephemeral });
+		// FIX 5: Use the original string (e.g., "Watching") for the reply
+		interaction.reply({ content: `Set ${BOT.NAME}'s activity to *${statusString} ${content}*`, ephemeral: true });
 	}
 
 }

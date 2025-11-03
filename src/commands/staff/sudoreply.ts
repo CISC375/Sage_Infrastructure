@@ -65,20 +65,20 @@ export default class extends Command {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			privThread = await courseGeneral.threads.create({
-				name: `${interaction.user.username}‘s anonymous question (${question.questionId})'`,
+				name: `${interaction.user.tag}‘s anonymous question (${question.questionId})'`,
 				autoArchiveDuration: 4320,
-				reason: `${interaction.user.username} asked an anonymous question`,
+				reason: `${interaction.user.tag} asked an anonymous question`,
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				type: `GUILD_PRIVATE_THREAD`
 			});
 		} else {
-			throw `Something went wrong creating ${asker.user.username}'s private thread. Please contact ${MAINTAINERS} for assistance!'`;
+			throw Error(`Something went wrong creating ${asker.user.tag}'s private thread. Please contact ${MAINTAINERS} for assistance!'`);
 		}
 
-		privThread.guild.members.fetch();
-		privThread.members.add(interaction.user.id);
-		privThread.members.add(question.owner);
+		await privThread.guild.members.fetch();
+		await privThread.members.add(interaction.user.id);
+		await privThread.members.add(question.owner);
 
 		const embed = new EmbedBuilder()
 			.setDescription(`I've sent your response to this thread: <#${privThread.id}>\n\n Please have any further conversation there.`);

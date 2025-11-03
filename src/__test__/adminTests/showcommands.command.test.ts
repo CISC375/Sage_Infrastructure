@@ -1,5 +1,5 @@
 import ShowCommandsCommand from '../../commands/admin/showcommands';
-import { ChatInputCommandInteraction, Formatters } from 'discord.js';
+import { ChatInputCommandInteraction, codeBlock } from 'discord.js';
 
 jest.mock('@lib/permissions', () => ({ BOTMASTER_PERMS: [{ id: 'botmaster_role_id', permission: true, type: 1 }] }));
 
@@ -28,6 +28,6 @@ describe('Admin ShowCommands Command', () => {
     await command.run(interaction);
 
     const expected = '+ Enabled\n- Disabled\n\n+ alpha\n- beta\n+ gamma';
-    expect(mockReply).toHaveBeenCalledWith(Formatters.codeBlock('diff', expected));
+    expect(mockReply).toHaveBeenCalledWith(codeBlock('diff', expected));
   });
 });

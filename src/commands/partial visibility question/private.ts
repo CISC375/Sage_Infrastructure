@@ -73,12 +73,12 @@ export default class extends Command {
 			throw `Something went wrong creating ${interaction.user.username}'s private thread. Please contact ${MAINTAINERS} for assistance!'`;
 		}
 
-		privThread.guild.members.fetch();
-		privThread.guild.members.cache.filter(mem => mem.roles.cache.has(course.roles.staff)
-		).forEach(staff => {
-			privThread.members.add(staff);
-		});
-		privThread.members.add(interaction.user.id);
+		await privThread.guild.members.fetch();
+		const staffMembers = privThread.guild.members.cache.filter(mem => mem.roles.cache.has(course.roles.staff));
+		for (const staff of staffMembers.values()) {
+			await privThread.members.add(staff);
+		}
+		await privThread.members.add(interaction.user.id);
 
 		const embed = new EmbedBuilder()
 			.setAuthor({ name: `${interaction.user.tag} (${interaction.user.id}) asked Question ${questionId}`, iconURL: interaction.user.avatarURL() })
@@ -104,7 +104,7 @@ export default class extends Command {
 			messageLink
 		};
 
-		interaction.client.mongo.collection(DB.PVQ).insertOne(entry);
+		await interaction.client.mongo.collection(DB.PVQ).insertOne(entry);
 
 		return interaction.reply({ content: `Your question has been sent to the staff. Any conversation about it will be had here: <#${privThread.id}>`, ephemeral: true });
 	}
