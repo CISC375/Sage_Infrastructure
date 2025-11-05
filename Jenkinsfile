@@ -9,7 +9,7 @@ pipeline {
         JENKINS_NODE_COOKIE='dontKillMe'
     }
 	stages {
-		stage('Test Build') {
+			stage('Test Build') {
 			steps {
 				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
 					sh 'find /tmp -user jenkins -print0 | xargs -0 rm -rf'
@@ -40,7 +40,7 @@ pipeline {
 				
 			}
 		}
-		stage('Lint') {
+			stage('Lint') {
 			steps {
 				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
 					sh 'echo "testing in temp workspace..."'
