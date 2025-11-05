@@ -59,6 +59,7 @@
 		"@pieces": "dist/src/pieces"
 	},
 	"devDependencies": {
+		"@touca/node": "^1.7.0",
 		"@types/console-stamp": "^0.2.33",
 		"@types/jest": "^30.0.0",
 		"@types/mongodb": "^3.6.3",
