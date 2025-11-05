@@ -15,6 +15,8 @@ module.exports = {
 		"^@lib/(.*)$": "<rootDir>/src/lib/$1",
 		"^@root/(.*)$": "<rootDir>/$1"
 	},
+	// Ensure Jest ignores compiled output when resolving modules and manual mocks
+	modulePathIgnorePatterns: ['<rootDir>/dist', '<rootDir>/build'],
 	testPathIgnorePatterns: ["/node_modules/", "/dist/"],
 };
 
