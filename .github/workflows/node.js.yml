@@ -13,6 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        ref: ${{ github.sha }}
     - name: Use Node.js
       uses: actions/setup-node@v4
       with:
@@ -48,7 +51,11 @@ jobs:
 
         echo "No unignored build errors found. Workflow continues."
     
-    - run: npm test
+    - name: Show Jest config
+      run: npx jest --showConfig | sed -n '1,120p'
+
+    - name: Run tests (no cache)
+      run: npx jest -c jest.config.js --no-cache
 
     # - name: Start Development
     # run: npm run dev
