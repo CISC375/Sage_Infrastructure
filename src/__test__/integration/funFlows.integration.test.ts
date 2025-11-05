@@ -1,4 +1,5 @@
 import register from '../../pieces/commandManager';
+import * as commandManagerModule from '../../pieces/commandManager';
 import interactionRouter from '../../pieces/interactionHandler';
 import * as pollModule from '../../commands/fun/poll';
 import * as rpsModule from '../../commands/fun/rockpaperscissors';
@@ -53,30 +54,20 @@ jest.mock('discord.js', () => {
 		Client,
 		Collection,
 		ApplicationCommandPermissionType: { Role: 'ROLE', User: 'USER' },
+		ApplicationCommandOptionType: {
+			String: 3,
+			Number: 10,
+			User: 6,
+			Channel: 7,
+			Attachment: 11,
+			Boolean: 5
+		},
+		ButtonStyle: { Primary: 1, Secondary: 2 },
 		ChannelType: { GuildText: 'GUILD_TEXT' }
 	};
 });
 
 const waitForPromises = () => new Promise(resolve => setImmediate(resolve));
-
-class DummyFunCommand extends Command {
-	description = 'dummy';
-	onRun = jest.fn(async (interaction: any, label: string) => interaction.reply({ content: label }));
-	runInGuild = true;
-
-	constructor(private readonly label: string) {
-		super();
-		this.permissions = [{
-			id: 'role-verified',
-			type: ApplicationCommandPermissionType.Role,
-			permission: true
-		}];
-	}
-
-	async run(interaction: any) {
-		return this.onRun(interaction, this.label);
-	}
-}
 
 function createRoleManager(roleIds: string[]) {
 	return {
@@ -92,25 +83,59 @@ function createRoleManager(roleIds: string[]) {
 }
 
 describe('Fun command interaction flows', () => {
+	const funCommandNames = [
+		'8ball',
+		'blindfoldedroosen',
+		'catfacts',
+		'coinflip',
+		'define',
+		'diceroll',
+		'doubt',
+		'f',
+		'latex',
+		'poll',
+		'quote',
+		'rockpaperscissors',
+		'submit',
+		'thisisfine',
+		'xkcd'
+	] as const;
+
 	afterEach(() => {
 		jest.restoreAllMocks();
 	});
 
-	test('slash dispatch handles multiple fun commands', async () => {
+	test('slash dispatch handles every fun command', async () => {
 		const client = new Client({
 			intents: [],
 			partials: []
 		}) as any;
 
-		const firstCommand = new DummyFunCommand('FIRST');
-		const secondCommand = new DummyFunCommand('SECOND');
-		firstCommand.name = 'fun-one';
-		secondCommand.name = 'fun-two';
+		jest.spyOn(commandManagerModule, 'loadCommands').mockImplementation(async (bot: any) => {
+			bot.commands = new Collection();
+			return Promise.resolve();
+		});
 
 		await register(client);
-		client.commands = new Collection();
-		client.commands.set(firstCommand.name, firstCommand);
-		client.commands.set(secondCommand.name, secondCommand);
+
+		const commandMap = new Collection<string, Command>();
+		const instantiatedFunCommands = funCommandNames.map(fileName => {
+			// eslint-disable-next-line @typescript-eslint/no-var-requires
+			const { default: FunCommand } = require(`../../commands/fun/${fileName}`);
+			const instance: Command = new FunCommand();
+			instance.name = fileName;
+			instance.permissions = [{
+				id: 'role-verified',
+				type: ApplicationCommandPermissionType.Role,
+				permission: true
+			}];
+			instance.runInGuild = true;
+			instance.run = jest.fn().mockResolvedValue(undefined);
+			commandMap.set(fileName, instance);
+			return { name: fileName, instance };
+		});
+
+		client.commands = commandMap;
 
 		const makeInteraction = (commandName: string, username: string) => ({
 			isChatInputCommand: () => true,
@@ -126,20 +151,18 @@ describe('Fun command interaction flows', () => {
 			reply: jest.fn().mockResolvedValue(undefined)
 		});
 
-		const firstInteraction = makeInteraction(firstCommand.name, 'UserOne');
-		const secondInteraction = makeInteraction(secondCommand.name, 'UserTwo');
-
-		client.emit('interactionCreate', firstInteraction as any);
-		client.emit('interactionCreate', secondInteraction as any);
+		instantiatedFunCommands.forEach(({ name }) => {
+			const interaction = makeInteraction(name, `user-${name}`);
+			client.emit('interactionCreate', interaction as any);
+		});
 
 		await waitForPromises();
 
-		expect(firstCommand.onRun).toHaveBeenCalledTimes(1);
-		expect(firstCommand.onRun).toHaveBeenCalledWith(firstInteraction, 'FIRST');
-		expect(secondCommand.onRun).toHaveBeenCalledTimes(1);
-		expect(secondCommand.onRun).toHaveBeenCalledWith(secondInteraction, 'SECOND');
-		expect(firstInteraction.reply).toHaveBeenCalledWith({ content: 'FIRST' });
-		expect(secondInteraction.reply).toHaveBeenCalledWith({ content: 'SECOND' });
+		instantiatedFunCommands.forEach(({ name, instance }) => {
+			expect(instance.run).toHaveBeenCalledTimes(1);
+			const [interactionArg] = (instance.run as jest.Mock).mock.calls[0];
+			expect(interactionArg.commandName).toBe(name);
+		});
 	});
 
 	test('interaction handler routes poll and RPS buttons', async () => {
