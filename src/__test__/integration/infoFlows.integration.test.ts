@@ -1,9 +1,5 @@
 import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
-import interactionRouter from '../../pieces/interactionHandler';
-import * as pollModule from '../../commands/fun/poll';
-import * as rpsModule from '../../commands/fun/rockpaperscissors';
-import { SageInteractionType } from '@lib/types/InteractionType';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
 let consoleLogSpy: jest.SpyInstance;
@@ -57,11 +53,12 @@ jest.mock('discord.js', () => {
 		ApplicationCommandPermissionType: { Role: 'ROLE', User: 'USER' },
 		ApplicationCommandOptionType: {
 			String: 3,
-			Number: 10,
+			Integer: 4,
+			Boolean: 5,
 			User: 6,
 			Channel: 7,
-			Attachment: 11,
-			Boolean: 5
+			Number: 10,
+			Attachment: 11
 		},
 		ButtonStyle: { Primary: 1, Secondary: 2 },
 		ChannelType: { GuildText: 'GUILD_TEXT' }
@@ -83,23 +80,17 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
-describe('Fun command interaction flows', () => {
-	const funCommandNames = [
-		'8ball',
-		'blindfoldedroosen',
-		'catfacts',
-		'coinflip',
-		'define',
-		'diceroll',
-		'doubt',
-		'f',
-		'latex',
-		'poll',
-		'quote',
-		'rockpaperscissors',
-		'submit',
-		'thisisfine',
-		'xkcd'
+describe('Info command interaction flows', () => {
+	const infoCommandNames = [
+		'commit',
+		'discordstatus',
+		'feedback',
+		'help',
+		'info',
+		'leaderboard',
+		'ping',
+		'serverinfo',
+		'stats'
 	] as const;
 
 	beforeEach(() => {
@@ -111,7 +102,7 @@ describe('Fun command interaction flows', () => {
 		jest.restoreAllMocks();
 	});
 
-	test('slash dispatch handles every fun command', async () => {
+	test('info commands respond for any verified member', async () => {
 		const client = new Client({
 			intents: [],
 			partials: []
@@ -125,10 +116,10 @@ describe('Fun command interaction flows', () => {
 		await register(client);
 
 		const commandMap = new Collection<string, Command>();
-		const instantiatedFunCommands = funCommandNames.map(fileName => {
+		const instantiatedInfoCommands = infoCommandNames.map(fileName => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
-			const { default: FunCommand } = require(`../../commands/fun/${fileName}`);
-			const instance: Command = new FunCommand();
+			const { default: InfoCommand } = require(`../../commands/info/${fileName}`);
+			const instance: Command = new InfoCommand();
 			instance.name = fileName;
 			instance.permissions = [{
 				id: 'role-verified',
@@ -143,7 +134,7 @@ describe('Fun command interaction flows', () => {
 
 		client.commands = commandMap;
 
-		const makeInteraction = (commandName: string, username: string) => ({
+		const makeInteraction = (commandName: string) => ({
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
 			isSelectMenu: () => false,
@@ -152,61 +143,21 @@ describe('Fun command interaction flows', () => {
 			commandName,
 			client,
 			channel: { type: ChannelType.GuildText },
-			user: { id: `${username}-id`, username },
+			user: { id: `user-${commandName}`, username: `User ${commandName}` },
 			member: { roles: createRoleManager(['role-verified']) },
 			reply: jest.fn().mockResolvedValue(undefined)
 		});
 
-		instantiatedFunCommands.forEach(({ name }) => {
-			const interaction = makeInteraction(name, `user-${name}`);
-			client.emit('interactionCreate', interaction as any);
+		instantiatedInfoCommands.forEach(({ name }) => {
+			client.emit('interactionCreate', makeInteraction(name) as any);
 		});
 
 		await waitForPromises();
 
-		instantiatedFunCommands.forEach(({ name, instance }) => {
+		instantiatedInfoCommands.forEach(({ name, instance }) => {
 			expect(instance.run).toHaveBeenCalledTimes(1);
 			const [interactionArg] = (instance.run as jest.Mock).mock.calls[0];
 			expect(interactionArg.commandName).toBe(name);
 		});
-	});
-
-	test('interaction handler routes poll and RPS buttons', async () => {
-		const client = new Client({
-			intents: [],
-			partials: []
-		}) as any;
-
-		await interactionRouter(client);
-
-		const pollSpy = jest.spyOn(pollModule, 'handlePollOptionSelect').mockResolvedValue(undefined);
-		const rpsSpy = jest.spyOn(rpsModule, 'handleRpsOptionSelect').mockResolvedValue(undefined);
-
-		const pollInteraction = {
-			isMessageComponent: () => true,
-			isButton: () => true,
-			customId: `${SageInteractionType.POLL}_choice`,
-			reply: jest.fn(),
-			user: { id: 'poll-user' }
-		};
-
-		const rpsInteraction = {
-			isMessageComponent: () => true,
-			isButton: () => true,
-			customId: `${SageInteractionType.RPS}_data`,
-			reply: jest.fn(),
-			user: { id: 'rps-user' }
-		};
-
-		client.emit('interactionCreate', pollInteraction as any);
-		client.emit('interactionCreate', rpsInteraction as any);
-
-		await waitForPromises();
-
-		expect(pollSpy).toHaveBeenCalledWith(client, pollInteraction);
-		expect(rpsSpy).toHaveBeenCalledWith(rpsInteraction);
-
-		pollSpy.mockRestore();
-		rpsSpy.mockRestore();
 	});
 });

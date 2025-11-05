@@ -1,9 +1,5 @@
 import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
-import interactionRouter from '../../pieces/interactionHandler';
-import * as pollModule from '../../commands/fun/poll';
-import * as rpsModule from '../../commands/fun/rockpaperscissors';
-import { SageInteractionType } from '@lib/types/InteractionType';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
 let consoleLogSpy: jest.SpyInstance;
@@ -11,9 +7,18 @@ let consoleLogSpy: jest.SpyInstance;
 jest.mock('@root/config', () => ({
 	BOT: { NAME: 'IntegrationBot', CLIENT_ID: 'client-id' },
 	GUILDS: { MAIN: 'guild-main' },
-	DB: { CLIENT_DATA: 'clientData' },
+	DB: { CLIENT_DATA: 'clientData', USERS: 'users' },
 	CHANNELS: { ROLE_SELECT: 'role-select' },
-	ROLES: { VERIFIED: 'role-verified' },
+	ROLES: {
+		VERIFIED: 'role-verified',
+		STAFF: 'role-staff',
+		ADMIN: 'role-admin',
+		MUTED: 'role-muted'
+	},
+	EMAIL: {
+		SENDER: 'test@example.com',
+		REPLY_TO: 'test@example.com'
+	},
 	MAINTAINERS: '@Maintainers'
 }));
 
@@ -57,11 +62,13 @@ jest.mock('discord.js', () => {
 		ApplicationCommandPermissionType: { Role: 'ROLE', User: 'USER' },
 		ApplicationCommandOptionType: {
 			String: 3,
-			Number: 10,
+			Integer: 4,
+			Boolean: 5,
 			User: 6,
 			Channel: 7,
-			Attachment: 11,
-			Boolean: 5
+			Role: 8,
+			Number: 10,
+			Attachment: 11
 		},
 		ButtonStyle: { Primary: 1, Secondary: 2 },
 		ChannelType: { GuildText: 'GUILD_TEXT' }
@@ -83,23 +90,18 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
-describe('Fun command interaction flows', () => {
-	const funCommandNames = [
-		'8ball',
-		'blindfoldedroosen',
-		'catfacts',
-		'coinflip',
-		'define',
-		'diceroll',
-		'doubt',
-		'f',
-		'latex',
-		'poll',
-		'quote',
-		'rockpaperscissors',
-		'submit',
-		'thisisfine',
-		'xkcd'
+describe('Staff command interaction flows', () => {
+	const staffCommandNames = [
+		'addassignment',
+		'blockpy',
+		'google',
+		'lookup',
+		'mute',
+		'resetlevel',
+		'roleinfo',
+		'sudoreply',
+		'warn',
+		'whois'
 	] as const;
 
 	beforeEach(() => {
@@ -111,7 +113,7 @@ describe('Fun command interaction flows', () => {
 		jest.restoreAllMocks();
 	});
 
-	test('slash dispatch handles every fun command', async () => {
+	test('authorized staff member can invoke every staff command', async () => {
 		const client = new Client({
 			intents: [],
 			partials: []
@@ -125,17 +127,11 @@ describe('Fun command interaction flows', () => {
 		await register(client);
 
 		const commandMap = new Collection<string, Command>();
-		const instantiatedFunCommands = funCommandNames.map(fileName => {
+		const instantiatedStaffCommands = staffCommandNames.map(fileName => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
-			const { default: FunCommand } = require(`../../commands/fun/${fileName}`);
-			const instance: Command = new FunCommand();
+			const { default: StaffCommand } = require(`../../commands/staff/${fileName}`);
+			const instance: Command = new StaffCommand();
 			instance.name = fileName;
-			instance.permissions = [{
-				id: 'role-verified',
-				type: ApplicationCommandPermissionType.Role,
-				permission: true
-			}];
-			instance.runInGuild = true;
 			instance.run = jest.fn().mockResolvedValue(undefined);
 			commandMap.set(fileName, instance);
 			return { name: fileName, instance };
@@ -143,7 +139,7 @@ describe('Fun command interaction flows', () => {
 
 		client.commands = commandMap;
 
-		const makeInteraction = (commandName: string, username: string) => ({
+		const makeInteraction = (commandName: string) => ({
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
 			isSelectMenu: () => false,
@@ -152,61 +148,71 @@ describe('Fun command interaction flows', () => {
 			commandName,
 			client,
 			channel: { type: ChannelType.GuildText },
-			user: { id: `${username}-id`, username },
-			member: { roles: createRoleManager(['role-verified']) },
+			user: { id: `user-${commandName}`, username: `User ${commandName}` },
+			member: { roles: createRoleManager(['role-staff']) },
 			reply: jest.fn().mockResolvedValue(undefined)
 		});
 
-		instantiatedFunCommands.forEach(({ name }) => {
-			const interaction = makeInteraction(name, `user-${name}`);
-			client.emit('interactionCreate', interaction as any);
+		instantiatedStaffCommands.forEach(({ name }) => {
+			client.emit('interactionCreate', makeInteraction(name) as any);
 		});
 
 		await waitForPromises();
 
-		instantiatedFunCommands.forEach(({ name, instance }) => {
+		instantiatedStaffCommands.forEach(({ name, instance }) => {
 			expect(instance.run).toHaveBeenCalledTimes(1);
 			const [interactionArg] = (instance.run as jest.Mock).mock.calls[0];
 			expect(interactionArg.commandName).toBe(name);
 		});
 	});
 
-	test('interaction handler routes poll and RPS buttons', async () => {
+	test('non-staff member is rejected from staff commands', async () => {
 		const client = new Client({
 			intents: [],
 			partials: []
 		}) as any;
 
-		await interactionRouter(client);
+		jest.spyOn(commandManagerModule, 'loadCommands').mockImplementation(async (bot: any) => {
+			bot.commands = new Collection();
+			return Promise.resolve();
+		});
 
-		const pollSpy = jest.spyOn(pollModule, 'handlePollOptionSelect').mockResolvedValue(undefined);
-		const rpsSpy = jest.spyOn(rpsModule, 'handleRpsOptionSelect').mockResolvedValue(undefined);
+		await register(client);
 
-		const pollInteraction = {
-			isMessageComponent: () => true,
-			isButton: () => true,
-			customId: `${SageInteractionType.POLL}_choice`,
-			reply: jest.fn(),
-			user: { id: 'poll-user' }
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const { default: StaffCommand } = require('../../commands/staff/mute');
+		const instance: Command = new StaffCommand();
+		instance.name = 'mute';
+		instance.run = jest.fn();
+
+		client.commands = new Collection([[instance.name, instance]]);
+
+		const replyMock = jest.fn().mockResolvedValue(undefined);
+
+		const interaction = {
+			isChatInputCommand: () => true,
+			isContextMenuCommand: () => false,
+			isSelectMenu: () => false,
+			isModalSubmit: () => false,
+			isButton: () => false,
+			commandName: 'mute',
+			client,
+			channel: { type: ChannelType.GuildText },
+			user: { id: 'user-no-role', username: 'NoRole' },
+			member: { roles: createRoleManager([]) },
+			reply: replyMock
 		};
 
-		const rpsInteraction = {
-			isMessageComponent: () => true,
-			isButton: () => true,
-			customId: `${SageInteractionType.RPS}_data`,
-			reply: jest.fn(),
-			user: { id: 'rps-user' }
-		};
+		const randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0);
 
-		client.emit('interactionCreate', pollInteraction as any);
-		client.emit('interactionCreate', rpsInteraction as any);
-
+		client.emit('interactionCreate', interaction as any);
 		await waitForPromises();
 
-		expect(pollSpy).toHaveBeenCalledWith(client, pollInteraction);
-		expect(rpsSpy).toHaveBeenCalledWith(rpsInteraction);
+		expect(instance.run).not.toHaveBeenCalled();
+		expect(replyMock).toHaveBeenCalledTimes(1);
+		expect(typeof replyMock.mock.calls[0][0]).toBe('string');
 
-		pollSpy.mockRestore();
-		rpsSpy.mockRestore();
+		randomSpy.mockRestore();
 	});
+
 });
