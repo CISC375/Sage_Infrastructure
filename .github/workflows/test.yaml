@@ -24,4 +24,4 @@ jobs:
        with:
          context: .
          push: true                   # ← enable push
-         tags: marcm0/sage-bot-repo:sage-bot  # ← your repo/image name
+         tags: marcm0/sage-bot-repo:sage-bot  # ← your repo/image name and tag
