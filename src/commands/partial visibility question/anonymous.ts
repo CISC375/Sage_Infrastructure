@@ -86,7 +86,7 @@ export default class extends Command {
 			messageLink
 		};
 
-		interaction.client.mongo.collection(DB.PVQ).insertOne(entry);
+		await interaction.client.mongo.collection(DB.PVQ).insertOne(entry);
 
 		return interaction.reply({ content: `Your question has been sent to your course anonymously. To reply anonymously, use \`/reply ${questionId} <response>\`.`, ephemeral: true });
 	}

@@ -26,6 +26,7 @@ export default class extends Command {
 		//	make sure course does not exist already
 		if (await interaction.client.mongo.collection(DB.COURSES).countDocuments({ name: course }) > 0) {
 			interaction.editReply({ content: `${course} has already been registered as a course.` });
+			return;
 		}
 		const reason = `Creating new course \`${course}\` as requested 
 		by \`${interaction.user.username}\` \`(${interaction.user.id})\`.`;
@@ -113,7 +114,7 @@ export default class extends Command {
 
 		await updateDropdowns(interaction);
 
-		interaction.editReply(`Successfully added course with ID ${course}`);
+		await interaction.editReply(`Successfully added course with ID ${course}`);
 	}
 
 	async createTextChannel(guild: Guild, name: string, permissionOverwrites: Array<OverwriteResolvable>, parent: string, reason: string): Promise<TextChannel> {

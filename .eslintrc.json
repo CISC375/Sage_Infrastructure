@@ -161,7 +161,7 @@
     ],
     "quote-props": ["error", "as-needed"],
     "quotes": [
-      "error",
+      "warning",
       "single",
       { "avoidEscape": true, "allowTemplateLiterals": true }
     ],

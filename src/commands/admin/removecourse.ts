@@ -23,7 +23,9 @@ export default class extends Command {
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		let timeout = DECISION_TIMEOUT;
 		const course = interaction.options.getChannel('course') as CategoryChannel;
-		console.log(course.id);
+		
+		// debugging
+		// console.log(course.id);
 
 		//	 grabbing course data
 		let channelCount;
@@ -112,13 +114,13 @@ export default class extends Command {
 
 					await updateDropdowns(interaction);
 
-					staffRole.delete(reason);
-					studentRole.delete(reason);
+					await staffRole.delete(reason);
+					await studentRole.delete(reason);
 
 					await interaction.editReply(`${channelCount} channels archived and ${userCount} users unenrolled from CISC ${courseId}`);
 				} catch (error) {
 					interaction.client.emit('error', error);
-					interaction.channel.send(`An error occured: ${error.message}`);
+					await interaction.channel.send(`An error occured: ${error.message}`);
 				}
 			} else {
 				await interaction.editReply({

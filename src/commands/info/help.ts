@@ -114,26 +114,20 @@ export default class extends Command {
 
 			const splitStr = helpStr.split(/\n\s*\n/).map(line => line === '' ? '\n' : line); // split string on blank lines, effectively one message for each category
 
-			let notified = false;
-			splitStr.forEach((helpMsg) => {
-				const embed = new EmbedBuilder()
-					.setTitle(`-- Commands --`)
-					.setDescription(helpMsg)
-					.setColor('Random');
-				interaction.user.send({ embeds: [embed] })
-					.then(() => {
-						if (!notified) {
-							interaction.reply({ content: 'I\'ve sent all commands to your DMs.', ephemeral: true });
-							notified = true;
-						}
-					})
-					.catch(() => {
-						if (!notified) {
-							interaction.reply({ content: 'I couldn\'t send you a DM. Please enable DMs and try again.', ephemeral: true });
-							notified = true;
-						}
-					});
-			});
+			try {
+				for (const helpMsg of splitStr) {
+					const embed = new EmbedBuilder()
+						.setTitle(`-- Commands --`)
+						.setDescription(helpMsg)
+						.setColor('Random');
+					await interaction.user.send({ embeds: [embed] });
+				}
+				// Only reply *after* all messages are sent successfully
+				await interaction.reply({ content: 'I\'ve sent all commands to your DMs.', ephemeral: true });
+			} catch (error) {
+				// This block runs if DMs are closed
+				await interaction.reply({ content: 'I wasn\'t able to DM you, do you have DMs disabled?', ephemeral: true });
+			}
 		}
 	}
 

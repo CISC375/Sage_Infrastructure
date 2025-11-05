@@ -49,8 +49,8 @@ export default class extends Command {
 		await interaction.channel.send(`Setting ${BOT.NAME}'s commands...`);
 		await interaction.guild.commands.set(commands);
 		await interaction.followUp(`Successfully refreshed ${BOT.NAME}'s commands. Restarting...`);
-		interaction.client.user.setActivity(`Restarting...`, { type: ActivityType.Playing });
-		interaction.channel.send(`Restarting ${BOT.NAME}`)
+		await interaction.client.user.setActivity(`Restarting...`, { type: ActivityType.Playing });
+		await interaction.channel.send(`Restarting ${BOT.NAME}`)
 			.then(() => {
 				interaction.client.destroy();
 				process.exit(0);

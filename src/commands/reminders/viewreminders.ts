@@ -14,8 +14,9 @@ export default class extends Command {
 			.find({ owner: interaction.user.id }).toArray();
 		reminders.sort((a, b) => a.expires.valueOf() - b.expires.valueOf());
 
-		if (reminders.length < 1) {
-			interaction.reply({ content: 'You don\'t have any pending reminders!', ephemeral: true });
+		if (reminders.length == 0) {
+			await interaction.reply({ content: 'You don\'t have any pending reminders!', ephemeral: true });
+			return;
 		}
 
 		const embeds: Array<EmbedBuilder> = [];

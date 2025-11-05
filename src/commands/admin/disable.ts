@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, ApplicationCommandPermissions, ChatInputCommandInteraction, Formatters,
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, ApplicationCommandPermissions, ChatInputCommandInteraction, codeBlock,
 	InteractionResponse } from 'discord.js';
 import { BOTMASTER_PERMS } from '@lib/permissions';
 import { getCommand } from '@root/src/lib/utils/generalUtils';
@@ -23,7 +23,8 @@ export default class extends Command {
 		const command = getCommand(interaction.client, commandInput);
 
 		//	check if command exists or is already disabled
-		if (!command) return interaction.reply({ content: `I couldn't find a command called \`${command}\``, ephemeral: true });
+		//  FIX: Use commandInput (the string) instead of command (the null object)
+		if (!command) return interaction.reply({ content: `I couldn't find a command called \`${commandInput}\``, ephemeral: true });
 		if (command.enabled === false) return interaction.reply({ content: `${command.name} is already disabled.`, ephemeral: true });
 
 		if (command.name === 'enable' || command.name === 'disable') {
@@ -35,13 +36,13 @@ export default class extends Command {
 
 		const { commandSettings } = await interaction.client.mongo.collection(DB.CLIENT_DATA).findOne({ _id: interaction.client.user.id }) as SageData;
 		commandSettings[commandSettings.findIndex(cmd => cmd.name === command.name)] = { name: command.name, enabled: false };
-		interaction.client.mongo.collection(DB.CLIENT_DATA).updateOne(
+		await interaction.client.mongo.collection(DB.CLIENT_DATA).updateOne(
 			{ _id: interaction.client.user.id },
 			{ $set: { commandSettings } },
 			{ upsert: true }
 		);
 
-		return interaction.reply(Formatters.codeBlock('diff', `->>> ${command.name} Disabled`));
+		return interaction.reply(codeBlock('diff', `->>> ${command.name} Disabled`));
 	}
 
 }

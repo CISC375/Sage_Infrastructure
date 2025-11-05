@@ -42,7 +42,10 @@ export default class extends Command {
 			labels: labels,
 			body: body || `\n\n<sub>Created by ${interaction.user.username} via ${BOT.NAME}</sub>`
 		}).catch(response => {
-			console.log(response);
+			
+			// Debugging
+			// console.log(response);
+			
 			let errormsg = '';
 			const { errors } = response as RequestError;
 			errors.forEach((error: { code; field; }) => {

@@ -42,7 +42,7 @@ export default class extends Command {
 				const backupResponse = await fetch(`http://chart.apis.google.com/chart?cht=tx&chl=${tex}`, { method: 'Get' });
 				if (!backupResponse.ok) {
 					// Both of these breaking is very unlikely
-					throw new Error(errorResponse);
+					throw Error(errorResponse);
 				}
 				image = await loadImage(await backupResponse.buffer(), 'png');
 			}
