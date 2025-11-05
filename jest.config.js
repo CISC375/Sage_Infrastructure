@@ -10,11 +10,10 @@ module.exports = {
 
 	testMatch: ['**/__test__/**/*.test.ts', '**/?(*.)+(spec|test).ts?(x)'],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-	setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'], // このパスは任意です
+	// Run setup before any test files are loaded so virtual mocks apply to module resolution
+	setupFiles: ['<rootDir>/jest.setup.ts'],
 	moduleNameMapper: {
 		"^@lib/(.*)$": "<rootDir>/src/lib/$1",
-		// Explicit mapping to avoid extension resolution issues on CI
-		"^@root/config$": "<rootDir>/config.ts",
 		"^@root/(.*)$": "<rootDir>/$1",
 	},
 	// Help Jest resolve absolute imports from project root
