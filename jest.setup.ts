@@ -25,7 +25,7 @@ jest.mock('@root/config', () => ({
         SENDER: 'no-reply@example.com',
         REPLY_TO: 'support@example.com',
     },
-}));
+}), { virtual: true });
 
 jest.mock('parse-duration', () => ({
     __esModule: true,

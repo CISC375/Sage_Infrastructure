@@ -13,7 +13,7 @@ module.exports = {
 	setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'], // このパスは任意です
 	moduleNameMapper: {
 		"^@lib/(.*)$": "<rootDir>/src/lib/$1",
-		"^@root/(.*)$": "<rootDir>/$1"
+		"^@root/(.*)$": "<rootDir>/$1",
 	},
 	// Ensure Jest ignores compiled output when resolving modules and manual mocks
 	modulePathIgnorePatterns: ['<rootDir>/dist', '<rootDir>/build'],
