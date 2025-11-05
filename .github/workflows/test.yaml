@@ -2,7 +2,7 @@ name: dockerimage #name of the workflow
 
 on:
  push:
-   branches: [ mizuho ] #which branch to watch for changes
+   branches: [ dockerWorkflow-Kevin ] #which branch to watch for changes
 
 jobs:
  build-and-push:
@@ -24,4 +24,4 @@ jobs:
        with:
          context: .
          push: true                   # ← enable push
-         tags: jun332/jun_131:main  # ← your repo/image name
+         tags: kevlund/sage-repo:test-bot  # ← your repo/image name
