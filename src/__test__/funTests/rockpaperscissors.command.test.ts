@@ -4,7 +4,10 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   EmbedBuilder,
+<<<<<<< HEAD
   ButtonStyle,
+=======
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
   InteractionResponse,
   Message,
 } from 'discord.js';
@@ -14,8 +17,12 @@ import RockPaperScissorsCommand, {
 } from '../../commands/fun/rockpaperscissors';
 import { SageInteractionType } from '@lib/types/InteractionType';
 import { buildCustomId, getDataFromCustomId } from '@lib/utils/interactionUtils';
+<<<<<<< HEAD
 import { BOT, ROLES } from '@root/config'; // ROLES is now needed for the mock type
 import { Command } from '@lib/types/Command';
+=======
+import { BOT } from '@root/config'; // ROLES is now needed for the mock type
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
 
 // --- Mocks ---
 

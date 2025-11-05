@@ -1,5 +1,8 @@
 const mute = require("../../commands/staff/mute").default;
+<<<<<<< HEAD
 import { MAINTAINERS, ROLES } from '@root/config';
+=======
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
 
 describe("mute command", () => {
 	let cmd;
@@ -58,6 +61,7 @@ describe("mute command", () => {
 		const mockGetUser = jest.fn().mockReturnValue('user');
 		const interaction = {
 			reply: mockReply,
+<<<<<<< HEAD
 			options: { getUser: mockGetUser },
 			guild: {
 				members: {
@@ -65,6 +69,36 @@ describe("mute command", () => {
 				}
 			},
 			user: { id: "0987654321", tag: "SenderUser"}
+=======
+			options: { 
+				getUser: mockGetUser 
+			},
+			guild: {
+				members: {
+					fetch: jest.fn().mockResolvedValueOnce(
+						{
+							id: "1234567890", 
+							displayName: "MutedUser", 
+							roles: {
+								cache: {
+									 has: jest.fn().mockReturnValue(false) 
+								},
+								add: jest.fn().mockReturnValue(true), 
+								remove: jest.fn().mockReturnValue(true)
+							}, 
+							user: {
+								username:"unmutedUser"
+							},
+							send: jest.fn().mockResolvedValue(true) 
+						}
+					)
+				}
+			},
+			user: { 
+				id: "0987654321", 
+				tag: "SenderUser"
+			}
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
 		};
 		await expect(cmd.run(interaction)).rejects.toThrow("Test error");
 		// reply was called once

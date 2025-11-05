@@ -20,7 +20,7 @@ export function getDataFromCustomId(customId: string): SageComponentInteractionD
  * @returns {string} the custom ID
  */
 export function buildCustomId(data: SageComponentInteractionData): string {
-	if (data.commandOwner.length !== 18) throw 'owner must be a 18 digit Discord ID';
+	if (data.commandOwner.length !== 18) throw 'owner must be an 18 digit Discord ID';
 	const customId = `${data.type}_${data.commandOwner}_${data.additionalData.join('_')}`;
 	if (customId.length > 100) {
 		throw 'Custom ID must not exceed 100 characters. Shorten additional data field.';

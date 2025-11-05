@@ -6,12 +6,17 @@
     "defines": [],
     "include_dirs": [],
     "libraries": [],
-    "msbuild_toolset": "v143",
-    "msvs_windows_target_platform_version": "10.0.22621.0"
+    "msvs_configuration_platform": "ARM64",
+    "xcode_configuration_platform": "arm64"
   },
   "variables": {
+    "arm_fpu": "neon",
     "asan": 0,
+<<<<<<< HEAD
     "clang": 0,
+=======
+    "clang": 1,
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
     "coverage": "false",
     "dcheck_always_on": 0,
     "debug_nghttp2": "false",
@@ -21,8 +26,13 @@
     "enable_pgo_use": "false",
     "error_on_warn": "false",
     "force_dynamic_crt": 0,
+<<<<<<< HEAD
     "host_arch": "x64",
     "icu_data_in": "..\\..\\deps\\icu-tmp\\icudt77l.dat",
+=======
+    "host_arch": "arm64",
+    "icu_data_in": "../../deps/icu-tmp/icudt77l.dat",
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
     "icu_endianness": "l",
     "icu_gyp_path": "tools/icu/icu-generic.gyp",
     "icu_path": "deps/icu-small",
@@ -30,9 +40,14 @@
     "icu_ver_major": "77",
     "is_debug": 0,
     "libdir": "lib",
+<<<<<<< HEAD
     "llvm_version": "0.0",
     "napi_build_version": "0",
     "nasm_version": "2.16",
+=======
+    "llvm_version": "16.0",
+    "napi_build_version": "0",
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
     "node_builtin_shareable_builtins": [
       "deps/cjs-module-lexer/lexer.js",
       "deps/cjs-module-lexer/dist/lexer.js",
@@ -367,7 +382,7 @@
     ],
     "node_module_version": 115,
     "node_no_browser_globals": "false",
-    "node_prefix": "\\usr\\local",
+    "node_prefix": "/",
     "node_release_urlbase": "https://nodejs.org/download/release/",
     "node_shared": "false",
     "node_shared_ada": "false",
@@ -390,8 +405,9 @@
     "node_use_node_snapshot": "true",
     "node_use_openssl": "true",
     "node_use_v8_platform": "true",
-    "node_with_ltcg": "true",
+    "node_with_ltcg": "false",
     "node_without_node_options": "false",
+<<<<<<< HEAD
     "node_write_snapshot_as_array_literals": "true",
     "openssl_is_fips": "false",
     "openssl_quic": "false",
@@ -399,6 +415,15 @@
     "shlib_suffix": "so.115",
     "single_executable_application": "true",
     "target_arch": "x64",
+=======
+    "node_write_snapshot_as_array_literals": "false",
+    "openssl_is_fips": "false",
+    "openssl_quic": "false",
+    "ossfuzz": "false",
+    "shlib_suffix": "115.dylib",
+    "single_executable_application": "true",
+    "target_arch": "arm64",
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
     "ubsan": 0,
     "use_prefix_to_find_headers": "false",
     "v8_enable_31bit_smis_on_64bit_arch": 0,
@@ -416,7 +441,10 @@
     "v8_enable_pointer_compression_shared_cage": 0,
     "v8_enable_sandbox": 0,
     "v8_enable_shared_ro_heap": 1,
+<<<<<<< HEAD
     "v8_enable_short_builtin_calls": 1,
+=======
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
     "v8_enable_v8_checks": 0,
     "v8_enable_webassembly": 1,
     "v8_no_strict_aliasing": 1,
@@ -426,6 +454,7 @@
     "v8_trace_maps": 0,
     "v8_use_siphash": 1,
     "want_separate_host_toolset": 0,
+<<<<<<< HEAD
     "nodedir": "C:\\Users\\Kevin Lundin\\AppData\\Local\\node-gyp\\Cache\\20.19.5",
     "python": "C:\\Python313\\python.exe",
     "standalone_static_library": 1,
@@ -449,5 +478,30 @@
     "prefix": "C:\\Users\\Kevin Lundin\\AppData\\Roaming\\npm",
     "userconfig": "C:\\Users\\Kevin Lundin\\.npmrc",
     "user_agent": "npm/10.8.2 node/v20.17.0 win32 x64 workspaces/false"
+=======
+    "xcode_version": "16.0",
+    "nodedir": "/Users/mizuho/Library/Caches/node-gyp/20.19.5",
+    "python": "/Library/Frameworks/Python.framework/Versions/3.11/bin/python3",
+    "standalone_static_library": 1,
+    "fallback_to_build": "true",
+    "build_from_source": "true",
+    "module": "/Users/mizuho/Sage_Infrastructure/lib/binding/your_module.node",
+    "module_name": "your_module",
+    "module_path": "/Users/mizuho/Sage_Infrastructure/lib/binding",
+    "napi_version": "9",
+    "node_abi_napi": "napi",
+    "node_napi_label": "node-v115",
+    "global_prefix": "/Users/mizuho/.nvm/versions/node/v20.19.5",
+    "local_prefix": "/Users/mizuho/Sage_Infrastructure",
+    "globalconfig": "/Users/mizuho/.nvm/versions/node/v20.19.5/etc/npmrc",
+    "engine_strict": "true",
+    "userconfig": "/Users/mizuho/.npmrc",
+    "init_module": "/Users/mizuho/.npm-init.js",
+    "npm_version": "10.8.2",
+    "node_gyp": "/Users/mizuho/.nvm/versions/node/v20.19.5/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js",
+    "cache": "/Users/mizuho/.npm",
+    "user_agent": "npm/10.8.2 node/v20.19.5 darwin arm64 workspaces/false",
+    "prefix": "/Users/mizuho/.nvm/versions/node/v20.19.5"
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
   }
 }

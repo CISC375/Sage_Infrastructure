@@ -9,7 +9,7 @@ export default class extends Command {
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const msgTime = new Date().getTime();
 		await interaction.reply('Ping?');
-		interaction.editReply(`Pong! Round trip took ${prettyMilliseconds(msgTime - interaction.createdTimestamp)}, REST ping ${interaction.client.ws.ping}ms.`);
+		await interaction.editReply(`Pong! Round trip took ${prettyMilliseconds(msgTime - interaction.createdTimestamp)}, REST ping ${interaction.client.ws.ping}ms.`);
 		return;
 	}
 

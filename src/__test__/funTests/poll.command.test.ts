@@ -4,8 +4,11 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   EmbedBuilder,
+<<<<<<< HEAD
   ButtonStyle,
   ApplicationCommandOptionType,
+=======
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
   InteractionResponse,
   Message,
   Client,
@@ -14,9 +17,13 @@ import {
 // Adjust this import path to match your project structure
 import PollCommand, { handlePollOptionSelect } from '../../commands/fun/poll';
 import { SageInteractionType } from '@lib/types/InteractionType';
+<<<<<<< HEAD
 import { BOT, DB, ROLES } from '@root/config';
 import { Command } from '@lib/types/Command';
 import { generateErrorEmbed, dateToTimestamp } from '@lib/utils/generalUtils';
+=======
+import { DB } from '@root/config';
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
 import parse from 'parse-duration';
 import { Poll } from '@lib/types/Poll';
 
@@ -96,9 +103,13 @@ jest.mock('@lib/utils/generalUtils', () => ({
 jest.mock('parse-duration', () => jest.fn());
 
 // --- Typed Mocks ---
+<<<<<<< HEAD
 const mockParse = parse as jest.Mock;
 const mockGenerateErrorEmbed = generateErrorEmbed as jest.Mock;
 const mockDateToTimestamp = dateToTimestamp as jest.Mock;
+=======
+const mockParse = parse as unknown as jest.MockedFunction<typeof parse>;
+>>>>>>> 35bb007c9c57d52ae04e06953b86aff4b93f5f2e
 const MockEmbedBuilder = EmbedBuilder as unknown as jest.Mock;
 const MockButtonBuilder = ButtonBuilder as unknown as jest.Mock;
 const MockActionRowBuilder = ActionRowBuilder as unknown as jest.Mock;

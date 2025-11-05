@@ -10,7 +10,7 @@ export default class extends Command {
 
 	async run(interaction: ChatInputCommandInteraction): Promise<InteractionResponse<boolean> | void> {
 		const bot = interaction.client;
-		bot.user.setActivity(`Restarting...`, { type: ActivityType.Playing });
+		await bot.user.setActivity(`Restarting...`, { type: ActivityType.Playing });
 		interaction.reply(`Restarting ${BOT.NAME}`)
 			.then(() => {
 				bot.destroy();

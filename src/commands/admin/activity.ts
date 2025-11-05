@@ -46,7 +46,7 @@ export default class extends Command {
 		bot.user.setActivity(content, { type: typeEnum });
 
 		//	updating Sage's activity status in the database (so that it stays upon a restart)
-		bot.mongo.collection(DB.CLIENT_DATA).updateOne(
+		await bot.mongo.collection(DB.CLIENT_DATA).updateOne(
 			{ _id: bot.user.id },
 			// FIX 4: Use the numeric enum value (e.g., 3) for the database
 			{ $set: { status: { type: typeEnum, content } } },

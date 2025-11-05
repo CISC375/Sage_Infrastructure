@@ -2,14 +2,19 @@ name: Main Pipeline
 
 on:
   push:
-    branches: [ "main", "Ava-branch-config" ]
+    branches: [ "mizuho", "Ava-branch-config" ]
   pull_request:
-    branches: [ "main", "Ava-branch-config" ]
+    branches: [ "mizuho", "Ava-branch-config" ]
 
 env:
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
   MAIN_BRANCH: 'main'
   SAGE_DIR: '/usr/local/sage/SageV2'
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
 
 jobs:
 
