@@ -2,9 +2,9 @@ name: Main Pipeline
 
 on:
   push:
-    branches: ["main", "Ava-branch-config"]
+    branches: ["main", "marcm"]
   pull_request:
-    branches: ["main", "Ava-branch-config"]
+    branches: ["main", "marcm"]
 
 env:
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
