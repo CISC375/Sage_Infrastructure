@@ -64,6 +64,30 @@ pipeline {
 				}
 			}
 		}
+		stage('Integration Tests') {
+			steps {
+				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+					sh 'echo "running integration tests..."'
+					sh 'npm run test:integration'
+					script{ stage_results = true }
+				}
+				script { 
+					discordSend(
+						description: "Integration tests " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + 
+						"](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")", 
+						footer: env.BUILD_TAG,
+						link: env.BUILD_URL, 
+						result: currentBuild.currentResult, 
+						title: JOB_NAME + " -- Integration Tests", 
+						webhookURL: env.DISCORD_WEBHOOK
+					)
+					if (stage_results == false) {
+						sh 'exit 1'
+					}
+					stage_results = false
+				}
+			}
+		}
 		stage('Deploy') {
 			steps {
 				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
