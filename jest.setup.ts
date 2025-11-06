@@ -1,6 +1,7 @@
 // jest.setup.ts
 
-jest.mock('@root/config', () => ({
+// Use relative path to avoid alias resolution issues in CI
+jest.mock('./config.ts', () => ({
     BOT: { NAME: 'TestBot' },
     BOTMASTER_PERMS: [],
 

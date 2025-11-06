@@ -14,11 +14,10 @@ module.exports = {
 	setupFiles: ['<rootDir>/jest.setup.ts'],
 	moduleNameMapper: {
 		"^@lib/(.*)$": "<rootDir>/src/lib/$1",
+		"^@root/config$": "<rootDir>/config.ts",
 		"^@root/(.*)$": "<rootDir>/$1",
 	},
-	// Help Jest resolve absolute imports from project root
 	moduleDirectories: ['node_modules', '<rootDir>'],
-	// Ensure Jest ignores compiled output when resolving modules and manual mocks
 	modulePathIgnorePatterns: ['<rootDir>/dist', '<rootDir>/build'],
 	testPathIgnorePatterns: ["/node_modules/", "/dist/", "/build/"],
 };
