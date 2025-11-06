@@ -25,3 +25,5 @@ jobs:
     uses: ./.github/workflows/dockerimage.yaml
   documentation:
     uses: ./.github/workflows/documentation.yml
+  automaticTesting:
+    uses: ./.github/workflows/automaticTesting.yml
