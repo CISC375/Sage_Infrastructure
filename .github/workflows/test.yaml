@@ -2,7 +2,7 @@ name: dockerimage #name of the workflow
 
 on:
  push:
-   branches: [ mizuho-githubaction ] #which branch to watch for changes
+   branches: [ ] #which branch to watch for changes
 
 jobs:
  build-and-push:
