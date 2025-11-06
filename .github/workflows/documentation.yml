@@ -2,7 +2,7 @@ name: documentation
 
 on:
   push:
-    branches: [ "main", "Ava-branch-config", "mizuho" ]
+    branches: [ "main", "Ava-branch-config", "mizuho-githubaction" ]
 
 jobs:
   build:
