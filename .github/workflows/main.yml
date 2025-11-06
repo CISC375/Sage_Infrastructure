@@ -21,3 +21,5 @@ jobs:
     uses: ./.github/workflows/node.js.yml
   test-suite:
     uses: ./.github/workflows/test-suite.yml
+  dockerimage:
+    uses: ./.github/workflows/dockerimage.yaml

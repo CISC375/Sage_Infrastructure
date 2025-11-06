@@ -1,17 +1,14 @@
 name: dockerimage #name of the workflow
 
 on:
- push:
-   branches: ["mizuho-githubaction"] #which branch to watch for changes
+ workflow_call:
+#  push:
+#    branches: ["mizuho-githubaction"] #which branch to watch for changes
 
 jobs:
-  node:
-    uses: ./.github/workflows/node.js.yml
-
   build-and-push:
    # Build & push Docker image only on push events (not PRs) and after tests
    if: github.event_name == 'push'
-   needs: [node]
    runs-on: ubuntu-latest
    steps:
      - name: Checkout
