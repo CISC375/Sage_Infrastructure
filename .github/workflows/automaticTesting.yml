@@ -3,11 +3,11 @@ name: Run Jest Tests
 on:
   push:
     branches:
-      -  mizuho #main  # Run on push to `main` branch
+      -  mizuho-githubaction  # Run on push to `mizuho-githubaction` branch
       - 'feature/*'  # Or you can specify any feature branches you want to test
   pull_request:
     branches:
-      - mizuho  # Run on pull request targeting `main` branch
+      - mizuho-githubaction  # Run on pull request targeting `mizuho-githubaction` branch
 
 jobs:
   test:
