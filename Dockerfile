@@ -38,17 +38,20 @@ RUN npm ci --omit=dev
 # Build stage (development + build)
 FROM deps AS build
 
-# Mount caching for npm to speed up subsequent installs
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm ci
+# Install all dependencies including devDeps for build
+RUN npm ci
 
 # Copy the rest of the source code into the container
 COPY . .
 
+# Ensure config.ts exists (fallback to example in CI/containers)
+RUN test -f config.ts || cp config.example.ts config.ts
+
 # Build the project
 RUN npm run build
+
+# Also include package.json in dist for module-alias '@root/package.json' resolution
+RUN cp package.json dist/package.json
 
 # ─────────────────────────────────────────────────────────────
 # Final runtime stage (minimal image)
@@ -66,13 +69,9 @@ RUN apk add --no-cache \
 # Run the application as a non-root user
 USER node
 
-# Copy package.json so package manager commands work
-COPY package.json . 
-
 # Copy necessary files from previous stages
 COPY --from=build /usr/src/app/package.json ./package.json
 COPY --from=build /usr/src/app/package-lock.json ./package-lock.json
-COPY --from=build /usr/src/app/tsconfig.json ./tsconfig.json
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/assets ./assets
