@@ -10,7 +10,7 @@ on:
       - mizuho-githubaction  # Run on pull request targeting `mizuho-githubaction` branch
 
 jobs:
-  test:
+  jest_test:
     runs-on: ubuntu-latest
 
     steps:
