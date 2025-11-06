@@ -23,3 +23,5 @@ jobs:
     uses: ./.github/workflows/test-suite.yml
   dockerimage:
     uses: ./.github/workflows/dockerimage.yaml
+  documentation:
+    uses: ./.github/workflows/documentation.yml

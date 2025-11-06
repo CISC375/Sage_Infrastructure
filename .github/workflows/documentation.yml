@@ -1,8 +1,9 @@
 name: documentation
 
 on:
-  push:
-    branches: [ "main", "Ava-branch-config", "mizuho-githubaction" ]
+ workflow_call:
+#   push:
+#     branches: [ "main", "Ava-branch-config", "mizuho-githubaction" ]
 
 jobs:
   documentation:
