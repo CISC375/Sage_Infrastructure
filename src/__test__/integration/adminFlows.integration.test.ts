@@ -2,6 +2,7 @@ import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
+import { getCommandNames } from './utils/commandTestUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -174,26 +175,9 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
+const adminCommandNames = getCommandNames('../../commands/admin');
+
 describe('Admin command interaction flows', () => {
-	const adminCommandNames = [
-		'activity',
-		'addbutton',
-		'addcourse',
-		'announce',
-		'count',
-		'disable',
-		'edit',
-		'enable',
-		'issue',
-		'prune',
-		'refresh',
-		'removecourse',
-		'resetlevels',
-		'restart',
-		'setassign',
-		'showcommands',
-		'status'
-	] as const;
 
 	beforeEach(() => {
 		consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);

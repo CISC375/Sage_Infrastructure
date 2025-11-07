@@ -6,6 +6,7 @@ import * as rpsModule from '../../commands/fun/rockpaperscissors';
 import { SageInteractionType } from '@lib/types/InteractionType';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
+import { getCommandNames } from './utils/commandTestUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -83,24 +84,9 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
+const funCommandNames = getCommandNames('../../commands/fun');
+
 describe('Fun command interaction flows', () => {
-	const funCommandNames = [
-		'8ball',
-		'blindfoldedroosen',
-		'catfacts',
-		'coinflip',
-		'define',
-		'diceroll',
-		'doubt',
-		'f',
-		'latex',
-		'poll',
-		'quote',
-		'rockpaperscissors',
-		'submit',
-		'thisisfine',
-		'xkcd'
-	] as const;
 
 	beforeEach(() => {
 		consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);

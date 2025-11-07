@@ -2,6 +2,7 @@ import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
+import { getCommandNames } from './utils/commandTestUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -80,12 +81,9 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
+const reminderCommands = getCommandNames('../../commands/reminders');
+
 describe('Reminders command interaction flows', () => {
-	const reminderCommands = [
-		'cancelreminder',
-		'remind',
-		'viewreminders'
-	] as const;
 
 	beforeEach(() => {
 		consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);

@@ -2,6 +2,7 @@ import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
+import { getCommandNames } from './utils/commandTestUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -80,18 +81,9 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
+const infoCommandNames = getCommandNames('../../commands/info');
+
 describe('Info command interaction flows', () => {
-	const infoCommandNames = [
-		'commit',
-		'discordstatus',
-		'feedback',
-		'help',
-		'info',
-		'leaderboard',
-		'ping',
-		'serverinfo',
-		'stats'
-	] as const;
 
 	beforeEach(() => {
 		consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
