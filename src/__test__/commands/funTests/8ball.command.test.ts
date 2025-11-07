@@ -1,7 +1,15 @@
-// adjust the import path to the file that exports the command class
+/**
+ * Tests for the `/8ball` novelty command. While the command itself is simple, the
+ * tests double as living documentation for how we mock deterministic randomness
+ * and Discord embed replies in this codebase. The guiding principles are:
+ *   • Treat every interaction.reply call as the observable contract.
+ *   • Stub Math.random so expectations remain deterministic.
+ *   • Mirror the user-facing strings so regressions surface immediately.
+ */
 const Magic8BallCommand = require("../../../commands/fun/8ball").default;
 
-// We must define the array here because it is NOT exported from the command file
+// The real command pulls from the same array, but it is not exported, so we
+// mirror the data locally to keep the assertions explicit.
 const MAGIC8BALL_RESPONSES = [
     'As I see it, yes.',
     'Ask again later.',
@@ -25,22 +33,46 @@ const MAGIC8BALL_RESPONSES = [
     'You may rely on it.'
 ];
 
+/**
+ * Suite-level coverage for Magic8BallCommand: question validation, randomized
+ * responses, and error handling.
+ */
 describe("Magic8BallCommand", () => {
     let cmd;
     let mockRandom;
 
+    /**
+     * The command relies on Math.random and caches no state, so a fresh instance
+     * per test keeps assertions isolated. We also lock randomness to a fixed value
+     * so the embed string picked from MAGIC8BALL_RESPONSES never changes.
+     */
     beforeEach(() => {
         cmd = new Magic8BallCommand();
         // Mock Math.random to always return 0, which selects the first response
         mockRandom = jest.spyOn(Math, 'random').mockReturnValue(0);
     });
 
+    /**
+     * Jest spies are reset after each spec to avoid cross-test pollution. This is
+     * especially important for Math.random because other suites may rely on the
+     * original implementation.
+     */
     afterEach(() => {
         // Restore the original implementation after each test
         mockRandom.mockRestore();
     });
 
+    /**
+     * Happy-path coverage: a well-formed question should yield a themed embed and
+     * echo the user's prompt in the footer. We assert against the entire shape of
+     * the outgoing payload so changes to colors/titles/descriptions are reviewed.
+     */
     describe("with a valid question", () => {
+        /**
+         * Valid requests are asynchronous because Discord replies return a promise.
+         * The test verifies (a) Math.random drives the response message and (b) the
+         * command passes through whatever value interaction.reply resolves with.
+         */
         test("calls interaction.reply with a random response embed", async () => {
             const mockReplyResult = { mocked: true };
             const mockReply = jest.fn().mockResolvedValue(mockReplyResult);
@@ -85,7 +117,17 @@ describe("Magic8BallCommand", () => {
         });
     });
 
+    /**
+     * Validation coverage: the command is opinionated that a question must contain
+     * a question mark. We simulate that branch to guarantee the fallback text
+     * stays user-friendly and localized in a single place.
+     */
     describe("with an invalid question (no question mark)", () => {
+        /**
+         * By leaving Math.random mocked we ensure the branch short-circuits before
+         * randomness is consulted. The embed copy here is effectively business
+         * logic, so we assert against each string literal.
+         */
         test("calls interaction.reply with the 'smh' embed", async () => {
             const mockReplyResult = { mocked: true };
             const mockReply = jest.fn().mockResolvedValue(mockReplyResult);
@@ -124,6 +166,10 @@ describe("Magic8BallCommand", () => {
     });
 
 
+    /**
+     * Defensive coverage: the command should not swallow Discord API failures.
+     * Instead, run() should surface the error so the caller (and Jest) can catch it.
+     */
     test("propagates errors from interaction.reply", async () => {
         const err = new Error("reply failed");
         const mockReply = jest.fn().mockRejectedValue(err);

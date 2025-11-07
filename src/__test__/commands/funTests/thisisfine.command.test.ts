@@ -1,13 +1,28 @@
-// adjust the import path to the file that exports the command class
+/**
+ * Tests for the `/thisisfine` meme command. The command simply replies with
+ * an image attachment, so the test doubles as documentation of the expected
+ * file path/name and error handling.
+ */
 const ThisIsFineCommand = require("../../../commands/fun/thisisfine").default;
 
+/**
+ * Suite scope: verify the meme attachment contract and reply error handling.
+ */
 describe("ThisIsFineCommand", () => {
 	let cmd;
 
+	/**
+	 * New command instance each time keeps the tests hermetic even though the
+	 * implementation is stateless today.
+	 */
 	beforeEach(() => {
 		cmd = new ThisIsFineCommand();
 	});
 
+	/**
+	 * Happy path: verifies the command builds the attachment array correctly and
+	 * returns whatever interaction.reply resolves with.
+	 */
 	test("calls interaction.reply with a files array including the image and correct name", async () => {
 		const mockReplyResult = { mocked: true };
 		const mockReply = jest.fn().mockResolvedValue(mockReplyResult);
@@ -37,6 +52,9 @@ describe("ThisIsFineCommand", () => {
 		expect(result).toBe(mockReplyResult);
 	});
 
+	/**
+	 * Defensive path: if Discord rejects the reply we simply forward the error.
+	 */
 	test("propagates errors from interaction.reply", async () => {
 		const err = new Error("reply failed");
 		const mockReply = jest.fn().mockRejectedValue(err);
