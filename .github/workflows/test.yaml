@@ -25,4 +25,3 @@ jobs:
          context: .
          push: true                   # ← enable push
          tags: kevlund/sage-repo:test-bot  # ← your repo/image name
-         platforms: windows/amd64
