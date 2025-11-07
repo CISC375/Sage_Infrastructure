@@ -1,8 +1,11 @@
+/**
+ * Ensures staff-level slash commands are dynamically loaded and respect role-based gating.
+ */
 import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
-import { getCommandNames } from './utils/commandTestUtils';
+import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -76,8 +79,10 @@ jest.mock('discord.js', () => {
 	};
 });
 
+// Allows async handlers triggered by emitted events to complete.
 const waitForPromises = () => new Promise(resolve => setImmediate(resolve));
 
+/** Role manager shim so we can grant or revoke the staff role within a test interaction. */
 function createRoleManager(roleIds: string[]) {
 	return {
 		cache: {
@@ -110,6 +115,7 @@ describe('Staff command interaction flows', () => {
 			partials: []
 		}) as any;
 
+		// Prevents the production command loader from running; we will populate bot.commands manually.
 		jest.spyOn(commandManagerModule, 'loadCommands').mockImplementation(async (bot: any) => {
 			bot.commands = new Collection();
 			return Promise.resolve();
@@ -118,6 +124,7 @@ describe('Staff command interaction flows', () => {
 		await register(client);
 
 		const commandMap = new Collection<string, Command>();
+		// Instantiate each staff command class so the test remains comprehensive as files are added.
 		const instantiatedStaffCommands = staffCommandNames.map(fileName => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const { default: StaffCommand } = require(`../../commands/staff/${fileName}`);
@@ -130,6 +137,7 @@ describe('Staff command interaction flows', () => {
 
 		client.commands = commandMap;
 
+		// Builds a faux interaction representing a staff member invoking a command.
 		const makeInteraction = (commandName: string) => ({
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
@@ -150,6 +158,7 @@ describe('Staff command interaction flows', () => {
 
 		await waitForPromises();
 
+		// Every staff command should have run exactly once in response to its interaction.
 		instantiatedStaffCommands.forEach(({ name, instance }) => {
 			expect(instance.run).toHaveBeenCalledTimes(1);
 			const [interactionArg] = (instance.run as jest.Mock).mock.calls[0];
@@ -180,6 +189,7 @@ describe('Staff command interaction flows', () => {
 
 		const replyMock = jest.fn().mockResolvedValue(undefined);
 
+		// Interaction representing a regular member lacking the staff role.
 		const interaction = {
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
@@ -199,6 +209,7 @@ describe('Staff command interaction flows', () => {
 		client.emit('interactionCreate', interaction as any);
 		await waitForPromises();
 
+		// Run should be blocked and the user should get a helpful response.
 		expect(instance.run).not.toHaveBeenCalled();
 		expect(replyMock).toHaveBeenCalledTimes(1);
 		expect(typeof replyMock.mock.calls[0][0]).toBe('string');

@@ -1,8 +1,11 @@
+/**
+ * Ensures question tagging commands remain dynamically synchronized and callable by verified users.
+ */
 import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
-import { getCommandNames } from './utils/commandTestUtils';
+import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -66,8 +69,10 @@ jest.mock('discord.js', () => {
 	};
 });
 
+// Gives asynchronous event handlers a chance to finish after emitting test interactions.
 const waitForPromises = () => new Promise(resolve => setImmediate(resolve));
 
+/** Mock role cache so interactions can pretend to have the verified role. */
 function createRoleManager(roleIds: string[]) {
 	return {
 		cache: {
@@ -100,6 +105,7 @@ describe('Question tagging command interaction flows', () => {
 			partials: []
 		}) as any;
 
+		// Stubs out the real command loader to keep the test deterministic.
 		jest.spyOn(commandManagerModule, 'loadCommands').mockImplementation(async (bot: any) => {
 			bot.commands = new Collection();
 			return Promise.resolve();
@@ -108,6 +114,7 @@ describe('Question tagging command interaction flows', () => {
 		await register(client);
 
 		const commandMap = new Collection<string, Command>();
+		// Instantiate every question-tagging command to keep the test future proof.
 		const instantiatedQuestionCommands = questionCommands.map(fileName => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const { default: QuestionCommand } = require(`../../commands/question tagging/${fileName}`);
@@ -126,6 +133,7 @@ describe('Question tagging command interaction flows', () => {
 
 		client.commands = commandMap;
 
+		// Verified interaction mock.
 		const makeInteraction = (commandName: string) => ({
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
@@ -146,6 +154,7 @@ describe('Question tagging command interaction flows', () => {
 
 		await waitForPromises();
 
+		// Assertions ensure each command executed exactly once.
 		instantiatedQuestionCommands.forEach(({ name, instance }) => {
 			expect(instance.run).toHaveBeenCalledTimes(1);
 			const [interactionArg] = (instance.run as jest.Mock).mock.calls[0];

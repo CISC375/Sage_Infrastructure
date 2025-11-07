@@ -1,8 +1,11 @@
+/**
+ * Confirms reminder commands are auto-discovered and runnable by verified users end to end.
+ */
 import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
-import { getCommandNames } from './utils/commandTestUtils';
+import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -66,8 +69,10 @@ jest.mock('discord.js', () => {
 	};
 });
 
+// Allows asynchronous handlers triggered by interactionCreate to settle before assertions.
 const waitForPromises = () => new Promise(resolve => setImmediate(resolve));
 
+/** Lightweight role manager mock to grant verified access inside tests. */
 function createRoleManager(roleIds: string[]) {
 	return {
 		cache: {
@@ -100,6 +105,7 @@ describe('Reminders command interaction flows', () => {
 			partials: []
 		}) as any;
 
+		// Stub loadCommands so we can inject our own command map.
 		jest.spyOn(commandManagerModule, 'loadCommands').mockImplementation(async (bot: any) => {
 			bot.commands = new Collection();
 			return Promise.resolve();
@@ -108,6 +114,7 @@ describe('Reminders command interaction flows', () => {
 		await register(client);
 
 		const commandMap = new Collection<string, Command>();
+		// Instantiate the reminder command classes themselves for maximum coverage.
 		const instantiatedReminders = reminderCommands.map(fileName => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const { default: ReminderCommand } = require(`../../commands/reminders/${fileName}`);
@@ -126,6 +133,7 @@ describe('Reminders command interaction flows', () => {
 
 		client.commands = commandMap;
 
+		// Verified interaction template.
 		const makeInteraction = (commandName: string) => ({
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
@@ -146,6 +154,7 @@ describe('Reminders command interaction flows', () => {
 
 		await waitForPromises();
 
+		// Each reminder command should have fired exactly once.
 		instantiatedReminders.forEach(({ name, instance }) => {
 			expect(instance.run).toHaveBeenCalledTimes(1);
 			const [interactionArg] = (instance.run as jest.Mock).mock.calls[0];

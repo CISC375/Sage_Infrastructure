@@ -1,8 +1,11 @@
+/**
+ * Validates partial-visibility question commands execute for verified members with the live command list.
+ */
 import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
-import { getCommandNames } from './utils/commandTestUtils';
+import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -74,8 +77,10 @@ jest.mock('discord.js', () => {
 	};
 });
 
+// Lets the mocked Discord client finish handling emitted events before we assert.
 const waitForPromises = () => new Promise(resolve => setImmediate(resolve));
 
+/** Minimal role cache mock to toggle the verified role on/off per interaction. */
 function createRoleManager(roleIds: string[]) {
 	return {
 		cache: {
@@ -108,6 +113,7 @@ describe('Partial visibility question command flows', () => {
 			partials: []
 		}) as any;
 
+		// Avoid walking the filesystem again; we control bot.commands directly.
 		jest.spyOn(commandManagerModule, 'loadCommands').mockImplementation(async (bot: any) => {
 			bot.commands = new Collection();
 			return Promise.resolve();
@@ -116,6 +122,7 @@ describe('Partial visibility question command flows', () => {
 		await register(client);
 
 		const commandMap = new Collection<string, Command>();
+		// Build real command instances so we catch regressions in their constructors.
 		const instantiatedPvCommands = pvCommands.map(fileName => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const { default: PvCommand } = require(`../../commands/partial visibility question/${fileName}`);
@@ -134,6 +141,7 @@ describe('Partial visibility question command flows', () => {
 
 		client.commands = commandMap;
 
+		// Verified user interaction stub.
 		const makeInteraction = (commandName: string) => ({
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
@@ -154,6 +162,7 @@ describe('Partial visibility question command flows', () => {
 
 		await waitForPromises();
 
+		// Each command must have been triggered once to prove coverage.
 		instantiatedPvCommands.forEach(({ name, instance }) => {
 			expect(instance.run).toHaveBeenCalledTimes(1);
 			const [interactionArg] = (instance.run as jest.Mock).mock.calls[0];

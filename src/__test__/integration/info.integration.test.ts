@@ -1,8 +1,11 @@
+/**
+ * Ensures informational commands are loaded dynamically and callable by verified members.
+ */
 import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
-import { getCommandNames } from './utils/commandTestUtils';
+import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -66,8 +69,10 @@ jest.mock('discord.js', () => {
 	};
 });
 
+// Gives the event loop a chance to process interaction handlers before assertions.
 const waitForPromises = () => new Promise(resolve => setImmediate(resolve));
 
+/** Simplified role manager for assigning the verified role to fake members. */
 function createRoleManager(roleIds: string[]) {
 	return {
 		cache: {
@@ -100,6 +105,7 @@ describe('Info command interaction flows', () => {
 			partials: []
 		}) as any;
 
+		// Avoid loading command files twice; we manage the registry by hand for determinism.
 		jest.spyOn(commandManagerModule, 'loadCommands').mockImplementation(async (bot: any) => {
 			bot.commands = new Collection();
 			return Promise.resolve();
@@ -108,6 +114,7 @@ describe('Info command interaction flows', () => {
 		await register(client);
 
 		const commandMap = new Collection<string, Command>();
+		// Instantiate every info command so the test automatically tracks new files.
 		const instantiatedInfoCommands = infoCommandNames.map(fileName => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const { default: InfoCommand } = require(`../../commands/info/${fileName}`);
@@ -126,6 +133,7 @@ describe('Info command interaction flows', () => {
 
 		client.commands = commandMap;
 
+		// Interaction factory that mimics a verified user invoking the command.
 		const makeInteraction = (commandName: string) => ({
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
@@ -146,6 +154,7 @@ describe('Info command interaction flows', () => {
 
 		await waitForPromises();
 
+		// Each command should run once, proving verified users can execute the info suite.
 		instantiatedInfoCommands.forEach(({ name, instance }) => {
 			expect(instance.run).toHaveBeenCalledTimes(1);
 			const [interactionArg] = (instance.run as jest.Mock).mock.calls[0];

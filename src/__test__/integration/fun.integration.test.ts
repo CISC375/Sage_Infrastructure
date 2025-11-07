@@ -1,3 +1,6 @@
+/**
+ * Covers fun slash commands end to end, including button routing for interactive handlers.
+ */
 import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
 import interactionRouter from '../../pieces/interactionHandler';
@@ -6,7 +9,7 @@ import * as rpsModule from '../../commands/fun/rockpaperscissors';
 import { SageInteractionType } from '@lib/types/InteractionType';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
-import { getCommandNames } from './utils/commandTestUtils';
+import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -69,8 +72,10 @@ jest.mock('discord.js', () => {
 	};
 });
 
+// Ensures Discord client event handlers flush before expectations run.
 const waitForPromises = () => new Promise(resolve => setImmediate(resolve));
 
+/** Minimal role manager adapter so tests can express which roles a fake member holds. */
 function createRoleManager(roleIds: string[]) {
 	return {
 		cache: {
@@ -103,6 +108,7 @@ describe('Fun command interaction flows', () => {
 			partials: []
 		}) as any;
 
+		// Short-circuit command loading so we can insert mocked commands manually.
 		jest.spyOn(commandManagerModule, 'loadCommands').mockImplementation(async (bot: any) => {
 			bot.commands = new Collection();
 			return Promise.resolve();
@@ -111,6 +117,7 @@ describe('Fun command interaction flows', () => {
 		await register(client);
 
 		const commandMap = new Collection<string, Command>();
+		// Instantiate the real command classes so behavioral regressions surface when files change.
 		const instantiatedFunCommands = funCommandNames.map(fileName => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const { default: FunCommand } = require(`../../commands/fun/${fileName}`);
@@ -129,6 +136,7 @@ describe('Fun command interaction flows', () => {
 
 		client.commands = commandMap;
 
+		// Represents a verified user invoking a slash command.
 		const makeInteraction = (commandName: string, username: string) => ({
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
@@ -150,6 +158,7 @@ describe('Fun command interaction flows', () => {
 
 		await waitForPromises();
 
+		// Every fun command should run exactly once in response to its interaction.
 		instantiatedFunCommands.forEach(({ name, instance }) => {
 			expect(instance.run).toHaveBeenCalledTimes(1);
 			const [interactionArg] = (instance.run as jest.Mock).mock.calls[0];
@@ -165,6 +174,7 @@ describe('Fun command interaction flows', () => {
 
 		await interactionRouter(client);
 
+		// Confirm the router calls the correct handler based on the customId prefix.
 		const pollSpy = jest.spyOn(pollModule, 'handlePollOptionSelect').mockResolvedValue(undefined);
 		const rpsSpy = jest.spyOn(rpsModule, 'handleRpsOptionSelect').mockResolvedValue(undefined);
 

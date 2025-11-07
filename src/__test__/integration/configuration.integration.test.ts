@@ -1,8 +1,11 @@
+/**
+ * Verifies configuration commands are dynamically discovered and executable by verified members.
+ */
 import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
-import { getCommandNames } from './utils/commandTestUtils';
+import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -66,8 +69,12 @@ jest.mock('discord.js', () => {
 	};
 });
 
+// Allows pending microtasks (e.g., interaction handlers) to complete before making assertions.
 const waitForPromises = () => new Promise(resolve => setImmediate(resolve));
 
+/**
+ * Lightweight GuildMemberRoleManager stand-in for specifying which roles the test member holds.
+ */
 function createRoleManager(roleIds: string[]) {
 	return {
 		cache: {
@@ -100,6 +107,7 @@ describe('Configuration command interaction flows', () => {
 			partials: []
 		}) as any;
 
+		// Stub loadCommands so we can manually control the command registry without touching the filesystem.
 		jest.spyOn(commandManagerModule, 'loadCommands').mockImplementation(async (bot: any) => {
 			bot.commands = new Collection();
 			return Promise.resolve();
@@ -108,6 +116,7 @@ describe('Configuration command interaction flows', () => {
 		await register(client);
 
 		const commandMap = new Collection<string, Command>();
+		// Instantiate every configuration command detected on disk to guarantee coverage stays up to date.
 		const instantiatedConfigCommands = configurationCommands.map(fileName => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const { default: ConfigCommand } = require(`../../commands/configuration/${fileName}`);
@@ -126,6 +135,7 @@ describe('Configuration command interaction flows', () => {
 
 		client.commands = commandMap;
 
+		// Minimal representation of a slash command interaction with the verified role applied.
 		const makeInteraction = (commandName: string) => ({
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
@@ -146,6 +156,7 @@ describe('Configuration command interaction flows', () => {
 
 		await waitForPromises();
 
+		// Every command must run exactly once, confirming verified members can invoke them.
 		instantiatedConfigCommands.forEach(({ name, instance }) => {
 			expect(instance.run).toHaveBeenCalledTimes(1);
 			const [interactionArg] = (instance.run as jest.Mock).mock.calls[0];

@@ -1,8 +1,12 @@
+/**
+ * Ensures every admin slash command is discovered and enforces the expected permission gates.
+ * Covers both successful execution by admin members and rejection for regular users.
+ */
 import register from '../../pieces/commandManager';
 import * as commandManagerModule from '../../pieces/commandManager';
 import { Command } from '@lib/types/Command';
 import { ApplicationCommandPermissionType, ChannelType, Collection, Client } from 'discord.js';
-import { getCommandNames } from './utils/commandTestUtils';
+import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
 jest.mock('@root/config', () => ({
@@ -160,8 +164,13 @@ jest.mock('discord.js', () => {
 	};
 });
 
+// Flushes queued promises after emitting events on the mocked Discord client.
 const waitForPromises = () => new Promise(resolve => setImmediate(resolve));
 
+/**
+ * Mocks the GuildMemberRoleManager used in tests so we can simulate different role holdings
+ * without pulling in the entire Discord.js role cache implementation.
+ */
 function createRoleManager(roleIds: string[]) {
 	return {
 		cache: {
@@ -194,6 +203,7 @@ describe('Admin command interaction flows', () => {
 			partials: []
 		}) as any;
 
+		// Prevent commandManager.loadCommands from loading the actual filesystem; we control the command map.
 		jest.spyOn(commandManagerModule, 'loadCommands').mockImplementation(async (bot: any) => {
 			bot.commands = new Collection();
 			return Promise.resolve();
@@ -202,6 +212,7 @@ describe('Admin command interaction flows', () => {
 		await register(client);
 
 		const commandMap = new Collection<string, Command>();
+		// Dynamically instantiate every admin command so the test automatically covers new files.
 		const instantiatedAdminCommands = adminCommandNames.map(fileName => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const { default: AdminCommand } = require(`../../commands/admin/${fileName}`);
@@ -220,6 +231,7 @@ describe('Admin command interaction flows', () => {
 
 		client.commands = commandMap;
 
+		// Helper to build a minimal interaction for the targeted command.
 		const makeInteraction = (commandName: string) => ({
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
@@ -240,6 +252,7 @@ describe('Admin command interaction flows', () => {
 
 		await waitForPromises();
 
+		// Each command should have run exactly once with the relevant interaction payload.
 		instantiatedAdminCommands.forEach(({ name, instance }) => {
 			expect(instance.run).toHaveBeenCalledTimes(1);
 			const [interactionArg] = (instance.run as jest.Mock).mock.calls[0];
@@ -275,6 +288,7 @@ describe('Admin command interaction flows', () => {
 
 		const replyMock = jest.fn().mockResolvedValue(undefined);
 
+		// Member without admin role attempting to run an admin-only command.
 		const interaction = {
 			isChatInputCommand: () => true,
 			isContextMenuCommand: () => false,
@@ -294,6 +308,7 @@ describe('Admin command interaction flows', () => {
 		client.emit('interactionCreate', interaction as any);
 		await waitForPromises();
 
+		// Command should not run and the user should receive a failure reply.
 		expect(instance.run).not.toHaveBeenCalled();
 		expect(replyMock).toHaveBeenCalledTimes(1);
 		expect(typeof replyMock.mock.calls[0][0]).toBe('string');
