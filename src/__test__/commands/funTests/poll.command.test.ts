@@ -1,3 +1,9 @@
+/**
+ * PollCommand has the most surface area of the fun commands: it builds embeds,
+ * buttons, action rows, talks to Mongo, and owns a helper for button presses.
+ * This file documents each moving piece so future maintainers understand how
+ * the poll lifecycle is expected to behave end-to-end.
+ */
 import {
   ButtonInteraction,
   ChatInputCommandInteraction,
@@ -16,9 +22,13 @@ import { DB } from '@root/config';
 import parse from 'parse-duration';
 import { Poll } from '@lib/types/Poll';
 
+/**
+ * The command touches Discord, Mongo, and parsing helpers. To keep the test
+ * cases readable we set up deterministic mocks up front.
+ */
 // --- Mocks ---
 
-// Mock discord.js
+// Mock discord.js builders so we can assert on how embeds/buttons are assembled.
 jest.mock('discord.js', () => {
   const MockEmbedBuilder = jest.fn(() => ({
     setTitle: jest.fn().mockReturnThis(),
@@ -60,7 +70,7 @@ jest.mock('discord.js', () => {
   };
 });
 
-// Mock local dependencies
+// Mock local dependencies to freeze config/role IDs referenced by the command.
 jest.mock('@root/config', () => ({
   BOT: {
     NAME: 'TestBot',
@@ -92,11 +102,16 @@ jest.mock('@lib/utils/generalUtils', () => ({
 jest.mock('parse-duration', () => jest.fn());
 
 // --- Typed Mocks ---
+// Casting to jest.Mock unlocks helper APIs (mockReturnValue, etc.) in TS.
 const mockParse = parse as jest.Mock;
 const MockEmbedBuilder = EmbedBuilder as unknown as jest.Mock;
 const MockButtonBuilder = ButtonBuilder as unknown as jest.Mock;
 const MockActionRowBuilder = ActionRowBuilder as unknown as jest.Mock;
 
+/**
+ * Mongo stand-ins: lightweight objects that record inserts/finds so we can
+ * verify persistence without needing a real database.
+ */
 const mockCollection = {
   insertOne: jest.fn().mockResolvedValue({}),
   findOne: jest.fn().mockResolvedValue({} as Poll),
@@ -110,6 +125,10 @@ const mockClient = {
   mongo: mockMongo,
 } as unknown as Client;
 
+/**
+ * High-level PollCommand tests cover creation, validation, and persistence.
+ * Each spec uses a mocked ChatInputCommandInteraction to mimic Discord input.
+ */
 describe('PollCommand', () => {
   let command: PollCommand;
   let mockInteraction: jest.Mocked<ChatInputCommandInteraction>;
@@ -117,7 +136,10 @@ describe('PollCommand', () => {
   let mockButton: any;
   let mockRow: any;
 
-  // Helper function to create a default valid interaction
+  /**
+   * Helper function to spin up a minimal interaction populated with the provided
+   * options. It keeps the individual specs focused on assertions, not setup.
+   */
   const createMockInteraction = (options: Record<string, string>) => {
     const getString = (key: string) => options[key];
     return {
@@ -132,6 +154,10 @@ describe('PollCommand', () => {
     } as unknown as jest.Mocked<ChatInputCommandInteraction>;
   };
 
+  /**
+   * Reset the builder mocks, Mongo spies, and parse-duration return value before
+   * every spec to guarantee deterministic expectations.
+   */
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -171,7 +197,14 @@ describe('PollCommand', () => {
     command = new PollCommand();
   });
 
+  /**
+   * The `run` suite verifies how slash-command inputs are validated and persisted.
+   */
   describe('run()', () => {
+    /**
+     * Baseline coverage: minimal 2-option poll, single row of buttons,
+     * persistence call, and reply payload verification.
+     */
     it('should create a valid poll with 2 options', async () => {
       mockInteraction = createMockInteraction({
         timespan: '1m',
@@ -209,6 +242,10 @@ describe('PollCommand', () => {
       );
     });
 
+    /**
+     * Layout coverage: more than five options requires multiple action rows.
+     * The test makes sure we split the buttons correctly.
+     */
     it('should create a valid poll with 6 options (2 rows)', async () => {
       mockInteraction = createMockInteraction({
         timespan: '1m',
@@ -239,6 +276,10 @@ describe('PollCommand', () => {
     // --- Validation Error Tests ---
 
     // *** FIX 3: Change this test to use try/catch ***
+    /**
+     * Validation coverage: invalid poll types should short-circuit before any
+     * Discord or DB calls are made.
+     */
     it('should error on invalid optiontype', async () => {
       mockInteraction = createMockInteraction({
         timespan: '1m',
@@ -265,12 +306,20 @@ describe('PollCommand', () => {
 // == Handle Button Selection ==
 // =============================
 
+/**
+ * The helper is triggered by Discord button presses. These tests document how we
+ * fetch the poll, update Mongo, and communicate back to the voter.
+ */
 describe('handlePollOptionSelect', () => {
   let mockButtonInteraction: jest.Mocked<ButtonInteraction>;
   let mockMessage: jest.Mocked<Message>;
   let mockDbPoll: Poll;
   let mockPollOwner: GuildMember;
 
+  /**
+   * Each button test works with a seeded poll document and mocked Discord
+   * objects so we can focus on state transitions.
+   */
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -336,6 +385,10 @@ describe('handlePollOptionSelect', () => {
   });
 
   // *** ALL 'handlePollOptionSelect' tests are now fixed by FIX 2 ***
+  /**
+   * Baseline selection: user votes once in a single-choice poll, which should
+   * append their ID, write to Mongo, and DM back an ephemeral confirmation.
+   */
   it('should add a vote to a single poll', async () => {
     await handlePollOptionSelect(mockClient, mockButtonInteraction);
 
@@ -359,6 +412,10 @@ describe('handlePollOptionSelect', () => {
     expect(mockMessage.edit).toHaveBeenCalled();
   });
 
+  /**
+   * Toggling behavior: clicking the same option again removes the vote and
+   * persists the new empty state.
+   */
   it('should remove a vote if clicked again (single poll)', async () => {
     // User 'user123' has already voted 'Yes'
     mockDbPoll.results[0].users = ['user123'];

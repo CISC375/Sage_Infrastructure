@@ -1,3 +1,7 @@
+/**
+ * QuoteCommand fetches inspirational quotes from ZenQuotes. These tests document
+ * how we mock axios, assert on embed construction, and surface failures.
+ */
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
@@ -8,11 +12,12 @@ import QuoteCommand from '../../../commands/fun/quote';
 import axios from 'axios';
 
 // --- Mocks ---
+// Centralized so the tests can focus on behavior instead of setup noise.
 
-// Mock axios
+// Mock axios so we can control success/error responses from the API.
 jest.mock('axios');
 
-// Mock discord.js
+// Mock discord.js embed builder to track chained calls.
 jest.mock('discord.js', () => {
   // Mock the builders to be classes with chainable methods
   const MockEmbedBuilder = jest.fn(() => ({
@@ -44,15 +49,22 @@ jest.mock('@root/config', () => ({
 }));
 
 // --- Typed Mocks ---
-
-// We cast the imported mocks so TypeScript understands them
+// We cast the imported mocks so TypeScript understands them.
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
+/**
+ * Suite: QuoteCommand
+ * Focus: verifying metadata, successful replies, and error propagation.
+ */
 describe('QuoteCommand', () => {
   let command: QuoteCommand;
   let mockInteraction: jest.Mocked<ChatInputCommandInteraction>;
   let mockEmbed: any;
 
+  /**
+   * Each spec gets a fresh command, embed builder, and interaction mock. The
+   * command holds no internal state but this keeps expectations isolated.
+   */
   beforeEach(() => {
     // Clear all mocks before each test
     jest.clearAllMocks();
@@ -75,6 +87,9 @@ describe('QuoteCommand', () => {
     command = new QuoteCommand();
   });
 
+  /**
+   * Static metadata should stay informative, so we snapshot the description.
+   */
   describe('Command Definition', () => {
     it('should have the correct description', () => {
       expect(command.description).toBe(
@@ -83,7 +98,13 @@ describe('QuoteCommand', () => {
     });
   });
 
+  /**
+   * The runtime suite focuses on API calls and Discord replies.
+   */
   describe('run()', () => {
+    /**
+     * Happy path: axios resolves, we construct an embed, and reply once.
+     */
     it('should fetch a quote and reply with an embed', async () => {
       // 1. Setup the mock API response
       const mockApiResponse = {
@@ -114,6 +135,10 @@ describe('QuoteCommand', () => {
       expect(mockInteraction.reply).toHaveBeenCalledWith({ embeds: [mockEmbed] });
     });
 
+    /**
+     * Failure path: axios rejects and the error propagates so upstream consumers
+     * can decide how to handle the outage.
+     */
     it('should throw an error if the API fails', async () => {
       // 1. Setup the mock API error
       const mockError = new Error('API is down');
