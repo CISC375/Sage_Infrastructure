@@ -1,3 +1,9 @@
+jest.mock("nodemailer", () => ({
+	createTransport: jest.fn(() => ({
+		sendMail: jest.fn().mockResolvedValue(undefined)
+	}))
+}));
+
 const lookup = require("../../../commands/staff/lookup").default;
 
 describe("lookup Command", () => {
