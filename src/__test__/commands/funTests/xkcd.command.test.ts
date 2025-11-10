@@ -1,3 +1,8 @@
+/**
+ * XkcdCommand fetches comics, builds embeds, and wires up a collector so users
+ * can navigate via buttons. The suite below documents each flow to make the
+ * asynchronous dance easier to understand.
+ */
 import {
   ButtonInteraction,
   ChatInputCommandInteraction,
@@ -27,6 +32,7 @@ interface XkcdComic {
 }
 
 // --- Mocks ---
+// Builders and fetch are mocked so the tests remain hermetic/deterministic.
 jest.mock('discord.js', () => {
   const MockEmbedBuilder = jest.fn(() => ({
     setColor: jest.fn().mockReturnThis(),
@@ -130,6 +136,9 @@ const firstComic: XkcdComic = {
 };
 
 // --- Tests ---
+/**
+ * Main suite covering slash command execution plus the collector callbacks.
+ */
 describe('XkcdCommand', () => {
   let command: XkcdCommand;
   let mockInteraction: jest.Mocked<ChatInputCommandInteraction>;
@@ -137,6 +146,10 @@ describe('XkcdCommand', () => {
   let collectorCallback: (i: ButtonInteraction) => Promise<void>;
   let mathRandomSpy: jest.SpyInstance;
 
+  /**
+   * Each test starts with fresh builder mocks, a stubbed collector, and a
+   * deterministic fetch/Math.random implementation.
+   */
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -210,6 +223,9 @@ describe('XkcdCommand', () => {
     command = new XkcdCommand();
   });
 
+  /**
+   * Undo the Math.random spy after each spec to keep other tests honest.
+   */
   afterEach(() => {
     mathRandomSpy.mockRestore();
   });
@@ -218,6 +234,7 @@ describe('XkcdCommand', () => {
     customId: string,
     userId: string = 'user123',
   ): jest.Mocked<ButtonInteraction> => {
+    // Helper to generate minimal button interactions for the collector tests.
     return {
       customId,
       user: { id: userId },
@@ -226,7 +243,15 @@ describe('XkcdCommand', () => {
     } as unknown as jest.Mocked<ButtonInteraction>;
   };
 
+  /**
+   * `run` fetches whichever comic variant the user requested and seeds the
+   * message component collector.
+   */
   describe('run()', () => {
+    /**
+     * Latest mode should hit the root endpoint and only render navigation
+     * buttons that make sense (no "previous" before comic 1).
+     */
     it("should fetch 'latest' comic", async () => {
       (mockInteraction.options.getString as jest.Mock).mockReturnValue('latest');
       await command.run(mockInteraction);
@@ -236,6 +261,10 @@ describe('XkcdCommand', () => {
       expect(actionRowArgs.components).toHaveLength(2); // 2 used
     });
 
+    /**
+     * Random mode makes two requests: latest to know the bounds, and one for the
+     * randomly selected ID. We lock Math.random so the expected ID is stable.
+     */
     it("should fetch a 'random' comic", async () => {
       (mockInteraction.options.getString as jest.Mock).mockReturnValue('random');
       
@@ -254,6 +283,9 @@ describe('XkcdCommand', () => {
       expect(actionRowArgs.components).toHaveLength(3);
     });
 
+    /**
+     * Direct numeric lookup: ensures button availability lines up with edges.
+     */
     it("should fetch comic '1' and show correct buttons", async () => {
       (mockInteraction.options.getString as jest.Mock).mockReturnValue('1');
       await command.run(mockInteraction);
@@ -264,7 +296,15 @@ describe('XkcdCommand', () => {
     });
   });
 
+  /**
+   * Collector callbacks fire after the original command resolves; we simulate
+   * button presses to make sure pagination works.
+   */
   describe('Collector', () => {
+    /**
+     * Next button should fetch the following comic, update the embed, and defer
+     * the interaction so Discord knows we handled it.
+     */
     it('should respond to "next" button', async () => {
       // 1. Run the command with comic 122
       (mockInteraction.options.getString as jest.Mock).mockReturnValue('122');
@@ -289,6 +329,10 @@ describe('XkcdCommand', () => {
       );
     });
 
+    /**
+     * When already at comic #1, clicking "previous" should effectively no-op,
+     * but we still defer the interaction to avoid Discord errors.
+     */
     it('should not respond to "previous" button on comic 1', async () => {
       (mockInteraction.options.getString as jest.Mock).mockReturnValue('1');
       await command.run(mockInteraction);

@@ -1,3 +1,10 @@
+/**
+ * LatexCommand tests exercise the full rendering pipeline: interaction deferral,
+ * third-party HTTP calls, canvas manipulation, and final Discord replies. The
+ * suite intentionally mocks each dependency so future maintainers understand
+ * exactly which side effects the command performs and how failures should
+ * surface to users.
+ */
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
@@ -11,13 +18,17 @@ import fetch from 'node-fetch';
 import { createCanvas, loadImage } from 'canvas';
 import { generateErrorEmbed } from '@lib/utils/generalUtils';
 
+/**
+ * The command orchestrates several heavy dependencies. Centralizing the mocks
+ * here keeps the actual test cases focused on intent rather than setup noise.
+ */
 // --- Mocks ---
 
-// Mock node-fetch
+// Mock node-fetch so we can deterministically drive primary/backup API flows.
 jest.mock('node-fetch');
 const { Response } = jest.requireActual('node-fetch');
 
-// Mock canvas
+// Mock canvas so the tests remain fast and do not require the native bindings.
 jest.mock('canvas', () => {
   // We need to mock all the canvas functions
   const mockCanvasData = {
@@ -47,7 +58,7 @@ jest.mock('canvas', () => {
   };
 });
 
-// Mock discord.js
+// Mock discord.js builders to avoid pulling in the full library during tests.
 jest.mock('discord.js', () => {
   const MockEmbedBuilder = jest.fn(() => ({
     setImage: jest.fn().mockReturnThis(),
@@ -68,7 +79,7 @@ jest.mock('discord.js', () => {
   };
 });
 
-// Mock local dependencies
+// Mock local dependencies to pin the bot name/roles and error embed helper.
 jest.mock('@root/config', () => ({
   ROLES: {
     VERIFIED: 'mock-verified-role-id',
@@ -86,6 +97,7 @@ jest.mock('@lib/utils/generalUtils', () => ({
 }));
 
 // --- Typed Mocks ---
+// Casting to jest.Mock gives us typed helpers (.mockResolvedValue, etc.).
 const mockedFetch = fetch as unknown as jest.Mock;
 const mockedGenerateErrorEmbed = generateErrorEmbed as jest.Mock;
 const MockEmbedBuilder = EmbedBuilder as unknown as jest.Mock;
@@ -93,12 +105,22 @@ const MockAttachmentBuilder = AttachmentBuilder as unknown as jest.Mock;
 const mockedCreateCanvas = createCanvas as jest.Mock;
 const mockedLoadImage = loadImage as jest.Mock;
 
+/**
+ * Each spec focuses on a single branch of the rendering flow so future readers
+ * can immediately see which dependencies are involved and why the command makes
+ * multiple network calls.
+ */
 describe('LatexCommand', () => {
   let command: LatexCommand;
   let mockInteraction: jest.Mocked<ChatInputCommandInteraction>;
   let mockEmbed: any;
   let mockAttachment: any;
 
+  /**
+   * Resetting all mocks ensures no previous fetch/canvas configuration bleeds
+   * into subsequent specs. We also create minimal stand-ins for interaction and
+   * builder objects so the tests can assert on how they are used.
+   */
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -125,6 +147,11 @@ describe('LatexCommand', () => {
     command = new LatexCommand();
   });
 
+  /**
+   * Base case: the primary codecogs API succeeds. We expect deferReply to be
+   * awaited, fetch called with the primary host, the SVG decoded via canvas, and
+   * the resulting attachment sent back through editReply.
+   */
   it('should render LaTeX using the primary API', async () => {
     // 1. Setup mocks for primary API success
     const mockBase64 = Buffer.from('fake-svg-data').toString('base64');
@@ -159,6 +186,11 @@ describe('LatexCommand', () => {
     expect(mockEmbed.setImage).toHaveBeenCalledWith('attachment://tex.png');
   });
 
+  /**
+   * Resilience: when codecogs fails we fall back to Google Chart's PNG renderer.
+   * The expectations verify that two fetch calls occur and that the PNG path is
+   * followed.
+   */
   it('should render LaTeX using the backup API if primary fails', async () => {
     // 1. Setup mocks for primary fail, backup success
     const mockBackupBuffer = Buffer.from('fake-png-data');
@@ -190,6 +222,10 @@ describe('LatexCommand', () => {
     });
   });
 
+  /**
+   * When both APIs fail we surface a friendly error embed rather than editing
+   * the original reply. This captures the user-facing contract for outage cases.
+   */
   it('should send an error if both APIs fail', async () => {
     // 1. Setup mocks for both APIs failing
     mockedFetch.mockResolvedValue(new Response('Not Found', { status: 404 }));
@@ -209,6 +245,11 @@ describe('LatexCommand', () => {
     expect(mockInteraction.editReply).not.toHaveBeenCalled();
   });
 
+  /**
+   * Canvas failures are rare but possible if native bindings break. The command
+   * should respond the same way as API failures, so we simulate a thrown error
+   * from createCanvas/getImageData and assert on the follow-up flow.
+   */
   it('should send an error if canvas logic fails', async () => {
     // 1. Setup mocks for primary API success
     const mockBase64 = Buffer.from('fake-svg-data').toString('base64');

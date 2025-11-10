@@ -1,20 +1,37 @@
-// adjust the import path to the file that exports the command class
+/**
+ * Tests for the `/catfacts` command which fetches trivia from catfact.ninja and
+ * presents it as an embed. The emphasis here is documenting how we isolate API
+ * calls, assert on the embed contract, and ensure errors bubble up cleanly.
+ */
 const CatFactCommand = require("../../../commands/fun/catfacts").default;
 const axios = require("axios");
 
-// Mock the axios module
+// Mock the axios module globally so each test can configure .get as needed.
 jest.mock("axios");
 const mockedAxios = axios;
 
+/**
+ * Suite scope: CatFactCommand should fetch trivia, render embeds, and handle
+ * both Discord and API failures.
+ */
 describe("CatFactCommand", () => {
     let cmd;
 
+    /**
+     * Re-create the command for every test to avoid shared state and clear the
+     * axios mock so that prior expectations do not leak.
+     */
     beforeEach(() => {
         cmd = new CatFactCommand();
         // Clear mocks before each test
         mockedAxios.get.mockClear();
     });
 
+    /**
+     * Happy path: the external API succeeds and the command forwards the fact in
+     * an embed. The test validates the HTTP request, the embed copy, and the fact
+     * that run() returns whatever interaction.reply resolves with.
+     */
     test("calls interaction.reply with an embed containing a cat fact", async () => {
         const mockFact = "Cats have over 20 muscles that control their ears.";
         const mockApiResponse = {
@@ -58,6 +75,10 @@ describe("CatFactCommand", () => {
         expect(result).toBe(mockReplyResult);
     });
 
+    /**
+     * Discord errors should be surfaced so callers can decide whether to retry or
+     * log. We simulate a rejected reply while keeping the API call successful.
+     */
     test("propagates errors from interaction.reply", async () => {
         const mockFact = "A test fact.";
         const mockApiResponse = { data: { fact: mockFact } };
@@ -72,6 +93,11 @@ describe("CatFactCommand", () => {
         expect(mockReply).toHaveBeenCalledTimes(1);
     });
 
+    /**
+     * If the upstream cat facts API fails we short-circuit before touching
+     * Discord. The test asserts that behavior by expecting a rejection and
+     * verifying reply was never called.
+     */
     test("propagates errors from axios.get", async () => {
         const err = new Error("API failed");
         // Mock a failed API call

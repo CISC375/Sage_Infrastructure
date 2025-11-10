@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // Import the command class to be tested
-import CheckCommand from '../commands/check'; 
+import CheckCommand from '../../commands/check'; 
 
 // --- Mock Dependencies ---
 

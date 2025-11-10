@@ -1,3 +1,9 @@
+jest.mock("nodemailer", () => ({
+	createTransport: jest.fn(() => ({
+		sendMail: jest.fn().mockResolvedValue(undefined)
+	}))
+}));
+
 const blockpy = require("../../../commands/staff/blockpy").default;
 
 export default blockpy;

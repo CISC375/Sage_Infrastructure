@@ -1,13 +1,26 @@
-// adjust the import path to the file that exports the command class
+/**
+ * The `/f` command pays respects with or without a tagged target. These tests
+ * document the message copy, attachment details, and error propagation.
+ */
 const RespectsCommand = require("../../../commands/fun/f").default;
 
+/**
+ * Suite scope: cover both target/no-target flows plus error propagation.
+ */
 describe("RespectsCommand", () => {
     let cmd; // Using 'any' as the type since the interaction mock is complex
 
+    /**
+     * The command is stateless, but we recreate it every time for clarity.
+     */
     beforeEach(() => {
         cmd = new RespectsCommand();
     });
 
+    /**
+     * If the user does not specify a target we still send the meme with a generic
+     * trailing space (matching the production command).
+     */
     test("calls reply with correct content and file when no target is given", async () => {
         const mockReplyResult = { mocked: true };
         const mockReply = jest.fn().mockResolvedValue(mockReplyResult);
@@ -47,6 +60,10 @@ describe("RespectsCommand", () => {
         expect(result).toBe(mockReplyResult);
     });
 
+    /**
+     * When a target is present we mention them in the content string but reuse
+     * the same attachment payload.
+     */
     test("calls reply with correct content and file when a target is given", async () => {
         const mockReplyResult = { mocked: true };
         const mockReply = jest.fn().mockResolvedValue(mockReplyResult);
@@ -85,6 +102,9 @@ describe("RespectsCommand", () => {
         expect(result).toBe(mockReplyResult);
     });
 
+    /**
+     * Error handling: any Discord failure should surface to the caller.
+     */
     test("propagates errors from interaction.reply", async () => {
         const err = new Error("reply failed");
         const mockReply = jest.fn().mockRejectedValue(err);

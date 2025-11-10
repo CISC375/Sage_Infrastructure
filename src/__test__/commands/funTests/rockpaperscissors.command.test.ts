@@ -1,3 +1,8 @@
+/**
+ * RockPaperScissorsCommand is interactive: it builds buttons, manages timers,
+ * and responds to button presses via a helper. This test file documents those
+ * moving pieces with deterministic mocks so contributors understand the flow.
+ */
 import {
   ButtonInteraction,
   ChatInputCommandInteraction,
@@ -15,6 +20,7 @@ import { SageInteractionType } from '@lib/types/InteractionType';
 import { buildCustomId, getDataFromCustomId } from '@lib/utils/interactionUtils';
 import { BOT } from '@root/config'; // ROLES is now needed for the mock type
 
+// Centralize mocks so the behavior-focused tests read clearly.
 // --- Mocks ---
 
 // Mock discord.js
@@ -89,6 +95,10 @@ const mockGetDataFromCustomId = getDataFromCustomId as jest.Mock;
 
 const DECISION_TIMEOUT = 10; // From the file
 
+/**
+ * High-level suite that covers slash command registration, reply payloads, and
+ * timeout flows.
+ */
 describe('RockPaperScissors', () => {
   let command: RockPaperScissorsCommand;
   let mockInteraction: jest.Mocked<ChatInputCommandInteraction>;
@@ -99,6 +109,11 @@ describe('RockPaperScissors', () => {
   // --- CHANGE 1: Add this variable ---
   let originalSetInterval: any;
 
+  /**
+   * Each spec needs a clean slate because we override global timers and rely on
+   * builder mocks. We also hijack setInterval so we control the timer handle
+   * that becomes part of the button custom ID.
+   */
   beforeEach(() => {
     // Clear all mocks before each test
     jest.clearAllMocks();
@@ -157,12 +172,18 @@ describe('RockPaperScissors', () => {
     } as unknown as jest.Mocked<ChatInputCommandInteraction>;
   });
 
-  // --- CHANGE 3: Add this entire afterEach block ---
+  /**
+   * Restore the original timer implementation after each spec to avoid leakage
+   * into other test files.
+   */
   afterEach(() => {
     // Restore the original setInterval to prevent test leakage
     global.setInterval = originalSetInterval;
   });
 
+  /**
+   * Metadata ensures slash-command help text stays accurate.
+   */
   describe('Command Definition', () => {
     it('should have the correct description', () => {
       expect(command.description).toBe(
@@ -171,7 +192,13 @@ describe('RockPaperScissors', () => {
     });
   });
 
+  /**
+   * run() builds the interactive message and timer.
+   */
   describe('run()', () => {
+    /**
+     * Happy path: we render the embed, three buttons, and encode timer IDs.
+     */
     it('should reply with an embed and three buttons', async () => {
       await command.run(mockInteraction);
 
@@ -217,6 +244,9 @@ describe('RockPaperScissors', () => {
       });
     });
 
+    /**
+     * Ensures we schedule a timeout that references the interaction and duration.
+     */
     it('should set a timeout', async () => {
       await command.run(mockInteraction);
       expect(global.setInterval).toHaveBeenCalledTimes(1); // Check our new mock
@@ -228,6 +258,10 @@ describe('RockPaperScissors', () => {
     });
   });
 
+  /**
+   * timeoutMessage() is called either manually or via timer; it edits the
+   * original command response to show that time ran out.
+   */
   describe('timeoutMessage()', () => {
     it('should edit the reply to show a timeout message', () => {
       command.timeoutMessage(mockInteraction);
@@ -247,6 +281,9 @@ describe('RockPaperScissors', () => {
     });
   });
 
+  /**
+   * When timers advance we expect timeoutMessage to execute.
+   */
   describe('Timeout Flow', () => {
     it('should call timeoutMessage after the timeout duration', async () => {
       await command.run(mockInteraction);
@@ -266,12 +303,20 @@ describe('RockPaperScissors', () => {
   });
 });
 
+/**
+ * handleRpsOptionSelect drives the button interaction flow. We cover guard
+ * clauses (wrong user), win/lose/draw outcomes, and timer cleanup.
+ */
 describe('handleRpsOptionSelect', () => {
   let mockButtonInteraction: jest.Mocked<ButtonInteraction>;
   let mockMessage: jest.Mocked<Message>;
   let mockEmbed: any;
   let mathRandomSpy: jest.SpyInstance;
 
+  /**
+   * Each interaction test wires up a fake Discord button press and controls the
+   * bot's "choice" via Math.random.
+   */
   beforeEach(() => {
     jest.clearAllMocks();
     mockEmbed = {
@@ -308,6 +353,9 @@ describe('handleRpsOptionSelect', () => {
     mathRandomSpy.mockRestore();
   });
 
+  /**
+   * Guard clause: ignore button presses from users who did not start the game.
+   */
   it('should deny interaction if user is not the command owner', async () => {
     const customIdData = {
       type: SageInteractionType.RPS,
@@ -329,6 +377,9 @@ describe('handleRpsOptionSelect', () => {
     expect(mockButtonInteraction.deferUpdate).not.toHaveBeenCalled();
   });
 
+  /**
+   * Scenario: player chooses rock, bot chooses scissors → player victory.
+   */
   it('should handle a player win (rock vs scissors)', async () => {
     const customIdData = {
       type: SageInteractionType.RPS,
@@ -366,6 +417,9 @@ describe('handleRpsOptionSelect', () => {
     expect(mockButtonInteraction.deferUpdate).toHaveBeenCalled();
   });
 
+  /**
+   * Scenario: player chooses paper, bot chooses scissors → bot victory.
+   */
   it('should handle a bot win (paper vs scissors)', async () => {
     const customIdData = {
       type: SageInteractionType.RPS,
@@ -387,6 +441,9 @@ describe('handleRpsOptionSelect', () => {
     expect(mockEmbed.setColor).toHaveBeenCalledWith('Red');
   });
 
+  /**
+   * Scenario: identical throws should result in a draw embed/color.
+   */
   it('should handle a draw (rock vs rock)', async () => {
     const customIdData = {
       type: SageInteractionType.RPS,
@@ -409,6 +466,9 @@ describe('handleRpsOptionSelect', () => {
     expect(mockEmbed.setColor).toHaveBeenCalledWith('Blue');
   });
 
+  /**
+   * Second player-win scenario to cover another branch in the outcome table.
+   */
   it('should handle player win (scissors vs paper)', async () => {
     const customIdData = {
       type: SageInteractionType.RPS,

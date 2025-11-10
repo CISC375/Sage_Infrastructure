@@ -1,4 +1,8 @@
-// adjust the import path to the file that exports the command class
+/**
+ * ContestSubmitCommand routes user-submitted files into a staff feedback channel.
+ * The tests document how we mock Discord channel fetches, embed construction, and
+ * the acknowledgement message sent back to the submitter.
+ */
 const ContestSubmitCommand = require("../../../commands/fun/submit").default;
 // We need to mock the config file
 const { CHANNELS, ROLES } = require('@root/config'); // ROLES is imported here by the base class
@@ -17,6 +21,10 @@ jest.mock('@root/config', () => ({
 }));
 // --- End Mocks ---
 
+/**
+ * ContestSubmitCommand test suite focuses on the async pipeline of fetching the
+ * feedback channel, sending an embed, and notifying the user.
+ */
 describe("ContestSubmitCommand", () => {
     let cmd;
     let mockInteraction;
@@ -26,6 +34,10 @@ describe("ContestSubmitCommand", () => {
     let mockGetAttachment;
     let mockGetString;
 
+    /**
+     * Before each spec we recreate the command and the mock Discord interaction.
+     * The explicit mockReply/mockSend helpers let us assert against every API call.
+     */
     beforeEach(() => {
         cmd = new ContestSubmitCommand(); // This line was failing
 
@@ -61,7 +73,13 @@ describe("ContestSubmitCommand", () => {
         jest.clearAllMocks();
     });
 
+    /**
+     * Branch: user supplied a description alongside the attachment.
+     */
     describe("with description", () => {
+        /**
+         * Happy path verifying channel fetch, embed content, and acknowledgement.
+         */
         test("fetches channel, sends embed, and replies to user", async () => {
             const mockFile = { url: 'http://example.com/image.png' };
             const mockDesc = 'This is my submission.';
@@ -100,7 +118,13 @@ describe("ContestSubmitCommand", () => {
         });
     });
 
+    /**
+     * Branch: attachments with no text should still go through.
+     */
     describe("without description", () => {
+        /**
+         * Ensures the embed gracefully omits the optional description.
+         */
         test("sends embed without description field", async () => {
             const mockFile = { url: 'http://example.com/image.png' };
             mockGetAttachment.mockReturnValue(mockFile);
@@ -124,6 +148,10 @@ describe("ContestSubmitCommand", () => {
         });
     });
 
+    /**
+     * Defensive coverage: if we cannot fetch the destination channel we bubble
+     * the error and avoid partial actions.
+     */
     test("propagates errors from interaction.client.channels.fetch", async () => {
         const err = new Error("Fetch failed");
         mockFetch.mockRejectedValue(err);

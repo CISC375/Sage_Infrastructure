@@ -1,4 +1,8 @@
-// adjust the import path to the file that exports the command class
+/**
+ * RollCommand supports a surprisingly large set of inputs (custom ranges, dice
+ * counts, keep-highest logic). These tests document the validation rules,
+ * embed contract, and error handling.
+ */
 const RollCommand = require("../../../commands/fun/diceroll").default;
 // Import the mocked function
 const { generateErrorEmbed } = require('@root/src/lib/utils/generalUtils');
@@ -15,6 +19,10 @@ const DEFAULT_RANGE = [1, 6];
 const DEFAULT_ROLLS = 1;
 // --- End Mocks ---
 
+/**
+ * RollCommand suite
+ * Focus: validation messages, deterministic rolls, and Discord reply handling.
+ */
 describe("RollCommand", () => {
     let cmd;
     let mockRandom;
@@ -22,6 +30,11 @@ describe("RollCommand", () => {
     let mockGetNumber;
     let mockInteraction;
 
+    /**
+     * Fresh command + mocked Math.random for every spec guarantees deterministic
+     * outcomes. The default interaction simulates a Discord user invoking the
+     * slash command without optional arguments.
+     */
     beforeEach(() => {
         cmd = new RollCommand();
         // Spy on Math.random to control outcomes
@@ -46,13 +59,24 @@ describe("RollCommand", () => {
         generateErrorEmbed.mockClear();
     });
 
+    /**
+     * Restore Math.random after each test so other suites aren't impacted and
+     * wipe any lingering mock call history.
+     */
     afterEach(() => {
         // Restore all mocks
         mockRandom.mockRestore();
         jest.clearAllMocks();
     });
 
+    /**
+     * Validation ensures players receive actionable feedback before we even hit
+     * the RNG. Each test targets a specific guard clause.
+     */
     describe("Validation Errors", () => {
+        /**
+         * Providing only a minimum is ambiguous; we expect a friendly error embed.
+         */
         test("handles min without max", async () => {
             mockGetNumber.mockImplementation((name) =>
                 name === 'minimum' ? 10 : null
@@ -65,6 +89,9 @@ describe("RollCommand", () => {
             expect(mockReply).toHaveBeenCalledWith({ embeds: [mockErrorEmbed], ephemeral: true });
         });
 
+        /**
+         * Maximum less than minimum is a common typo, so document the response.
+         */
         test("handles max < min", async () => {
             mockGetNumber.mockImplementation((name) => {
                 if (name === 'minimum') return 10;
@@ -78,6 +105,9 @@ describe("RollCommand", () => {
             expect(mockReply).toHaveBeenCalledWith({ embeds: [mockErrorEmbed], ephemeral: true });
         });
 
+        /**
+         * This command only rolls integers; fractional bounds are rejected.
+         */
         test("handles non-integer min/max", async () => {
             mockGetNumber.mockImplementation((name) => {
                 if (name === 'minimum') return 1.5;
@@ -91,6 +121,9 @@ describe("RollCommand", () => {
             expect(mockReply).toHaveBeenCalledWith({ embeds: [mockErrorEmbed], ephemeral: true });
         });
 
+        /**
+         * Users cannot spam with too many dice; this ensures the cap works.
+         */
         test("handles invalid numRolls (too high)", async () => {
             mockGetNumber.mockImplementation((name) =>
                 name === 'numdice' ? 20 : null
@@ -102,6 +135,9 @@ describe("RollCommand", () => {
             expect(mockReply).toHaveBeenCalledWith({ embeds: [mockErrorEmbed], ephemeral: true });
         });
 
+        /**
+         * Keep-highest must be positive to make sense.
+         */
         test("handles invalid keepHighest (zero)", async () => {
             mockGetNumber.mockImplementation((name) =>
                 name === 'keephighest' ? 0 : null
@@ -113,6 +149,9 @@ describe("RollCommand", () => {
             expect(mockReply).toHaveBeenCalledWith({ embeds: [mockErrorEmbed], ephemeral: true });
         });
 
+        /**
+         * Keeping more dice than rolled should be caught early.
+         */
         test("handles keepHighest > numRolls", async () => {
             mockGetNumber.mockImplementation((name) => {
                 if (name === 'numdice') return 3;
@@ -127,7 +166,14 @@ describe("RollCommand", () => {
         });
     });
 
+    /**
+     * Once validation passes we check the embeds rendered for deterministic RNG
+     * seeds so copy regressions are caught quickly.
+     */
     describe("Successful Rolls", () => {
+        /**
+         * Default 1d6 roll; demonstrates how we convert Math.random into values.
+         */
         test("handles a default roll (1d6)", async () => {
             // (0.5 * (6 - 1 + 1)) + 1 = (0.5 * 6) + 1 = 3 + 1 = 4
             mockRandom.mockReturnValue(0.5);
@@ -146,6 +192,10 @@ describe("RollCommand", () => {
             expect(embed.footer.text).toBe(`TestUser rolled ${DEFAULT_ROLLS} dice ranging from ${DEFAULT_RANGE[0]} to ${DEFAULT_RANGE[1]}`);
         });
 
+        /**
+         * More complex configuration: custom range, multiple dice, and keep-
+         * highest logic. The inline math walkthrough makes the expectations clear.
+         */
         test("handles a custom roll (3d10 keep 2)", async () => {
             mockGetNumber.mockImplementation((name) => {
                 if (name === 'minimum') return 1;
@@ -185,6 +235,10 @@ describe("RollCommand", () => {
         });
     });
 
+    /**
+     * The command ultimately resolves by replying. If that fails we simply pass
+     * the rejection through.
+     */
     test("propagates errors from interaction.reply", async () => {
         const err = new Error("reply failed");
         mockReply.mockRejectedValue(err);
