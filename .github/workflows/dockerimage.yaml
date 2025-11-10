@@ -50,5 +50,5 @@ jobs:
          push: true
          tags: ${{ steps.meta.outputs.tags }}
          labels: ${{ steps.meta.outputs.labels }}
-         cache-from: type=registry,ref=docker.io/jun332/jun_131:buildcache
-         cache-to: type=registry,ref=docker.io/jun332/jun_131:buildcache,mode=max
+         cache-from: type=registry,ref=docker.io/kevlund/sage-repo:buildcache
+         cache-to: type=registry,ref=docker.io/kevlund/sage-repo:buildcache,mode=max
