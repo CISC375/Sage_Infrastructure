@@ -37,9 +37,11 @@ jobs:
        id: meta
        uses: docker/metadata-action@v5
        with:
-         context: .
-         push: true                   # ← enable push
-         tags: kevlund/sage-repo:test-bot  # ← your repo/image name
+         images: |
+           docker.io/kevlund/sage-repo
+         tags: |
+           type=raw,value=test-bot,enable=${{ github.ref == 'refs/heads/mizuho-githubaction' }}
+           type=sha,enable=true,format=long	
      - name: Build and push Docker image
        uses: docker/build-push-action@v6
        with:
