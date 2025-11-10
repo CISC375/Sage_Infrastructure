@@ -8,6 +8,7 @@ import { ApplicationCommandPermissionType, ChannelType, Collection, Client } fro
 import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
+// Fix config IDs so reminder permission/collection lookups remain predictable.
 jest.mock('@root/config', () => ({
 	BOT: { NAME: 'IntegrationBot', CLIENT_ID: 'client-id' },
 	GUILDS: { MAIN: 'guild-main' },
@@ -17,6 +18,7 @@ jest.mock('@root/config', () => ({
 	MAINTAINERS: '@Maintainers'
 }));
 
+// Mock just enough Discord.js surface (client + builders) for reminder tests.
 jest.mock('discord.js', () => {
 	const { EventEmitter } = require('events');
 
@@ -86,6 +88,7 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
+// Stay in sync with the real reminders directory so coverage adjusts automatically.
 const reminderCommands = getCommandNames('../../commands/reminders');
 
 describe('Reminders command interaction flows', () => {
@@ -126,6 +129,7 @@ describe('Reminders command interaction flows', () => {
 				permission: true
 			}];
 			instance.runInGuild = true;
+			// Mock run handlers so assertions stay focused on wiring.
 			instance.run = jest.fn().mockResolvedValue(undefined);
 			commandMap.set(fileName, instance);
 			return { name: fileName, instance };

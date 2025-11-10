@@ -8,6 +8,7 @@ import { ApplicationCommandPermissionType, ChannelType, Collection, Client } fro
 import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
+// Provide deterministic IDs so permission logic targets known role/channel values.
 jest.mock('@root/config', () => ({
 	BOT: { NAME: 'IntegrationBot', CLIENT_ID: 'client-id' },
 	GUILDS: { MAIN: 'guild-main' },
@@ -17,6 +18,7 @@ jest.mock('@root/config', () => ({
 	MAINTAINERS: '@Maintainers'
 }));
 
+// Discord.js shim that exposes only the builders/client state these tests rely on.
 jest.mock('discord.js', () => {
 	const { EventEmitter } = require('events');
 
@@ -74,6 +76,7 @@ const waitForPromises = () => new Promise(resolve => setImmediate(resolve));
 
 /**
  * Lightweight GuildMemberRoleManager stand-in for specifying which roles the test member holds.
+ * Only the ability to locate a role by ID is needed for these flows.
  */
 function createRoleManager(roleIds: string[]) {
 	return {
@@ -88,6 +91,7 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
+// Keep coverage tied to the real configuration command directory.
 const configurationCommands = getCommandNames('../../commands/configuration');
 
 describe('Configuration command interaction flows', () => {
@@ -128,6 +132,7 @@ describe('Configuration command interaction flows', () => {
 				permission: true
 			}];
 			instance.runInGuild = true;
+			// Stub the handler so assertions can focus on dispatch success.
 			instance.run = jest.fn().mockResolvedValue(undefined);
 			commandMap.set(fileName, instance);
 			return { name: fileName, instance };

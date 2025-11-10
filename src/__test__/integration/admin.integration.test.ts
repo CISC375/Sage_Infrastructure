@@ -9,6 +9,7 @@ import { ApplicationCommandPermissionType, ChannelType, Collection, Client } fro
 import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
+// Lock down config IDs so permission checks compare against deterministic values.
 jest.mock('@root/config', () => ({
 	BOT: { NAME: 'IntegrationBot', CLIENT_ID: 'client-id' },
 	GUILDS: { MAIN: 'guild-main' },
@@ -31,6 +32,7 @@ jest.mock('@root/config', () => ({
 	MAINTAINERS: '@Maintainers'
 }));
 
+// Minimal Discord.js shim that supports the subset of builders and client behavior used by admin commands.
 jest.mock('discord.js', () => {
 	const { EventEmitter } = require('events');
 
@@ -165,6 +167,7 @@ jest.mock('discord.js', () => {
 });
 
 // Flushes queued promises after emitting events on the mocked Discord client.
+// Gives the event loop a tick so emitted interactions finish running.
 const waitForPromises = () => new Promise(resolve => setImmediate(resolve));
 
 /**
@@ -184,6 +187,7 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
+// Always operate on the real admin command list so the suite self-updates when files move.
 const adminCommandNames = getCommandNames('../../commands/admin');
 
 describe('Admin command interaction flows', () => {
@@ -212,6 +216,7 @@ describe('Admin command interaction flows', () => {
 		await register(client);
 
 		const commandMap = new Collection<string, Command>();
+		// Commands execute their real constructors while run handlers are stubbed for assertion simplicity.
 		// Dynamically instantiate every admin command so the test automatically covers new files.
 		const instantiatedAdminCommands = adminCommandNames.map(fileName => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -224,6 +229,7 @@ describe('Admin command interaction flows', () => {
 				permission: true
 			}];
 			instance.runInGuild = true;
+			// Stub run to observe dispatch without executing admin logic.
 			instance.run = jest.fn().mockResolvedValue(undefined);
 			commandMap.set(fileName, instance);
 			return { name: fileName, instance };
@@ -282,6 +288,7 @@ describe('Admin command interaction flows', () => {
 			type: ApplicationCommandPermissionType.Role,
 			permission: true
 		}];
+		// Keep run mocked so we can ensure it never executes for unauthorized members.
 		instance.run = jest.fn();
 
 		client.commands = new Collection([[instance.name, instance]]);

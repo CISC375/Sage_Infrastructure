@@ -8,6 +8,7 @@ import { ApplicationCommandPermissionType, ChannelType, Collection, Client } fro
 import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
+// Provide deterministic IDs to keep mocked interactions predictable.
 jest.mock('@root/config', () => ({
 	BOT: { NAME: 'IntegrationBot', CLIENT_ID: 'client-id' },
 	GUILDS: { MAIN: 'guild-main' },
@@ -17,6 +18,7 @@ jest.mock('@root/config', () => ({
 	MAINTAINERS: '@Maintainers'
 }));
 
+// Discord.js shim exposing only the bits required by info commands.
 jest.mock('discord.js', () => {
 	const { EventEmitter } = require('events');
 
@@ -86,6 +88,7 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
+// Use the live info command directory to keep coverage self-updating.
 const infoCommandNames = getCommandNames('../../commands/info');
 
 describe('Info command interaction flows', () => {
@@ -113,12 +116,12 @@ describe('Info command interaction flows', () => {
 
 		await register(client);
 
-		const commandMap = new Collection<string, Command>();
-		// Instantiate every info command so the test automatically tracks new files.
-		const instantiatedInfoCommands = infoCommandNames.map(fileName => {
-			// eslint-disable-next-line @typescript-eslint/no-var-requires
-			const { default: InfoCommand } = require(`../../commands/info/${fileName}`);
-			const instance: Command = new InfoCommand();
+			const commandMap = new Collection<string, Command>();
+			// Instantiate every info command so the test automatically tracks new files.
+			const instantiatedInfoCommands = infoCommandNames.map(fileName => {
+				// eslint-disable-next-line @typescript-eslint/no-var-requires
+				const { default: InfoCommand } = require(`../../commands/info/${fileName}`);
+				const instance: Command = new InfoCommand();
 			instance.name = fileName;
 			instance.permissions = [{
 				id: 'role-verified',
@@ -126,7 +129,8 @@ describe('Info command interaction flows', () => {
 				permission: true
 			}];
 			instance.runInGuild = true;
-			instance.run = jest.fn().mockResolvedValue(undefined);
+				// Real constructors run, but handlers are mocked so we only assert dispatch.
+				instance.run = jest.fn().mockResolvedValue(undefined);
 			commandMap.set(fileName, instance);
 			return { name: fileName, instance };
 		});

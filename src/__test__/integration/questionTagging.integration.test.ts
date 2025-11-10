@@ -8,6 +8,7 @@ import { ApplicationCommandPermissionType, ChannelType, Collection, Client } fro
 import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
+// Keep config-driven IDs stable so question-tagging permission logic remains deterministic.
 jest.mock('@root/config', () => ({
 	BOT: { NAME: 'IntegrationBot', CLIENT_ID: 'client-id' },
 	GUILDS: { MAIN: 'guild-main' },
@@ -17,6 +18,7 @@ jest.mock('@root/config', () => ({
 	MAINTAINERS: '@Maintainers'
 }));
 
+// Discord.js shim exposing the minimal builders needed by question-tagging commands.
 jest.mock('discord.js', () => {
 	const { EventEmitter } = require('events');
 
@@ -86,6 +88,7 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
+// Mirror the actual question-tagging directory so coverage evolves automatically.
 const questionCommands = getCommandNames('../../commands/question tagging');
 
 describe('Question tagging command interaction flows', () => {
@@ -126,6 +129,7 @@ describe('Question tagging command interaction flows', () => {
 				permission: true
 			}];
 			instance.runInGuild = true;
+			// Mock run handlers to keep assertions focused on dispatch.
 			instance.run = jest.fn().mockResolvedValue(undefined);
 			commandMap.set(fileName, instance);
 			return { name: fileName, instance };

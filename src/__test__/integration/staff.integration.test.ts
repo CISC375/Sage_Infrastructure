@@ -8,6 +8,7 @@ import { ApplicationCommandPermissionType, ChannelType, Collection, Client } fro
 import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
+// Fix config IDs so role-gating decisions hit predictable values.
 jest.mock('@root/config', () => ({
 	BOT: { NAME: 'IntegrationBot', CLIENT_ID: 'client-id' },
 	GUILDS: { MAIN: 'guild-main' },
@@ -26,6 +27,7 @@ jest.mock('@root/config', () => ({
 	MAINTAINERS: '@Maintainers'
 }));
 
+// Discord.js shim exposing only what staff command flows rely upon.
 jest.mock('discord.js', () => {
 	const { EventEmitter } = require('events');
 
@@ -96,6 +98,7 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
+// Reflect the live staff command directory, keeping coverage aligned with new files.
 const staffCommandNames = getCommandNames('../../commands/staff');
 
 describe('Staff command interaction flows', () => {
@@ -130,6 +133,7 @@ describe('Staff command interaction flows', () => {
 			const { default: StaffCommand } = require(`../../commands/staff/${fileName}`);
 			const instance: Command = new StaffCommand();
 			instance.name = fileName;
+			// Run handlers are mocked so assertions can focus on dispatch/authorization.
 			instance.run = jest.fn().mockResolvedValue(undefined);
 			commandMap.set(fileName, instance);
 			return { name: fileName, instance };
@@ -183,6 +187,7 @@ describe('Staff command interaction flows', () => {
 		const { default: StaffCommand } = require('../../commands/staff/mute');
 		const instance: Command = new StaffCommand();
 		instance.name = 'mute';
+		// Run is left mocked so we can assert it never fires for non-staff members.
 		instance.run = jest.fn();
 
 		client.commands = new Collection([[instance.name, instance]]);

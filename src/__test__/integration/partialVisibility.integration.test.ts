@@ -8,6 +8,7 @@ import { ApplicationCommandPermissionType, ChannelType, Collection, Client } fro
 import { getCommandNames } from './utils/commandDirectoryUtils';
 let consoleLogSpy: jest.SpyInstance;
 
+// Use fixed config identifiers to make PVQ permission logic deterministic in tests.
 jest.mock('@root/config', () => ({
 	BOT: { NAME: 'IntegrationBot', CLIENT_ID: 'client-id' },
 	GUILDS: { MAIN: 'guild-main' },
@@ -17,6 +18,7 @@ jest.mock('@root/config', () => ({
 	MAINTAINERS: '@Maintainers'
 }));
 
+// Provide the builders (EmbedBuilder) and client surface PVQ commands rely on.
 jest.mock('discord.js', () => {
 	const { EventEmitter } = require('events');
 
@@ -94,6 +96,7 @@ function createRoleManager(roleIds: string[]) {
 	};
 }
 
+// Automatically reflect the state of the partial-visibility command directory.
 const pvCommands = getCommandNames('../../commands/partial visibility question');
 
 describe('Partial visibility question command flows', () => {
@@ -134,6 +137,7 @@ describe('Partial visibility question command flows', () => {
 				permission: true
 			}];
 			instance.runInGuild = true;
+			// Commands keep real constructors, but handlers are mocked so we only assert routing.
 			instance.run = jest.fn().mockResolvedValue(undefined);
 			commandMap.set(fileName, instance);
 			return { name: fileName, instance };
