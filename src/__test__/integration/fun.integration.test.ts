@@ -25,7 +25,7 @@ jest.mock('discord.js', () => {
 	const { EventEmitter } = require('events');
 
 	class Collection extends Map {
-		find(predicate) {
+		find(predicate: (arg0: any, arg1: any, arg2: this) => any) {
 			for (const [key, value] of this.entries()) {
 				if (predicate(value, key, this)) return value;
 			}
