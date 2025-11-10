@@ -2,6 +2,11 @@ name: dockerimage #name of the workflow
 
 on:
  workflow_call:
+  secrets:
+      DOCKER_USER:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
 #  push:
 #    branches: ["mizuho-githubaction"] #which branch to watch for changes
 
