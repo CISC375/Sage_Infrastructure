@@ -33,7 +33,8 @@ export default class extends Command {
 			.setTimestamp();
 
 		if (description) embed.setDescription(description);
-		submissionChannel.send({ embeds: [embed] }).then(() => interaction.reply({ content: `Thanks for your submission, ${interaction.user.username}!` }));
+		await submissionChannel.send({ embeds: [embed] });
+		await interaction.reply({ content: `Thanks for your submission, ${interaction.user.username}!` });
 	}
 
 }

@@ -26,7 +26,7 @@ export default class extends Command {
 				content: `Something went wrong. Please contact ${MAINTAINERS} for help. You can give the user the <@&${ROLES.MUTED}> role manually as a quick fix.`,
 				ephemeral: true
 			});
-			throw new Error('Could not find member based on passed in user');
+			throw Error('Could not find member based on passed in user');
 		}
 
 		if (member.roles.cache.has(ROLES.MUTED)) {

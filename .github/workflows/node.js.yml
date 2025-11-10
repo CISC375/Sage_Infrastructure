@@ -8,47 +8,46 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '>=18'
-        cache: 'npm'
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ">=18"
+          cache: "npm"
 
-    - name: Install required system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev build-essential g++
-        
-    - run: npm cache clean --force
-    - run: npm ci
+      - name: Install required system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev build-essential g++
 
-    # Add this step to copy config.example.ts to config.ts
-    - name: Set config file
-      run: cp config.example.ts config.ts
-    
-    - name: build
-      run: |
-        npm run build 2>&1 | tee build-output.log
+      - run: npm cache clean --force
+      - run: npm ci
 
-        if grep -q "node_modules/discord.js/typings/index.d.ts" build-output.log; then
-          echo "Ignoring build errors from node_modules/discord.js/typings/index.d.ts"
+      # Add this step to copy config.example.ts to config.ts
+      - name: Set config file
+        run: cp config.example.ts config.ts
 
-          sed -i '/node_modules\/discord\.js\/typings\/index\.d\.ts/d' build-output.log
-        fi
+      - name: build
+        run: |
+          npm run build 2>&1 | tee build-output.log
 
-        if grep -q "Error" build-output.log; then
-          echo "Other build errors found. Failing the workflow."
-          exit 1
-        fi
+          if grep -q "node_modules/discord.js/typings/index.d.ts" build-output.log; then
+            echo "Ignoring build errors from node_modules/discord.js/typings/index.d.ts"
 
-        echo "No unignored build errors found. Workflow continues."
-    
-    - run: npm test
+            sed -i '/node_modules\/discord\.js\/typings\/index\.d\.ts/d' build-output.log
+          fi
+
+          if grep -q "Error" build-output.log; then
+            echo "Other build errors found. Failing the workflow."
+            exit 1
+          fi
+
+          echo "No unignored build errors found. Workflow continues."
+
+      - run: npm test
 
     # - name: Start Development
     # run: npm run dev

@@ -26,13 +26,13 @@ export default class extends Command {
 		const reminder = reminders[remindNum];
 
 		if (!reminder) {
-			interaction.reply({
-				content: `I couldn't find reminder **${remindNum}**. Use the \`viewremind\` command to see your current reminders.`,
+			return interaction.reply({
+				content: `I couldn't find reminder **${remindNum + 1}**. Use the \`viewremind\` command to see your current reminders.`,
 				ephemeral: true
 			});
 		}
 
-		interaction.client.mongo.collection(DB.REMINDERS).findOneAndDelete(reminder);
+		await interaction.client.mongo.collection(DB.REMINDERS).findOneAndDelete(reminder);
 
 		const hidden = reminder.mode === 'private';
 		return interaction.reply({

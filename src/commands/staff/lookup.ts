@@ -44,7 +44,7 @@ export default class extends Command {
 
 		if (!entry.pii) {
 			const sender: SageUser = await interaction.client.mongo.collection(DB.USERS).findOne({ discordId: interaction.user.id });
-			this.sendEmail(sender.email, member.displayName, user.tag, entry);
+			await this.sendEmail(sender.email, member.displayName, user.tag, entry);
 			return interaction.reply(
 				{ content: `\`${user.tag}\` has not opted to have their information shared over Discord.\nInstead, an email has been sent to you containing the requested data.`,
 					ephemeral: true });
@@ -53,7 +53,7 @@ export default class extends Command {
 		return interaction.reply({ embeds: [embed], ephemeral: true });
 	}
 
-	sendEmail(recipient: string, displayName: string, username: string, entry: SageUser): void {
+	async sendEmail(recipient: string, displayName: string, username: string, entry: SageUser): Promise<void> {
 		const mailer = nodemailer.createTransport({
 			host: 'mail.udel.edu',
 			port: 25

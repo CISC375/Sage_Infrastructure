@@ -15,7 +15,7 @@ module.exports = {
         ...tsJestTransformCfg,
     },
 
-	resetModules: false,
+	  resetModules: false,
 
     moduleNameMapper: {
         "^@lib/(.*)$": "<rootDir>/src/lib/$1",
