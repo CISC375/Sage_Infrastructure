@@ -3,22 +3,22 @@ const tsJestTransformCfg = createDefaultPreset().transform;
 
 /** @type {import("jest").Config} **/
 module.exports = {
-    testEnvironment: "node",
+	testEnvironment: "node",
 
-    // Only look for tests in the source folder
-    roots: ["<rootDir>/src"],
+	// Only look for tests in the source folder
+	roots: ["<rootDir>/src"],
 
-    // Ignore compiled files
-    modulePathIgnorePatterns: ["<rootDir>/dist/"],
+	// Ignore compiled files
+	modulePathIgnorePatterns: ["<rootDir>/dist/"],
 
-    transform: {
-        ...tsJestTransformCfg,
-    },
+	transform: {
+		...tsJestTransformCfg,
+	},
 
-	  resetModules: false,
+	resetModules: false,
 
-    moduleNameMapper: {
-        "^@lib/(.*)$": "<rootDir>/src/lib/$1",
-        "^@root/(.*)$": "<rootDir>/$1",
-    },
+	moduleNameMapper: {
+		"^@lib/(.*)$": "<rootDir>/src/lib/$1",
+		"^@root/(.*)$": "<rootDir>/$1",
+	},
 };
