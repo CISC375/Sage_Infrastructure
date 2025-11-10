@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sage-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sage
+  template:
+    metadata:
+      labels:
+        app: sage
+    spec:
+      containers:
+        - name: sage
+          image: <docker-username/docker-repo:bot-tag>   # You can get all of this information from docker hub.
+          ports: 
+          - containerPort: 8080
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          env:
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: sage-config
+                  key: ENVIRONMENT
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: sage-config
+                  key: LOG_LEVEL
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sage-secrets
+                  key: API_KEY

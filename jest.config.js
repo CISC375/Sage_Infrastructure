@@ -3,24 +3,22 @@ const tsJestTransformCfg = createDefaultPreset().transform;
 
 /** @type {import("jest").Config} **/
 module.exports = {
-	testEnvironment: "node",
+    testEnvironment: "node",
 
-	// Only look for tests in the source folder
-	roots: ["<rootDir>/src"],
+    // Only look for tests in the source folder
+    roots: ["<rootDir>/src"],
 
-	// Ignore compiled files
-	modulePathIgnorePatterns: ["<rootDir>/dist/"],
+    // Ignore compiled files
+    modulePathIgnorePatterns: ["<rootDir>/dist/"],
 
-	transform: {
-		...tsJestTransformCfg,
-	},
+    transform: {
+        ...tsJestTransformCfg,
+    },
 
-	// Map the TS path aliases so Jest resolves imports like @lib/foo
-	moduleNameMapper: {
-		"^@lib/(.*)$": "<rootDir>/src/lib/$1",
-		"^@root/(.*)$": "<rootDir>/$1",
-	},
+	  resetModules: false,
 
-	// Optional: restrict Jest to only test files ending in .test.ts or .spec.ts
-	// testMatch: ["**/__test__/**/*.test.[jt]s?(x)"],
+    moduleNameMapper: {
+        "^@lib/(.*)$": "<rootDir>/src/lib/$1",
+        "^@root/(.*)$": "<rootDir>/$1",
+    },
 };
