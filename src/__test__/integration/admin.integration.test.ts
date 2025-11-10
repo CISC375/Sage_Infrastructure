@@ -35,7 +35,7 @@ jest.mock('discord.js', () => {
 	const { EventEmitter } = require('events');
 
 	class Collection extends Map {
-		find(predicate) {
+		find(predicate: (arg0: any, arg1: any, arg2: this) => any) {
 			for (const [key, value] of this.entries()) {
 				if (predicate(value, key, this)) return value;
 			}
@@ -66,73 +66,73 @@ jest.mock('discord.js', () => {
 	}
 
 	class ModalBuilder {
-		data;
+		data: { title?: any; customId?: any; components: any; };
 		constructor() {
 			this.data = { components: [] };
 		}
-		setTitle(title) { this.data.title = title; return this; }
-		setCustomId(id) { this.data.customId = id; return this; }
-		addComponents(...rows) {
+		setTitle(title: any) { this.data.title = title; return this; }
+		setCustomId(id: any) { this.data.customId = id; return this; }
+		addComponents(...rows: any[]) {
 			this.data.components.push(...rows);
 			return this;
 		}
 	}
 
 	class TextInputBuilder {
-		data;
+		data: { customId?: any; label?: any; style?: any; required?: any; value?: any; };
 		constructor() {
 			this.data = {};
 		}
-		setCustomId(id) { this.data.customId = id; return this; }
-		setLabel(label) { this.data.label = label; return this; }
-		setStyle(style) { this.data.style = style; return this; }
-		setRequired(required) { this.data.required = required; return this; }
-		setValue(value) { this.data.value = value; return this; }
+		setCustomId(id: any) { this.data.customId = id; return this; }
+		setLabel(label: any) { this.data.label = label; return this; }
+		setStyle(style: any) { this.data.style = style; return this; }
+		setRequired(required: any) { this.data.required = required; return this; }
+		setValue(value: any) { this.data.value = value; return this; }
 	}
 
 	class ActionRowBuilder {
-		components;
+		components: any[];
 		constructor() {
 			this.components = [];
 		}
-		addComponents(...components) {
+		addComponents(...components: any[]) {
 			this.components.push(...components.flat());
 			return this;
 		}
 	}
 
 	class ButtonBuilder {
-		data;
+		data: { label?: any; customId?: any; style?: any; emoji?: any; };
 		constructor() {
 			this.data = {};
 		}
-		setLabel(label) { this.data.label = label; return this; }
-		setCustomId(id) { this.data.customId = id; return this; }
-		setStyle(style) { this.data.style = style; return this; }
-		setEmoji(emoji) { this.data.emoji = emoji; return this; }
+		setLabel(label: any) { this.data.label = label; return this; }
+		setCustomId(id: any) { this.data.customId = id; return this; }
+		setStyle(style: any) { this.data.style = style; return this; }
+		setEmoji(emoji: any) { this.data.emoji = emoji; return this; }
 	}
 
 	class EmbedBuilder {
-		data;
+		data: { title?: any; description?: any; color?: any; footer?: any; fields?: any; thumbnail?: any; timestamp?: any; };
 		constructor() {
 			this.data = {};
 		}
-		setTitle(title) { this.data.title = title; return this; }
-		setDescription(desc) { this.data.description = desc; return this; }
-		setColor(color) { this.data.color = color; return this; }
-		setFooter(footer) { this.data.footer = footer; return this; }
-		setFields(fields) { this.data.fields = fields; return this; }
-		addFields(...fields) {
+		setTitle(title: any) { this.data.title = title; return this; }
+		setDescription(desc: any) { this.data.description = desc; return this; }
+		setColor(color: any) { this.data.color = color; return this; }
+		setFooter(footer: any) { this.data.footer = footer; return this; }
+		setFields(fields: any) { this.data.fields = fields; return this; }
+		addFields(...fields: any[]) {
 			this.data.fields = (this.data.fields || []).concat(fields);
 			return this;
 		}
-		setThumbnail(url) { this.data.thumbnail = url; return this; }
+		setThumbnail(url: any) { this.data.thumbnail = url; return this; }
 		setTimestamp() { this.data.timestamp = Date.now(); return this; }
 	}
 
 	class AttachmentBuilder {
-		data;
-		constructor(buffer, options) {
+		data: { buffer: any; options: any; };
+		constructor(buffer: any, options: any) {
 			this.data = { buffer, options };
 		}
 	}

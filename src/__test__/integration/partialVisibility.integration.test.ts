@@ -21,7 +21,7 @@ jest.mock('discord.js', () => {
 	const { EventEmitter } = require('events');
 
 	class Collection extends Map {
-		find(predicate) {
+		find(predicate: (arg0: any, arg1: any, arg2: this) => any) {
 			for (const [key, value] of this.entries()) {
 				if (predicate(value, key, this)) return value;
 			}
@@ -53,9 +53,9 @@ jest.mock('discord.js', () => {
 
 	class EmbedBuilder {
 		data: Record<string, unknown> = {};
-		setAuthor(author) { this.data.author = author; return this; }
-		setDescription(description) { this.data.description = description; return this; }
-		setImage(url) { this.data.image = url; return this; }
+		setAuthor(author: unknown) { this.data.author = author; return this; }
+		setDescription(description: unknown) { this.data.description = description; return this; }
+		setImage(url: unknown) { this.data.image = url; return this; }
 	}
 
 	return {
