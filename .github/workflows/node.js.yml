@@ -31,6 +31,13 @@ jobs:
     - name: Set config file
       run: cp config.example.ts config.ts
     
+    - name: Check for binding.gyp
+      run: |
+        if [ ! -f binding.gyp ]; then
+        echo "Error: binding.gyp not found. Exiting."
+        exit 1
+        fi
+
     - name: build
       run: |
         npm run build 2>&1 | tee build-output.log
