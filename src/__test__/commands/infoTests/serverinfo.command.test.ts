@@ -7,7 +7,7 @@ import ServerInfoCmd from '../../../commands/info/serverinfo';
 
 jest.mock('@root/config', () => ({
 	ROLES: { VERIFIED: 'role-verified' }
-}), { virtual: true });
+}));
 
 const coll = <T>(items: T[]) => ({
 	filter: (fn: (x: T) => boolean) => {

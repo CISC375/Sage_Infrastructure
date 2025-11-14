@@ -9,7 +9,7 @@ jest.mock('@root/config', () => ({
 	BOT: { NAME: 'Sage' },
 	MAINTAINERS: 'the admins',
 	ROLES: { VERIFIED: 'mock-verified-role-id' }
-}), { virtual: true });
+}));
 
 type MinimalInteraction = Pick<ChatInputCommandInteraction, 'reply'>;
 

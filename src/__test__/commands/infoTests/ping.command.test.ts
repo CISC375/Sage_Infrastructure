@@ -10,7 +10,7 @@ import prettyMilliseconds from 'pretty-ms';
 
 jest.mock('@root/config', () => ({
 	ROLES: { VERIFIED: 'role-verified' }
-}), { virtual: true });
+}));
 
 type MinimalInteraction = Pick<ChatInputCommandInteraction, 'reply' | 'editReply' | 'createdTimestamp' | 'client'>;
 
