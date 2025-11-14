@@ -13,7 +13,7 @@
 		"install": "node-pre-gyp install --fallback-to-build --build-from-source",
 		"build": "tsc -p .",
 		"clean": "rm -rf dist",
-		"test": "jest --testPathIgnorePatterns=src/__test__/integration",
+		"test": "jest --testPathIgnorePatterns=src/__test__/integration --verbose",
 		"test:integration": "jest src/__test__/integration --runInBand --verbose",
 		"test+integration": "jest --runInBand --verbose",
 		"test:lint": "eslint src --ext .ts",
