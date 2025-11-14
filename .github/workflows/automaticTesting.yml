@@ -1,29 +1,48 @@
 name: Run Jest Tests
 
 on:
-  push:
-    branches:
-      - Julia-TestAutomation #main  # Run on push to `main` branch
-      - "feature/*" # Or you can specify any feature branches you want to test
-  pull_request:
-    branches:
-      - Julia-TestAutomation # Run on pull request targeting `main` branch
+  workflow_call:
+#   push:
+#     branches:
+#       -  mizuho-githubaction  # Run on push to `mizuho-githubaction` branch
+#       - 'feature/*'  # Or you can specify any feature branches you want to test
+#   pull_request:
+#     branches:
+#       - mizuho-githubaction  # Run on pull request targeting `mizuho-githubaction` branch
 
 jobs:
-  test:
+  jest_test:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "20" # Update Node version as needed
+          node-version: ">=18"
+          cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install required system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev build-essential g++
 
-      - name: Run Jest tests
-        run: npm run test
+      - name: Clean npm cache and install deps
+        run: |
+          npm cache clean --force
+          npm ci
+
+      - name: Set config file
+        run: cp config.example.ts config.ts
+
+      - name: Show Jest config
+        run: npx jest --showConfig | sed -n '1,120p'
+
+      - name: Run Jest tests (no cache)
+        run: npx jest -c jest.config.js --no-cache
