@@ -16,11 +16,11 @@ jest.mock('@root/config', () => ({
 	BOT: { NAME: 'Sage' },
 	PREFIX: '/',
 	ROLES: { VERIFIED: 'role-verified' }
-}), { virtual: true });
+}));
 
 jest.mock('@root/src/lib/utils/generalUtils', () => ({
 	getCommand: jest.fn()
-}), { virtual: true });
+}));
 
 const { getCommand } = jest.requireMock('@root/src/lib/utils/generalUtils');
 

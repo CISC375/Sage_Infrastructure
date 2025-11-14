@@ -5,11 +5,11 @@
 import type { ChatInputCommandInteraction } from 'discord.js';
 import StatsCmd from '../../../commands/info/stats';
 
-jest.mock('@root/package.json', () => ({ version: '3.3.0' }), { virtual: true });
+jest.mock('@root/package.json', () => ({ version: '3.3.0' }));
 jest.mock('@root/config', () => ({
 	BOT: { NAME: 'Sage' },
 	ROLES: { VERIFIED: 'role-verified' } // <-- add
-}), { virtual: true });
+}));
 
 jest.mock('pretty-ms', () => jest.fn(() => '1h 2m 3s'));
 

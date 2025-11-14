@@ -10,7 +10,7 @@ jest.mock('@root/config', () => ({
 	CHANNELS: { FEEDBACK: '123' },
 	MAINTAINERS: 'the admins',
 	ROLES: { VERIFIED: 'role-verified' } // <-- add
-}), { virtual: true });
+}));
 
 
 type MinimalOptions = {

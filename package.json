@@ -15,6 +15,7 @@
 		"clean": "rm -rf dist",
 		"test": "jest --testPathIgnorePatterns=src/__test__/integration",
 		"test:integration": "jest src/__test__/integration --runInBand --verbose",
+		"test+integration": "jest --runInBand --verbose",
 		"test:lint": "eslint src --ext .ts",
 		"lint": "eslint 'src/**/*.{ts,tsx}'",
 		"dev": "tsc-watch --onSuccess \"node dist/src/sage.js\"",
