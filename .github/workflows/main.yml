@@ -2,19 +2,31 @@ name: Main Pipeline
 
 on:
   push:
-    branches: ["main", "Ava-branch-config"]
+    branches: ["mizuho-githubaction", "Ava-branch-config"]
   pull_request:
-    branches: ["main", "Ava-branch-config"]
+    branches: ["mizuho-githubaction", "Ava-branch-config"]
 
 env:
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
   MAIN_BRANCH: "main"
   SAGE_DIR: "/usr/local/sage/SageV2"
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 jobs:
   node:
     uses: ./.github/workflows/node.js.yml
   test-suite:
-    uses: ./.github/workflows/test-suite.yml
-
-  #documentation step would go here but not ready yet
+    uses: ./.github/workflows/test-suite.yml # made by previous students, in the progress
+  dockerimage:
+    uses: ./.github/workflows/dockerimage.yaml # I started! docker image. cause error
+    secrets:
+      DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  documentation:
+    uses: ./.github/workflows/documentation.yml # made by previous students,in the progress
+  automaticTesting:
+    uses: ./.github/workflows/automaticTesting.yml
