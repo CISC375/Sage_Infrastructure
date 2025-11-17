@@ -147,14 +147,16 @@ describe('WhoisCommand', () => {
 
 		const expectedCreatedAgoMs = now.getTime() - mockTargetUser.createdTimestamp;
 		const expectedJoinedAgoMs = now.getTime() - mockTargetMember.joinedTimestamp;
+		const expectedAccountCreatedValue = `${mockTargetUser.createdAt.getMonth()}/${mockTargetUser.createdAt.getDate()}/${mockTargetUser.createdAt.getFullYear()} \n		(${expectedCreatedAgoMs / 1000}s ago)`;
+		const expectedMemberSinceValue = `${mockTargetMember.joinedAt.getMonth()}/${mockTargetMember.joinedAt.getDate()}/${mockTargetMember.joinedAt.getFullYear()}\n		(${expectedJoinedAgoMs / 1000}s ago)`;
 
 		// *** FIX: Use CORRECT dates (0-indexed month) and EXACT whitespace from source ***
 		// Use template literals and ensure spacing matches the source file exactly.
 		expect(mockEmbed.addFields).toHaveBeenCalledWith([
 			{ name: 'Display Name', value: 'TargetNickname (<@target123>)', inline: true },
 			// January = 0, June = 5. Day = getDate(). Match the newline and 8 spaces.
-			{ name: 'Account Created', value: `11/31/2023 \n		(${expectedCreatedAgoMs / 1000}s ago)`, inline: true },
-			{ name: 'Joined Server', value: `5/14/2024\n		(${expectedJoinedAgoMs / 1000}s ago)`, inline: true },
+			{ name: 'Account Created', value: expectedAccountCreatedValue, inline: true },
+			{ name: 'Joined Server', value: expectedMemberSinceValue, inline: true },
 			{ name: 'Roles', value: '<@&role1> <@&role2>', inline: true },
 		]);
 		// *** END FIX ***
