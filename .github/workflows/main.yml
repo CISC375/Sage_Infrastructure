@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "mizuho-githubaction", "Ava-branch-config" ]
 
+
+
+	
 env:
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
   MAIN_BRANCH: 'main'
