@@ -10,6 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: autodoc
-        run: echo "Not completed yet"
-        # run: npm run autodoc
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Generate documentation
+        run: npm run autodoc
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-docs
+          path: |
+            Commands.md
+            Staff Commands.md
+          retention-days: 30
