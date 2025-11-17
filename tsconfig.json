@@ -4,11 +4,12 @@
         "allowSyntheticDefaultImports": true,
         "baseUrl": ".",
         "esModuleInterop": true,
+        "moduleResolution": "node",
         "outDir": "./dist",
         "paths": {
-			"@root/*": ["*"],
-			"@lib/*": ["src/lib/*"],
-			"@pieces/*": ["src/pieces/*"]
+			"@root/*": ["./*"],
+			"@lib/*": ["./src/lib/*"],
+			"@pieces/*": ["./src/pieces/*"]
         },
         "resolveJsonModule": true,
         "rootDir": "./",
