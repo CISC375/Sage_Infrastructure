@@ -41,7 +41,8 @@ jobs:
            docker.io/kevlund/sage-repo
          tags: |
            type=raw,value=test-bot,enable=${{ github.ref == 'refs/heads/mizuho-githubaction' }}
-           type=sha,enable=true,format=long	
+           type=sha,enable=true,format=long
+
      - name: Build and push Docker image
        uses: docker/build-push-action@v6
        with:
@@ -52,7 +53,3 @@ jobs:
          labels: ${{ steps.meta.outputs.labels }}
          cache-from: type=registry,ref=docker.io/kevlund/sage-repo:buildcache
          cache-to: type=registry,ref=docker.io/kevlund/sage-repo:buildcache,mode=max
-
-
-
-		 
