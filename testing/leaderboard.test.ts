@@ -2,7 +2,7 @@
  * Tests for src/commands/leaderboard.ts
  * - Mocks canvas + guild + mongo + avatars
  */
-import type { ChatInputCommandInteraction, ImageURLOptions } from 'discord.js';
+import type { ChatInputCommandInteraction } from 'discord.js';
 import LeaderboardCmd from '../src/commands/info/leaderboard';
 
 
@@ -33,6 +33,14 @@ ChatInputCommandInteraction,
 'deferReply' | 'followUp' | 'options' | 'guild' | 'client' | 'user'
 >;
 
+type MockMember = {
+	displayName: string;
+	displayHexColor: string;
+	user: {
+		displayAvatarURL: () => string;
+	};
+};
+
 describe('leaderboard command', () => {
 	test('builds image and follows up with embed + file', async () => {
 		// Two users, different levels/exp
@@ -41,9 +49,27 @@ describe('leaderboard command', () => {
 			{ discordId: 'u2', level: 6, curExp: 40, levelExp: 120 }
 		];
 
-		const membersCache = new Map<string, any>([
-			['u1', { displayName: 'Alpha', displayHexColor: '#00ff00', user: { displayAvatarURL: (_?: ImageURLOptions) => 'u1.png' } }],
-			['u2', { displayName: 'Beta', displayHexColor: '#123456', user: { displayAvatarURL: (_?: ImageURLOptions) => 'u2.png' } }]
+		const membersCache = new Map<string, MockMember>([
+			[
+				'u1',
+				{
+					displayName: 'Alpha',
+					displayHexColor: '#00ff00',
+					user: {
+						displayAvatarURL: () => 'u1.png'
+					}
+				}
+			],
+			[
+				'u2',
+				{
+					displayName: 'Beta',
+					displayHexColor: '#123456',
+					user: {
+						displayAvatarURL: () => 'u2.png'
+					}
+				}
+			]
 		]);
 
 		const interaction = {

@@ -2,7 +2,6 @@
  * Tests for src/commands/discordstatus.ts
  * - Mocks node-fetch and ensures defer + editReply with an embed
  */
-/* eslint-disable camelcase */
 import type { ChatInputCommandInteraction } from 'discord.js';
 import DiscordStatusCmd from '../src/commands/info/discordstatus';
 

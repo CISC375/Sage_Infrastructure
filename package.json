@@ -15,7 +15,7 @@
 		"clean": "rm -rf dist",
 		"test": "jest",
 		"test:lint": "eslint src --ext .ts",
-		"lint": "eslint src tests testing --ext .ts --fix",
+		"lint": "eslint \"testing/**/*.{ts,tsx}\"",
 		"dev": "tsc-watch --onSuccess \"node dist/src/sage.js\"",
 		"onboard": "node dist/onboard/onboard.js",
 		"nudge": "node dist/onboard/nudge.js",
@@ -62,6 +62,7 @@
 		"@babel/core": "^7.28.4",
 		"@babel/preset-env": "^7.28.3",
 		"@babel/preset-typescript": "^7.27.1",
+		"@eslint/js": "^9.39.1",
 		"@types/console-stamp": "^0.2.33",
 		"@types/jest": "^30.0.0",
 		"@types/mongodb": "^3.6.3",
@@ -69,14 +70,16 @@
 		"@types/node-cron": "^2.0.3",
 		"@types/node-fetch": "^2.5.7",
 		"@types/nodemailer": "^6.4.0",
-		"@typescript-eslint/eslint-plugin": "^4.23.0",
-		"@typescript-eslint/parser": "^4.23.0",
+		"@typescript-eslint/eslint-plugin": "^8.46.4",
+		"@typescript-eslint/parser": "^8.46.4",
 		"babel-jest": "^30.2.0",
-		"eslint": "^7.26.0",
+		"eslint": "^9.39.1",
+		"eslint-plugin-react": "^7.37.5",
 		"jest": "^30.2.0",
 		"ts-jest": "^29.4.5",
 		"ts-node": "^10.9.2",
 		"tsc-watch": "^4.6.2",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.46.4"
 	}
 }
