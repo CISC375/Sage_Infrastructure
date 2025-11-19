@@ -1,7 +1,11 @@
 name: documentation
 
 on:
+<<<<<<< HEAD
   workflow_call:
+=======
+ workflow_call:
+>>>>>>> origin/mizuho-integration
 #   push:
 #     branches: [ "main", "Ava-branch-config", "mizuho-githubaction" ]
 
@@ -10,6 +14,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+<<<<<<< HEAD
       - name: autodoc
         run: echo "Not completed yet"
         # run: npm run autodoc
+=======
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev build-essential g++
+
+      - name: Build project
+        run: npm run build
+
+      - name: Generate documentation
+        run: npm run autodoc
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-docs
+          path: |
+            Commands.md
+            Staff Commands.md
+          retention-days: 30
+>>>>>>> origin/mizuho-integration

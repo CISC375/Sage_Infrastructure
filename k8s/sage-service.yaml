@@ -4,9 +4,10 @@ metadata:
   name: sage-service
 spec:
   selector:
-    app: sage
+    app: sage # Matches the labels in your deployment
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 8080
-  type: ClusterIP
+      port: 80 # External port
+      targetPort: 8080 # Matches containerPort in the deployment
+      nodePort: 30080 # Optional: custom port in range 30000–32767
+  type: NodePort # Use this for local clusters like Minikube
