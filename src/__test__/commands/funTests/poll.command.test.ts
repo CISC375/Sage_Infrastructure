@@ -103,7 +103,7 @@ jest.mock('parse-duration', () => jest.fn());
 
 // --- Typed Mocks ---
 // Casting to jest.Mock unlocks helper APIs (mockReturnValue, etc.) in TS.
-const mockParse = parse as jest.Mock;
+const mockParse = parse as any;
 const MockEmbedBuilder = EmbedBuilder as unknown as jest.Mock;
 const MockButtonBuilder = ButtonBuilder as unknown as jest.Mock;
 const MockActionRowBuilder = ActionRowBuilder as unknown as jest.Mock;
