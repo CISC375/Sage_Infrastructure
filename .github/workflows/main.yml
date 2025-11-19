@@ -2,9 +2,9 @@ name: Main Pipeline
 
 on:
   push:
-    branches: [ "mizuho-githubaction", "Ava-branch-config" ]
+    branches: [ "mizuho-integration" ]
   pull_request:
-    branches: [ "mizuho-githubaction", "Ava-branch-config" ]
+    branches: [ "mizuho-integration" ]
 
 env:
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
