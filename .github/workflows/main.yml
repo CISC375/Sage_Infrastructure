@@ -26,7 +26,5 @@ jobs:
     secrets:
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  documentation:
-    uses: ./.github/workflows/documentation.yml # made by previous students,in the progress
   automaticTesting:
     uses: ./.github/workflows/automaticTesting.yml 
