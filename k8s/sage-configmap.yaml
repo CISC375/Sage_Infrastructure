@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: sage-config
 data:
-  ENVIRONMENT: "production"
-  LOG_LEVEL: "info"
+  ENVIRONMENT: production
+  LOG_LEVEL: debug

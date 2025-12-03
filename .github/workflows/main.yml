@@ -2,9 +2,15 @@ name: Main Pipeline
 
 on:
   push:
+<<<<<<< HEAD
     branches: ["main"]
   pull_request:
     branches: ["main"]
+=======
+    branches: [ "mizuho-integration" ]
+  pull_request:
+    branches: [ "mizuho-integration" ]
+>>>>>>> origin/mizuho-integration
 
 env:
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
@@ -16,6 +22,14 @@ permissions:
   security-events: write
   actions: read
 
+<<<<<<< HEAD
+=======
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+>>>>>>> origin/mizuho-integration
 jobs:
   node:
     uses: ./.github/workflows/node.js.yml
@@ -27,4 +41,8 @@ jobs:
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   automaticTesting:
+<<<<<<< HEAD
     uses: ./.github/workflows/automaticTesting.yml
+=======
+    uses: ./.github/workflows/automaticTesting.yml 
+>>>>>>> origin/mizuho-integration

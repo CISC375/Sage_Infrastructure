@@ -32,7 +32,7 @@
 		"type": "git",
 		"url": "git+https://github.com/ud-cis-discord/SageV2.git"
 	},
-	"author": "Matt Nadar, Leo Chen, Simon Brugel, Blade Tyrrell, Josh Lyon, Ren Ross & Ben Segal",
+	"author": "Matt Nadar, Leo Chen, Simon Brugel, Blade Tyrrell, Josh Lyon, Ren Ross, Ben Segal, Jared Miller, Marc Madlangbayan, Kevin Lundin, Caden Keen, Mizuho Okitani, Egor Prasolov, Ronald Kouloun, Wesley _",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/ud-cis-discord/SageV2/issues"
@@ -40,7 +40,7 @@
 	"homepage": "https://github.com/ud-cis-discord/SageV2",
 	"dependencies": {
 		"@discordjs/node-pre-gyp": "0.4.5",
-		"@octokit/rest": "^18.3.5",
+		"@octokit/rest": "^22.0.0",
 		"axios": "^1.4.0",
 		"canvas": "^3.2.0",
 		"console-stamp": "^3.0.2",
@@ -52,8 +52,8 @@
 		"node": "^24.8.0",
 		"node-cron": "^2.0.3",
 		"node-fetch": "^2.6.1",
-		"nodemailer": "^6.4.17",
-		"parse-duration": "^0.4.4",
+		"nodemailer": "^7.0.9",
+		"parse-duration": "^2.1.4",
 		"pretty-ms": "^7.0.1"
 	},
 	"_moduleAliases": {
@@ -69,10 +69,9 @@
 		"@types/node-cron": "^2.0.3",
 		"@types/node-fetch": "^2.5.7",
 		"@types/nodemailer": "^6.4.0",
-		"@typescript-eslint/eslint-plugin": "^4.33.0",
-		"@typescript-eslint/parser": "^4.33.0",
-		"dotenv-cli": "^10.0.0",
-		"eslint": "^7.32.0",
+		"@typescript-eslint/eslint-plugin": "^8.46.2",
+		"@typescript-eslint/parser": "^8.46.2",
+		"eslint": "^8.57.1",
 		"jest": "^30.2.0",
 		"ts-jest": "^29.4.5",
 		"tsc-watch": "^4.6.2",
