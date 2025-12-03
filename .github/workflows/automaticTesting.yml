@@ -11,11 +11,7 @@ on:
 #       - mizuho-githubaction  # Run on pull request targeting `mizuho-githubaction` branch
 
 jobs:
-<<<<<<< HEAD
-  jest_test:
-=======
   unit_tests:
->>>>>>> origin/mizuho-integration
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
@@ -29,13 +25,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-<<<<<<< HEAD
-          node-version: ">=18"
+          node-version: "20"
           cache: "npm"
-=======
-          node-version: '20'
-          cache: 'npm'
->>>>>>> origin/mizuho-integration
 
       - name: Install required system dependencies
         run: |
@@ -46,8 +37,6 @@ jobs:
         run: |
           npm cache clean --force
           npm ci
-<<<<<<< HEAD
-=======
 
       - name: Set config file
         run: cp config.example.ts config.ts
@@ -87,8 +76,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install required system dependencies
         run: |
@@ -107,7 +96,6 @@ jobs:
         run: npx jest -c jest.config.js --no-cache --testMatch="**/*integration*.test.ts"
         env:
           MONGODB_URI: mongodb://test:test@localhost:27017/sage_test?authSource=admin
->>>>>>> origin/mizuho-integration
 
       - name: Set config file
         run: cp config.example.ts config.ts
