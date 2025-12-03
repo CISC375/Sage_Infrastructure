@@ -38,25 +38,12 @@ RUN npm ci --omit=dev
 # Build stage (development + build)
 FROM deps AS build
 
-<<<<<<< HEAD
-# Mount caching for npm to speed up subsequent installs
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm ci
-=======
 # Install all dependencies including devDeps for build
 RUN npm ci
->>>>>>> origin/mizuho-integration
 
 # Copy the rest of the source code into the container
 COPY . .
 
-<<<<<<< HEAD
-# Build the project
-RUN npm run build
-
-=======
 # Ensure config.ts exists (fallback to example in CI/containers)
 RUN test -f config.ts || cp config.example.ts config.ts
 
@@ -66,7 +53,6 @@ RUN npm run build
 # Also include package.json in dist for module-alias '@root/package.json' resolution
 RUN cp package.json dist/package.json
 
->>>>>>> origin/mizuho-integration
 # ─────────────────────────────────────────────────────────────
 # Final runtime stage (minimal image)
 FROM base AS final
@@ -83,19 +69,9 @@ RUN apk add --no-cache \
 # Run the application as a non-root user
 USER node
 
-<<<<<<< HEAD
-# Copy package.json so package manager commands work
-COPY package.json . 
-
 # Copy necessary files from previous stages
 COPY --from=build /usr/src/app/package.json ./package.json
 COPY --from=build /usr/src/app/package-lock.json ./package-lock.json
-COPY --from=build /usr/src/app/tsconfig.json ./tsconfig.json
-=======
-# Copy necessary files from previous stages
-COPY --from=build /usr/src/app/package.json ./package.json
-COPY --from=build /usr/src/app/package-lock.json ./package-lock.json
->>>>>>> origin/mizuho-integration
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/assets ./assets
