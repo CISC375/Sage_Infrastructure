@@ -2,15 +2,9 @@ name: Main Pipeline
 
 on:
   push:
-<<<<<<< HEAD
     branches: ["main"]
   pull_request:
     branches: ["main"]
-=======
-    branches: [ "mizuho-integration" ]
-  pull_request:
-    branches: [ "mizuho-integration" ]
->>>>>>> origin/mizuho-integration
 
 env:
   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
@@ -22,14 +16,11 @@ permissions:
   security-events: write
   actions: read
 
-<<<<<<< HEAD
-=======
 permissions:
   contents: read
   security-events: write
   actions: read
 
->>>>>>> origin/mizuho-integration
 jobs:
   node:
     uses: ./.github/workflows/node.js.yml
