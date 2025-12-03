@@ -40,7 +40,7 @@ commands in staff-only channels.
 async function main() {
 	const categories = new Map<string, string>();
 
-	const commandFiles = readdirRecursive(`${__dirname}/../src/commands`).filter(file => file.endsWith('.js'));
+	const commandFiles = readdirRecursive(`${__dirname}/../src/commands`).filter((file: string) => file.endsWith('.js'));
 	for (const file of commandFiles) {
 		const commandModule = await import(file);
 
@@ -64,7 +64,7 @@ async function main() {
 
 		if (!categories.has(command.category)) {
 			const catWords = command.category.split(' ');
-			const formattedCat = catWords.map(word => word[0].toUpperCase() + word.substring(1)).join(' ');
+			const formattedCat = catWords.map((word: string) => word[0].toUpperCase() + word.substring(1)).join(' ');
 			categories.set(command.category, `### ${formattedCat} Commands`);
 		}
 
@@ -74,11 +74,15 @@ async function main() {
 		newCatText += command.extendedHelp ? `\n- More info: ${command.extendedHelp}\n` : ``;
 		if (command.options) {
 			newCatText += '\n- Parameters:\n';
-			newCatText += command.options.map(param =>
+			const formattedOptions = command.options.map((param) => {
+				const required = 'required' in param ? param.required : undefined;
+				const requiredText = required === undefined ? '' : ` (${required ? 'required' : 'optional'})`;
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore: see Note 1 comment block in help.ts
-				`  - ${param.name} (${param.required ? 'required' : 'optional'}): ${param.description}`
-			).join('\n');
+				const description = 'description' in param ? param.description : '';
+				return `  - ${param.name}${requiredText}: ${description}`;
+			});
+			newCatText += formattedOptions.join('\n');
 		}
 		categories.set(command.category, newCatText);
 	}

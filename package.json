@@ -32,7 +32,7 @@
 		"type": "git",
 		"url": "git+https://github.com/ud-cis-discord/SageV2.git"
 	},
-	"author": "Matt Nadar, Leo Chen, Simon Brugel, Blade Tyrrell, Josh Lyon, Ren Ross, Ben Segal, Jared Miller, Marc Madlangbayan, Kevin Lundin, Caden Keen, Mizuho Okitani, Egor Prasolov, Ronald Kouloun, Wesley _",
+	"author": "Matt Nadar, Leo Chen, Simon Brugel, Blade Tyrrell, Josh Lyon, Ren Ross & Ben Segal",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/ud-cis-discord/SageV2/issues"

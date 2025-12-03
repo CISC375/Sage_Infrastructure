@@ -1,5 +1,5 @@
 import 'module-alias/register';
-import { MongoClient, ObjectID } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import nodemailer from 'nodemailer';
 import { SageUser } from '@lib/types/SageUser';
 import { DB, BOT, EMAIL, GUILDS } from '@root/config';
@@ -94,7 +94,7 @@ function sleep(ms: number) {
 }
 
 interface DatabaseUser extends SageUser {
-	_id: ObjectID
+	_id: ObjectId
 }
 
 main();

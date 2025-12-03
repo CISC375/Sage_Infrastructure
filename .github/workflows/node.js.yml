@@ -11,27 +11,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-<<<<<<< HEAD
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.sha }}
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ">=18"
+          node-version: "20"
           cache: "npm"
-=======
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        ref: ${{ github.sha }}
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
->>>>>>> origin/mizuho-integration
 
       - name: Install required system dependencies
         run: |
@@ -41,23 +30,19 @@ jobs:
       - run: npm cache clean --force
       - run: npm ci
 
-      # Add this step to copy config.example.ts to config.ts
       - name: Set config file
         run: cp config.example.ts config.ts
 
       - name: build
         run: |
-          npm run build 2>&1 | tee build-output.log
+          npm run build 2>&1 | tee build-output.log || true
 
           if grep -q "node_modules/discord.js/typings/index.d.ts" build-output.log; then
             echo "Ignoring build errors from node_modules/discord.js/typings/index.d.ts"
-
-<<<<<<< HEAD
-            sed -i '/node_modules\/discord\.js\/typings\/index\.d\.ts/d' build-output.log
           fi
 
-          if grep -q "Error" build-output.log; then
-            echo "Other build errors found. Failing the workflow."
+          if grep -i "error" build-output.log | grep -v "node_modules/discord.js/typings/index.d.ts"; then
+            echo "Build failed with unignored errors"
             exit 1
           fi
 
@@ -68,15 +53,6 @@ jobs:
 
       - name: Run tests (no cache)
         run: npx jest -c jest.config.js --no-cache
-=======
-        echo "No unignored build errors found. Workflow continues."
-    
-    - name: Show Jest config
-      run: npx jest --showConfig | sed -n '1,120p'
 
-    - name: Run tests (no cache)
-      run: npx jest -c jest.config.js --no-cache
->>>>>>> origin/mizuho-integration
-
-    # - name: Start Development
-    # run: npm run dev
+      # - name: Start Development
+      #   run: npm run dev
