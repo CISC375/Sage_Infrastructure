@@ -17,7 +17,7 @@
     "types": ["node", "discord.js", "jest"],
     "module": "commonjs"
   },
-  "include": ["config.ts", "src/**/*"],
+  "include": ["config.ts", "src/**/*", "onboard/**/*", "autodoc/**/*"],
   "exclude": [
     "**/node_modules",
     "**/node_modules/discord.js/typings/index.d.ts", // problematic in djs versions >13.1
