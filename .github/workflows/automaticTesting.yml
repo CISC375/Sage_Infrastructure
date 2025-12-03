@@ -96,12 +96,3 @@ jobs:
         run: npx jest -c jest.config.js --no-cache --testMatch="**/*integration*.test.ts"
         env:
           MONGODB_URI: mongodb://test:test@localhost:27017/sage_test?authSource=admin
-
-      - name: Set config file
-        run: cp config.example.ts config.ts
-
-      - name: Show Jest config
-        run: npx jest --showConfig | sed -n '1,120p'
-
-      - name: Run Jest tests (no cache)
-        run: npx jest -c jest.config.js --no-cache
